@@ -345,8 +345,9 @@ describe('modifyWithEditor', () => {
 
     expect(oldFilePath).toMatch(/gemini-cli-modify-test-file-old-\d+\.txt$/);
     expect(newFilePath).toMatch(/gemini-cli-modify-test-file-new-\d+\.txt$/);
-    expect(oldFilePath).toContain(`${tempDir}/gemini-cli-tool-modify-diffs/`);
-    expect(newFilePath).toContain(`${tempDir}/gemini-cli-tool-modify-diffs/`);
+    // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
+    expect(oldFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
+    expect(newFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
   });
 
   it('should create temp files with correct naming without extension', async () => {
@@ -368,8 +369,9 @@ describe('modifyWithEditor', () => {
 
     expect(oldFilePath).toMatch(/gemini-cli-modify-test-file-old-\d+$/);
     expect(newFilePath).toMatch(/gemini-cli-modify-test-file-new-\d+$/);
-    expect(oldFilePath).toContain(`${tempDir}/gemini-cli-tool-modify-diffs/`);
-    expect(newFilePath).toContain(`${tempDir}/gemini-cli-tool-modify-diffs/`);
+    // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
+    expect(oldFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
+    expect(newFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
   });
 });
 

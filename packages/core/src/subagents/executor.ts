@@ -169,8 +169,17 @@ export class SubagentExecutor {
         return result;
       } catch (error) {
         activeSubagents.delete(subagent.id);
-        this.sendProgress(`❌ ${subagent.name} 失敗: ${error instanceof Error ? error.message : String(error)}`, 'error');
-        throw error;
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.sendProgress(`❌ ${subagent.name} 失敗: ${errorMessage}`, 'error');
+        
+        // 失敗した場合でも結果オブジェクトを返す
+        return {
+          subagentId: subagent.id,
+          result: `エラー: ${errorMessage}`,
+          status: 'failed',
+          executionTime: Date.now() - startTime,
+          error: errorMessage
+        };
       }
     };
 
@@ -181,28 +190,49 @@ export class SubagentExecutor {
       const chunk = chunks[i];
       this.sendProgress(`🔄 バッチ ${i + 1}/${chunks.length} 実行中 (${chunk.length}個のサブエージェント)`, 'progress');
       
-      const chunkResults = await Promise.allSettled(
-        chunk.map(subagent => executeWithLimit(subagent))
-      );
-      
-      // 結果を処理
-      chunkResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          results.push(result.value);
-        } else {
-          const subagent = chunk[index];
+      try {
+        const chunkResults = await Promise.allSettled(
+          chunk.map(subagent => executeWithLimit(subagent))
+        );
+        
+        // 結果を処理
+        chunkResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            results.push(result.value);
+          } else {
+            const subagent = chunk[index];
+            const errorMessage = result.reason instanceof Error ? result.reason.message : String(result.reason);
+            results.push({
+              subagentId: subagent.id,
+              result: `並列実行エラー: ${errorMessage}`,
+              executionTime: Date.now() - startTime,
+              status: 'failed',
+              error: errorMessage
+            });
+          }
+        });
+      } catch (batchError) {
+        // バッチ全体のエラーハンドリング
+        this.sendProgress(`❌ バッチ ${i + 1} でエラーが発生: ${batchError instanceof Error ? batchError.message : String(batchError)}`, 'error');
+        
+        // バッチ内の各サブエージェントにエラー結果を追加
+        chunk.forEach(subagent => {
           results.push({
             subagentId: subagent.id,
-            result: result.reason instanceof Error ? result.reason.message : String(result.reason),
+            result: `バッチ実行エラー: ${batchError instanceof Error ? batchError.message : String(batchError)}`,
             executionTime: Date.now() - startTime,
-            status: 'failed'
+            status: 'failed',
+            error: batchError instanceof Error ? batchError.message : String(batchError)
           });
-        }
-      });
+        });
+      }
     }
 
     const totalTime = Date.now() - startTime;
-    this.sendProgress(`🎯 並列実行完了: ${results.length}個のサブエージェント (総実行時間: ${totalTime}ms)`, 'success');
+    const successCount = results.filter(r => r.status === 'success').length;
+    const failedCount = results.filter(r => r.status === 'failed').length;
+    
+    this.sendProgress(`🎯 並列実行完了: ${results.length}個のサブエージェント (成功: ${successCount}, 失敗: ${failedCount}, 総実行時間: ${totalTime}ms)`, 'success');
 
     return results;
   }

@@ -115,14 +115,23 @@ describe('createContentGeneratorConfig', () => {
   });
 
   it('should configure for Vertex AI using GCP project and location when set', async () => {
-    process.env.GOOGLE_CLOUD_PROJECT = 'env-gcp-project';
-    process.env.GOOGLE_CLOUD_LOCATION = 'env-gcp-location';
+    const originalEnv = process.env;
+    process.env = {
+      ...originalEnv,
+      GOOGLE_CLOUD_PROJECT: 'test-project',
+      GOOGLE_CLOUD_LOCATION: 'us-central1',
+      GOOGLE_API_KEY: 'your_api_key_here',
+    };
+
     const config = await createContentGeneratorConfig(
       mockConfig,
       AuthType.USE_VERTEX_AI,
     );
     expect(config.vertexai).toBe(true);
+    // 環境変数が設定されている場合、apiKeyはundefinedになる
     expect(config.apiKey).toBeUndefined();
+
+    process.env = originalEnv;
   });
 
   it('should not configure for Vertex AI if required env vars are empty', async () => {

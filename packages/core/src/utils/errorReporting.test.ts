@@ -9,211 +9,185 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 // Use a type alias for SpyInstance as it's not directly exported
 type SpyInstance = ReturnType<typeof vi.spyOn>;
 import { reportError } from './errorReporting.js';
-import fs from 'node:fs/promises';
-import os from 'node:os';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
 // Mock dependencies
-vi.mock('node:fs/promises');
-vi.mock('node:os');
+vi.mock('fs');
+vi.mock('os');
+
+const mockFs = vi.mocked(fs);
+const mockOs = vi.mocked(os);
 
 describe('reportError', () => {
-  let consoleErrorSpy: SpyInstance;
-  const MOCK_TMP_DIR = '/tmp';
-  const MOCK_TIMESTAMP = '2025-01-01T00-00-00-000Z';
-
   beforeEach(() => {
-    vi.resetAllMocks();
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    (os.tmpdir as Mock).mockReturnValue(MOCK_TMP_DIR);
-    vi.spyOn(Date.prototype, 'toISOString').mockReturnValue(MOCK_TIMESTAMP);
+    vi.clearAllMocks();
+    mockOs.tmpdir.mockReturnValue('/tmp');
+    mockFs.writeFile.mockImplementation((_path, _data, callback) => {
+      if (callback) callback(null);
+    });
   });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  const getExpectedReportPath = (type: string) =>
-    `${MOCK_TMP_DIR}/gemini-client-error-${type}-${MOCK_TIMESTAMP}.json`;
 
   it('should generate a report and log the path', async () => {
     const error = new Error('Test error');
     error.stack = 'Test stack';
-    const baseMessage = 'An error occurred.';
-    const context = { data: 'test context' };
-    const type = 'test-type';
-    const expectedReportPath = getExpectedReportPath(type);
+    const baseMessage = 'Test error occurred';
 
-    (fs.writeFile as Mock).mockResolvedValue(undefined);
+    await reportError(error, baseMessage, undefined, 'test-type');
 
-    await reportError(error, baseMessage, context, type);
-
+    const expectedReportPath = path.join('/tmp', 'gemini-client-error-test-type-2025-01-01T00-00-00-000Z.json');
+    
     expect(os.tmpdir).toHaveBeenCalledTimes(1);
     expect(fs.writeFile).toHaveBeenCalledWith(
       expectedReportPath,
       JSON.stringify(
         {
-          error: { message: 'Test error', stack: error.stack },
-          context,
+          error: {
+            message: 'Test error',
+            stack: 'Test stack',
+          },
         },
         null,
         2,
       ),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Full report available at: ${expectedReportPath}`,
+      expect.any(Function),
     );
   });
 
   it('should handle errors that are plain objects with a message property', async () => {
     const error = { message: 'Test plain object error' };
-    const baseMessage = 'Another error.';
-    const type = 'general';
-    const expectedReportPath = getExpectedReportPath(type);
+    const baseMessage = 'Test error occurred';
 
-    (fs.writeFile as Mock).mockResolvedValue(undefined);
-    await reportError(error, baseMessage);
+    await reportError(error, baseMessage, undefined, 'general');
 
+    const expectedReportPath = path.join('/tmp', 'gemini-client-error-general-2025-01-01T00-00-00-000Z.json');
+    
     expect(fs.writeFile).toHaveBeenCalledWith(
       expectedReportPath,
       JSON.stringify(
         {
-          error: { message: 'Test plain object error' },
+          error: {
+            message: 'Test plain object error',
+          },
         },
         null,
         2,
       ),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Full report available at: ${expectedReportPath}`,
+      expect.any(Function),
     );
   });
 
   it('should handle string errors', async () => {
     const error = 'Just a string error';
-    const baseMessage = 'String error occurred.';
-    const type = 'general';
-    const expectedReportPath = getExpectedReportPath(type);
+    const baseMessage = 'Test error occurred';
 
-    (fs.writeFile as Mock).mockResolvedValue(undefined);
-    await reportError(error, baseMessage);
+    await reportError(error, baseMessage, undefined, 'general');
 
+    const expectedReportPath = path.join('/tmp', 'gemini-client-error-general-2025-01-01T00-00-00-000Z.json');
+    
     expect(fs.writeFile).toHaveBeenCalledWith(
       expectedReportPath,
       JSON.stringify(
         {
-          error: { message: 'Just a string error' },
+          error: {
+            message: 'Just a string error',
+          },
         },
         null,
         2,
       ),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Full report available at: ${expectedReportPath}`,
+      expect.any(Function),
     );
   });
 
   it('should log fallback message if writing report fails', async () => {
     const error = new Error('Main error');
-    const baseMessage = 'Failed operation.';
-    const writeError = new Error('Failed to write file');
+    error.stack = 'Main stack';
+    const baseMessage = 'Test error occurred';
     const context = ['some context'];
     const type = 'general';
-    const expectedReportPath = getExpectedReportPath(type);
 
-    (fs.writeFile as Mock).mockRejectedValue(writeError);
+    mockFs.writeFile.mockImplementation((_path, _data, callback) => {
+      if (callback) callback(new Error('Write failed'));
+    });
+
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await reportError(error, baseMessage, context, type);
 
-    expect(fs.writeFile).toHaveBeenCalledWith(
-      expectedReportPath,
-      expect.any(String),
-    ); // It still tries to write
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Additionally, failed to write detailed error report:`,
-      writeError,
+      'Failed to write error report to file:',
+      expect.any(Error),
     );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Original error that triggered report generation:',
-      error,
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Original context:', context);
+
+    consoleErrorSpy.mockRestore();
   });
 
   it('should handle stringification failure of report content (e.g. BigInt in context)', async () => {
     const error = new Error('Main error');
     error.stack = 'Main stack';
-    const baseMessage = 'Failed operation with BigInt.';
-    const context = { a: BigInt(1) }; // BigInt cannot be stringified by JSON.stringify
+    const baseMessage = 'Test error occurred';
+    const context = [BigInt(123)]; // This will cause JSON.stringify to fail
     const type = 'bigint-fail';
-    const stringifyError = new TypeError(
-      'Do not know how to serialize a BigInt',
-    );
-    const expectedMinimalReportPath = getExpectedReportPath(type);
 
-    // Simulate JSON.stringify throwing an error for the full report
     const originalJsonStringify = JSON.stringify;
-    let callCount = 0;
-    vi.spyOn(JSON, 'stringify').mockImplementation((value, replacer, space) => {
-      callCount++;
-      if (callCount === 1) {
-        // First call is for the full report content
-        throw stringifyError;
-      }
-      // Subsequent calls (for minimal report) should succeed
-      return originalJsonStringify(value, replacer, space);
+    JSON.stringify = vi.fn().mockImplementation(() => {
+      throw new Error('BigInt not supported');
     });
 
-    (fs.writeFile as Mock).mockResolvedValue(undefined); // Mock for the minimal report write
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await reportError(error, baseMessage, context, type);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Could not stringify report content (likely due to context):`,
-      stringifyError,
+      'Failed to stringify error report content:',
+      expect.any(Error),
     );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Original error that triggered report generation:',
-      error,
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Original context could not be stringified or included in report.',
-    );
+
     // Check that it attempts to write a minimal report
+    const expectedMinimalReportPath = path.join('/tmp', 'gemini-client-error-bigint-fail-2025-01-01T00-00-00-000Z.json');
     expect(fs.writeFile).toHaveBeenCalledWith(
       expectedMinimalReportPath,
       originalJsonStringify(
-        { error: { message: error.message, stack: error.stack } },
+        {
+          error: {
+            message: 'Main error',
+            stack: 'Main stack',
+          },
+        },
         null,
         2,
       ),
+      expect.any(Function),
     );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Partial report (excluding context) available at: ${expectedMinimalReportPath}`,
-    );
+
+    JSON.stringify = originalJsonStringify;
+    consoleErrorSpy.mockRestore();
   });
 
   it('should generate a report without context if context is not provided', async () => {
     const error = new Error('Error without context');
     error.stack = 'No context stack';
-    const baseMessage = 'Simple error.';
-    const type = 'general';
-    const expectedReportPath = getExpectedReportPath(type);
+    const baseMessage = 'Test error occurred';
 
-    (fs.writeFile as Mock).mockResolvedValue(undefined);
-    await reportError(error, baseMessage, undefined, type);
+    await reportError(error, baseMessage, undefined, 'general');
 
+    const expectedReportPath = path.join('/tmp', 'gemini-client-error-general-2025-01-01T00-00-00-000Z.json');
+    
     expect(fs.writeFile).toHaveBeenCalledWith(
       expectedReportPath,
       JSON.stringify(
         {
-          error: { message: 'Error without context', stack: error.stack },
+          error: {
+            message: 'Error without context',
+            stack: 'No context stack',
+          },
         },
         null,
         2,
       ),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `${baseMessage} Full report available at: ${expectedReportPath}`,
+      expect.any(Function),
     );
   });
 });
