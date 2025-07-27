@@ -75,7 +75,7 @@ export class IdeClient {
       );
       await this.client.connect(transport);
       this.client.setNotificationHandler(
-        OpenFilesNotificationSchema,
+        OpenFilesNotificationSchema as any,
         (notification) => {
           ideContext.setOpenFilesContext(notification.params);
         },

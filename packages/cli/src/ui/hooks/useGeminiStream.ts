@@ -55,6 +55,7 @@ import {
   TrackedCancelledToolCall,
 } from './useReactToolScheduler.js';
 import { useSessionStats } from '../contexts/SessionContext.js';
+import { NaturalLanguageSubagentProcessor } from './naturalLanguageSubagentProcessor.js';
 
 export function mergePartListUnions(list: PartListUnion[]): PartListUnion {
   const resultParts: PartListUnion = [];
@@ -111,6 +112,28 @@ export const useGeminiStream = (
     }
     return new GitService(config.getProjectRoot());
   }, [config]);
+
+  // 自然言語サブエージェントプロセッサーを初期化
+  const naturalLanguageProcessor = useMemo(() => {
+    const processor = new NaturalLanguageSubagentProcessor();
+    
+    // リアルタイム表示コールバックを設定
+    processor.setProgressCallback((message: string, type: 'info' | 'success' | 'error' | 'progress') => {
+      const messageType = type === 'error' ? MessageType.ERROR : 
+                         type === 'success' ? MessageType.INFO : 
+                         type === 'progress' ? MessageType.INFO : MessageType.INFO;
+      
+      addItem(
+        {
+          type: messageType,
+          text: message,
+        },
+        Date.now(),
+      );
+    });
+    
+    return processor;
+  }, [addItem]);
 
   const [toolCalls, scheduleToolCalls, markToolsAsSubmitted] =
     useReactToolScheduler(
@@ -236,6 +259,56 @@ export const useGeminiStream = (
         onDebugMessage(`User query: '${trimmedQuery}'`);
         await logger?.logMessage(MessageSenderType.USER, trimmedQuery);
 
+        // 自然言語サブエージェント並列起動をチェック
+        const subagentResult = await naturalLanguageProcessor.processNaturalLanguagePrompt(trimmedQuery);
+        
+        if (subagentResult.shouldExecute && subagentResult.subagents && subagentResult.specialty && subagentResult.task) {
+          onDebugMessage(`自然言語サブエージェント並列起動を検出: ${subagentResult.specialty} - ${subagentResult.task}`);
+          
+          // メインエージェントの動作を表示
+          naturalLanguageProcessor.displayMainAgentAction('タスク分析完了', `専門分野: ${subagentResult.specialty}, タスク: ${subagentResult.task}`);
+          
+          // サブエージェント並列実行を実行
+          const executionResult = await naturalLanguageProcessor.executeParallelSubagents(
+            subagentResult.subagents,
+            subagentResult.task
+          );
+
+          if (executionResult.success) {
+            // 協調作業の進行状況を表示
+            naturalLanguageProcessor.displayCollaborationProgress(1, 1, '並列実行完了');
+            
+            const resultsText = executionResult.results.map(r => 
+              `- **${r.subagentName}**: ${r.result.substring(0, 150)}${r.result.length > 150 ? '...' : ''}`
+            ).join('\n\n');
+
+            const message = `🤖 **自然言語サブエージェント並列実行完了**\n\n**専門分野**: ${subagentResult.specialty}\n**タスク**: ${subagentResult.task}\n**実行数**: ${executionResult.results.length}\n\n**結果**:\n${resultsText}`;
+
+            addItem(
+              {
+                type: MessageType.INFO,
+                text: message,
+              },
+              Date.now(),
+            );
+
+            // 最終的なメインエージェントの動作を表示
+            naturalLanguageProcessor.displayMainAgentAction('結果統合完了', `${executionResult.results.length}個のサブエージェントの結果を統合しました`);
+
+            return { queryToSend: null, shouldProceed: false };
+          } else {
+            const errorMessage = `❌ サブエージェント並列実行に失敗しました: ${executionResult.error}`;
+            addItem(
+              {
+                type: MessageType.ERROR,
+                text: errorMessage,
+              },
+              Date.now(),
+            );
+            return { queryToSend: null, shouldProceed: false };
+          }
+        }
+
         // Handle UI-only commands first
         const slashCommandResult = await handleSlashCommand(trimmedQuery);
 
@@ -321,6 +394,7 @@ export const useGeminiStream = (
       logger,
       shellModeActive,
       scheduleToolCalls,
+      naturalLanguageProcessor, // 新しい依存関係を追加
     ],
   );
 

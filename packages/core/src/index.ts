@@ -28,6 +28,24 @@ export * from './core/tokenLimits.js';
 // Export subagents
 export * from './subagents/index.js';
 
+// 協調エージェントシステム
+export { CollaborativeAgentSystem } from './subagents/collaborativeAgent.js';
+export type {
+  CollaborativeTaskOptions,
+  CollaborativeTaskResult,
+  RealTimeCollaborationOptions,
+  RealTimeCollaborationResult,
+  TaskAnalysis,
+  IntegratedResult,
+  Subtask,
+  CollaborationStep,
+  CollaborationAction,
+  CollaborationActionResult,
+  CollaborationMetrics,
+  CollaborationSessionResult,
+  SituationAnalysis
+} from './subagents/types.js';
+
 // Export utilities
 export * from './utils/paths.js';
 export * from './utils/schemaValidator.js';

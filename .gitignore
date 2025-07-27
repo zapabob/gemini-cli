@@ -39,8 +39,3 @@ packages/*/coverage/
 packages/cli/src/generated/
 .integration-tests/
 packages/vscode-ide-companion/*.vsix
-
-# Project specific ignores
-kiro/
-_doc/
-specstory/

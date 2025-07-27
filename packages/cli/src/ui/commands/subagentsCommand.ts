@@ -198,6 +198,7 @@ async function handleExecuteSubagent(args: string[]): Promise<MessageActionRetur
     // モック実行（実際のGemini API統合は後で実装）
     const executor = new SubagentExecutor();
     const result = await executor.executeTask(subagent, {
+      id: `task-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       task,
       priority: 'medium',
       timeout: 30000
@@ -249,6 +250,7 @@ async function handleExecuteParallel(args: string[]): Promise<MessageActionRetur
 
     const executor = new SubagentExecutor();
     const results = await executor.executeParallel(subagents, {
+      id: `parallel-task-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       task,
       priority: 'medium',
       timeout: 30000

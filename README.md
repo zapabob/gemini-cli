@@ -19,6 +19,7 @@ With the Gemini CLI you can:
 - **🆕 Load Balancing**: Distribute requests across multiple Gemini API endpoints for improved reliability and performance
 - **🆕 Sub-Agents**: Create specialized AI agents for different tasks and coordinate them seamlessly
 - **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
+- **🆕 DeepResearch**: Perform comprehensive multi-level research with source validation and topic exploration
 
 ## 🆕 New Features
 
@@ -85,21 +86,24 @@ gemini --checkpointing
 
 ## Quickstart
 
-You have two options to install Gemini CLI.
+You have multiple options to install Gemini CLI.
 
-### With Node
+### With Node (Recommended)
 
 1. **Prerequisites:** Ensure you have [Node.js version 20](https://nodejs.org/en/download) or higher installed.
-2. **Run the CLI:** Execute the following command in your terminal:
+2. **Install from source:**
 
    ```bash
-   npx https://github.com/zapabob/gemini-cli
-   ```
-
-   Or install it with:
-
-   ```bash
-   npm install -g @google/gemini-cli
+   # Clone the repository
+   git clone https://github.com/google-gemini/gemini-cli.git
+   cd gemini-cli
+   
+   # Install dependencies and build
+   npm install
+   npm run build
+   
+   # Link globally (optional)
+   npm link
    ```
 
    Then, run the CLI from anywhere:
@@ -107,6 +111,26 @@ You have two options to install Gemini CLI.
    ```bash
    gemini
    ```
+
+   Or run directly:
+
+   ```bash
+   node bundle/gemini.js
+   ```
+
+### With NPX
+
+Execute the following command in your terminal:
+
+```bash
+npx https://github.com/zapabob/gemini-cli
+```
+
+### With NPM
+
+```bash
+npm install -g @google/gemini-cli
+```
 
 ### With Homebrew
 
@@ -127,6 +151,21 @@ You have two options to install Gemini CLI.
 
 3. **Pick a color theme**
 4. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
+
+### Installation Verification
+
+After installation, verify that everything is working:
+
+```bash
+# Check version
+gemini --version
+
+# Test basic functionality
+gemini -p "Hello, this is a test" -m gemini-2.5-pro
+
+# List available extensions
+gemini --list-extensions
+```
 
 You are now ready to use the Gemini CLI!
 
@@ -213,6 +252,15 @@ gemini --checkpointing --show-memory-usage
 # Emergency saves on interruption
 # Session recovery on restart
 ```
+
+**DeepResearch Example:**
+```sh
+# Perform comprehensive research on a topic
+gemini -p "DeepResearchツールを使って、量子コンピューティングの最新動向について詳しく調べて"
+
+# Use custom research parameters
+gemini -p "deep_researchツールで、AI技術の最新動向を調査して。戦略はfocused、最大深さ5、最大ソース20で"
+```
 ### Next steps
 
 - Learn how to [contribute to or build from the source](./CONTRIBUTING.md).
@@ -221,11 +269,40 @@ gemini --checkpointing --show-memory-usage
 - For more comprehensive documentation, see the [full documentation](./docs/index.md).
 - Take a look at some [popular tasks](#popular-tasks) for more inspiration.
 - Check out our **[Official Roadmap](./ROADMAP.md)**
+- **🆕 GitHub Actions Integration**: Automate code analysis with [GitHub Actions](./docs/github-actions.md)
 
 ### Troubleshooting
 
 Head over to the [troubleshooting guide](docs/troubleshooting.md) if you're
 having issues.
+
+#### Common Issues
+
+**Authentication Issues:**
+```bash
+# If you encounter authentication errors, try:
+gcloud auth application-default login
+gcloud auth login
+```
+
+**Build Issues:**
+```bash
+# If build fails, try cleaning and rebuilding:
+npm run clean
+npm install
+npm run build
+```
+
+**Permission Issues (Windows):**
+```bash
+# Run PowerShell as Administrator for global installation
+npm link
+```
+
+**Quota Exceeded:**
+- Check your API quota limits
+- Consider upgrading to a paid plan
+- Use load balancer for better distribution
 
 ## Popular tasks
 

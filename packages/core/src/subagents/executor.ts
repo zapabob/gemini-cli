@@ -4,12 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Subagent, SubagentStatus, addTaskHistory, updateSubagent } from '../config/subagents.js';
-import { generateTaskId } from '../utils/taskUtils.js';
-import { GeminiClient, GeminiRequest } from './geminiClient.js';
+import { Subagent } from '../config/subagents.js';
+import { GeminiClient } from './geminiClient.js';
 
+/**
+ * サブエージェントタスク定義
+ */
 export interface SubagentTask {
-  taskId: string;
+  id: string;
   task: string;
   context?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
@@ -18,8 +20,10 @@ export interface SubagentTask {
   metadata?: Record<string, any>;
 }
 
+/**
+ * サブエージェント実行結果
+ */
 export interface SubagentResult {
-  taskId: string;
   subagentId: string;
   result: string;
   status: 'success' | 'failed' | 'partial';
@@ -29,309 +33,218 @@ export interface SubagentResult {
   metadata?: Record<string, any>;
 }
 
-export interface SubagentExecutionOptions {
+/**
+ * サブエージェント実行オプション
+ */
+export interface SubagentExecutorOptions {
+  geminiClient?: GeminiClient;
+  maxConcurrent?: number;
   timeout?: number;
-  maxRetries?: number;
-  enableLogging?: boolean;
-  parallelExecution?: boolean;
-  resultAggregation?: 'first' | 'best' | 'all' | 'consensus';
+  onProgress?: (message: string, type: 'info' | 'success' | 'error' | 'progress') => void;
 }
 
 /**
- * サブエージェント実行エンジン
+ * サブエージェント実行器
  */
 export class SubagentExecutor {
-  private runningTasks: Map<string, Promise<SubagentResult>> = new Map();
-  private taskQueue: Array<{ task: SubagentTask; subagent: Subagent }> = [];
-  private maxConcurrentTasks: number;
-  private defaultTimeout: number;
-  private geminiClient: GeminiClient | null = null;
+  private geminiClient: GeminiClient;
+  private maxConcurrent: number;
+  private timeout: number;
+  private onProgress?: (message: string, type: 'info' | 'success' | 'error' | 'progress') => void;
 
-  constructor(options: { 
-    maxConcurrentTasks?: number; 
-    defaultTimeout?: number;
-    geminiClient?: GeminiClient;
-  } = {}) {
-    this.maxConcurrentTasks = options.maxConcurrentTasks || 5;
-    this.defaultTimeout = options.defaultTimeout || 300000; // 5分
-    this.geminiClient = options.geminiClient || null;
+  constructor(options: SubagentExecutorOptions = {}) {
+    this.geminiClient = options.geminiClient || new GeminiClient({
+      apiKey: process.env.GEMINI_API_KEY || 'mock-api-key',
+      defaultModel: 'models/gemini-1.5-flash',
+      defaultTemperature: 0.7,
+      defaultMaxTokens: 4096
+    });
+    this.maxConcurrent = options.maxConcurrent || 5;
+    this.timeout = options.timeout || 300000; // 5分
+    this.onProgress = options.onProgress;
   }
 
   /**
-   * 単一のサブエージェントでタスクを実行する
+   * 進捗メッセージを送信
+   */
+  private sendProgress(message: string, type: 'info' | 'success' | 'error' | 'progress' = 'info') {
+    if (this.onProgress) {
+      this.onProgress(message, type);
+    }
+  }
+
+  /**
+   * 単一サブエージェントタスク実行
    */
   async executeTask(
-    subagent: Subagent,
-    task: Omit<SubagentTask, 'taskId'>,
-    options: SubagentExecutionOptions = {}
+    subagent: Subagent, 
+    task: SubagentTask
   ): Promise<SubagentResult> {
-    const taskId = generateTaskId();
-    const fullTask: SubagentTask = { ...task, taskId };
-    
-    // サブエージェントの状態を更新
-    await updateSubagent(subagent.id, { 
-      status: 'running' as SubagentStatus,
-      lastUsed: new Date().toISOString()
-    });
-
     const startTime = Date.now();
-    const timeout = options.timeout || this.defaultTimeout;
-
+    
     try {
-      // タスク実行のタイムアウト設定
-      const result = await Promise.race([
-        this.executeSubagentTask(subagent, fullTask),
-        this.createTimeoutPromise(timeout)
-      ]) as SubagentResult;
+      this.sendProgress(`🚀 ${subagent.name} のタスク実行開始: ${task.task}`, 'progress');
+      
+      // サブエージェントの状態を更新
+      subagent.status = 'running';
+      
+      // Gemini APIを使用してタスクを実行
+      const response = await this.geminiClient.generateText({
+        prompt: this.generateTaskPrompt(subagent, task),
+        maxTokens: subagent.maxTokens,
+        temperature: subagent.temperature
+      });
 
       const executionTime = Date.now() - startTime;
-      const finalResult: SubagentResult = {
-        ...result,
-        executionTime,
-        status: result.status || 'success'
-      };
-
-      // タスク履歴を追加
-      await addTaskHistory(subagent.id, {
-        taskId,
-        task: fullTask.task,
-        result: finalResult.result,
+      
+      // タスク履歴に追加
+      subagent.taskHistory.push({
+        taskId: task.id,
+        task: task.task,
+        result: response.text,
         timestamp: new Date().toISOString(),
-        status: finalResult.status
+        status: 'success'
       });
 
-      // サブエージェントの状態を更新
-      await updateSubagent(subagent.id, { 
-        status: 'completed' as SubagentStatus 
-      });
+      // 最終使用日時を更新
+      subagent.lastUsed = new Date().toISOString();
+      subagent.status = 'idle';
 
-      return finalResult;
+      this.sendProgress(`✅ ${subagent.name} のタスク実行完了 (${executionTime}ms)`, 'success');
+
+      return {
+        subagentId: subagent.id,
+        result: response.text,
+        executionTime,
+        tokensUsed: response.tokensUsed,
+        status: 'success'
+      };
 
     } catch (error) {
       const executionTime = Date.now() - startTime;
-      const errorResult: SubagentResult = {
-        taskId,
-        subagentId: subagent.id,
-        result: '',
-        status: 'failed',
-        executionTime,
-        error: error instanceof Error ? error.message : String(error)
-      };
+      subagent.status = 'idle';
 
-      // エラー履歴を追加
-      await addTaskHistory(subagent.id, {
-        taskId,
-        task: fullTask.task,
-        result: errorResult.error || 'Unknown error',
+      // エラーをタスク履歴に記録
+      subagent.taskHistory.push({
+        taskId: task.id,
+        task: task.task,
+        result: error instanceof Error ? error.message : String(error),
         timestamp: new Date().toISOString(),
         status: 'failed'
       });
 
-      // サブエージェントの状態を更新
-      await updateSubagent(subagent.id, { 
-        status: 'failed' as SubagentStatus 
-      });
+      this.sendProgress(`❌ ${subagent.name} のタスク実行失敗: ${error instanceof Error ? error.message : String(error)}`, 'error');
 
-      return errorResult;
+      return {
+        subagentId: subagent.id,
+        result: error instanceof Error ? error.message : String(error),
+        executionTime,
+        status: 'failed'
+      };
     }
   }
 
   /**
-   * 複数のサブエージェントで並列実行する
+   * サブエージェント並列実行
    */
   async executeParallel(
-    subagents: Subagent[],
-    task: Omit<SubagentTask, 'taskId'>,
-    options: SubagentExecutionOptions = {}
+    subagents: Subagent[], 
+    task: SubagentTask
   ): Promise<SubagentResult[]> {
-    const taskId = generateTaskId();
-    const fullTask: SubagentTask = { ...task, taskId };
+    this.sendProgress(`⚡ ${subagents.length}個のサブエージェントで並列実行開始`, 'info');
+    
+    const startTime = Date.now();
+    const results: SubagentResult[] = [];
+    const activeSubagents = new Set<string>();
 
-    // 並列実行の制限チェック
-    if (subagents.length > this.maxConcurrentTasks) {
-      throw new Error(`Too many subagents (${subagents.length}). Maximum allowed: ${this.maxConcurrentTasks}`);
-    }
-
-    // 全サブエージェントを実行状態に更新
-    await Promise.all(
-      subagents.map(subagent => 
-        updateSubagent(subagent.id, { 
-          status: 'running' as SubagentStatus,
-          lastUsed: new Date().toISOString()
-        })
-      )
-    );
-
-    try {
-      // 並列実行
-      const results = await Promise.allSettled(
-        subagents.map(subagent => this.executeSubagentTask(subagent, fullTask))
-      );
-
-      // 結果を処理
-      const processedResults: SubagentResult[] = results.map((result, index) => {
-        const subagent = subagents[index];
-        if (result.status === 'fulfilled') {
-          return result.value;
-        } else {
-          return {
-            taskId,
-            subagentId: subagent.id,
-            result: '',
-            status: 'failed' as const,
-            executionTime: 0,
-            error: result.reason?.message || 'Unknown error'
-          };
-        }
-      });
-
-      // 結果集約
-      const aggregatedResults = this.aggregateResults(processedResults, options.resultAggregation || 'all');
-
-      // 各サブエージェントの状態を更新
-      await Promise.all(
-        subagents.map(subagent => {
-          const result = processedResults.find(r => r.subagentId === subagent.id);
-          const status = result?.status === 'success' ? 'completed' : 'failed';
-          return updateSubagent(subagent.id, { status: status as SubagentStatus });
-        })
-      );
-
-      return aggregatedResults;
-
-    } catch (error) {
-      // エラー時の状態更新
-      await Promise.all(
-        subagents.map(subagent => 
-          updateSubagent(subagent.id, { status: 'failed' as SubagentStatus })
-        )
-      );
-      throw error;
-    }
-  }
-
-  /**
-   * サブエージェントの実際のタスク実行
-   */
-  private async executeSubagentTask(subagent: Subagent, task: SubagentTask): Promise<SubagentResult> {
-    if (!this.geminiClient) {
-      // Gemini APIクライアントが設定されていない場合はモック実装
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            taskId: task.taskId,
-            subagentId: subagent.id,
-            result: `Task completed by ${subagent.name} (${subagent.specialty})`,
-            status: 'success',
-            executionTime: Math.random() * 1000 + 500, // 500-1500ms
-            tokensUsed: Math.floor(Math.random() * 1000) + 100
-          });
-        }, Math.random() * 2000 + 1000); // 1-3秒のランダム実行時間
-      });
-    }
-
-    try {
-      const startTime = Date.now();
+    // 並列実行の制御
+    const executeWithLimit = async (subagent: Subagent): Promise<SubagentResult> => {
+      activeSubagents.add(subagent.id);
+      this.sendProgress(`🤖 ${subagent.name} が実行中... (${activeSubagents.size}/${this.maxConcurrent})`, 'progress');
       
-      // Gemini APIを使用してタスクを実行
-      const response = await this.geminiClient.executeSubagentTask(
-        subagent,
-        task.task,
-        task.context,
-        {
-          maxTokens: task.metadata?.maxTokens || 4096,
-          temperature: task.metadata?.temperature || 0.7
-        }
+      try {
+        const result = await this.executeTask(subagent, task);
+        activeSubagents.delete(subagent.id);
+        this.sendProgress(`✅ ${subagent.name} 完了 (残り: ${subagents.length - results.length - 1})`, 'success');
+        return result;
+      } catch (error) {
+        activeSubagents.delete(subagent.id);
+        this.sendProgress(`❌ ${subagent.name} 失敗: ${error instanceof Error ? error.message : String(error)}`, 'error');
+        throw error;
+      }
+    };
+
+    // 並列実行を制限付きで実行
+    const chunks = this.chunkArray(subagents, this.maxConcurrent);
+    
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      this.sendProgress(`🔄 バッチ ${i + 1}/${chunks.length} 実行中 (${chunk.length}個のサブエージェント)`, 'progress');
+      
+      const chunkResults = await Promise.allSettled(
+        chunk.map(subagent => executeWithLimit(subagent))
       );
-
-      const executionTime = Date.now() - startTime;
-
-      return {
-        taskId: task.taskId,
-        subagentId: subagent.id,
-        result: response.text,
-        status: 'success',
-        executionTime,
-        tokensUsed: response.tokensUsed,
-        metadata: {
-          model: response.model,
-          finishReason: response.finishReason
+      
+      // 結果を処理
+      chunkResults.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          results.push(result.value);
+        } else {
+          const subagent = chunk[index];
+          results.push({
+            subagentId: subagent.id,
+            result: result.reason instanceof Error ? result.reason.message : String(result.reason),
+            executionTime: Date.now() - startTime,
+            status: 'failed'
+          });
         }
-      };
-
-    } catch (error) {
-      return {
-        taskId: task.taskId,
-        subagentId: subagent.id,
-        result: `Error: ${error instanceof Error ? error.message : String(error)}`,
-        status: 'failed',
-        executionTime: 0,
-        error: error instanceof Error ? error.message : String(error)
-      };
+      });
     }
+
+    const totalTime = Date.now() - startTime;
+    this.sendProgress(`🎯 並列実行完了: ${results.length}個のサブエージェント (総実行時間: ${totalTime}ms)`, 'success');
+
+    return results;
   }
 
   /**
-   * タイムアウト用のPromiseを作成
+   * タスクプロンプト生成
    */
-  private createTimeoutPromise(timeout: number): Promise<SubagentResult> {
-    return new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error(`Task execution timed out after ${timeout}ms`));
-      }, timeout);
-    });
-  }
+  private generateTaskPrompt(subagent: Subagent, task: SubagentTask): string {
+    let prompt = `あなたは${subagent.name}という専門的なAIアシスタントです。
 
-  /**
-   * 結果を集約する
-   */
-  private aggregateResults(
-    results: SubagentResult[], 
-    strategy: 'first' | 'best' | 'all' | 'consensus'
-  ): SubagentResult[] {
-    switch (strategy) {
-      case 'first':
-        return results.filter(r => r.status === 'success').slice(0, 1);
-      case 'best':
-        return results.filter(r => r.status === 'success')
-          .sort((a, b) => (b.executionTime || 0) - (a.executionTime || 0))
-          .slice(0, 1);
-      case 'all':
-        return results;
-      case 'consensus':
-        const successfulResults = results.filter(r => r.status === 'success');
-        if (successfulResults.length > results.length / 2) {
-          return successfulResults;
-        }
-        return results;
-      default:
-        return results;
+専門分野: ${subagent.specialty}
+説明: ${subagent.description}
+
+${subagent.systemPrompt ? `システムプロンプト: ${subagent.systemPrompt}\n\n` : ''}
+
+タスク: ${task.task}
+
+専門的な視点から回答してください。`;
+
+    if (task.context) {
+      prompt += `\n\nコンテキスト: ${task.context}`;
     }
+
+    return prompt;
   }
 
   /**
-   * 実行中のタスクを取得
+   * 配列を指定サイズのチャンクに分割
    */
-  getRunningTasks(): Map<string, Promise<SubagentResult>> {
-    return new Map(this.runningTasks);
+  private chunkArray<T>(array: T[], size: number): T[][] {
+    const chunks: T[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunks.push(array.slice(i, i + size));
+    }
+    return chunks;
   }
 
   /**
-   * 特定のタスクをキャンセル
+   * 実行状況の詳細表示
    */
-  async cancelTask(taskId: string): Promise<boolean> {
-    const task = this.runningTasks.get(taskId);
-    if (!task) return false;
-
-    // タスクのキャンセル処理
-    this.runningTasks.delete(taskId);
-    return true;
-  }
-
-  /**
-   * 全実行中タスクをキャンセル
-   */
-  async cancelAllTasks(): Promise<void> {
-    this.runningTasks.clear();
+  displayExecutionStatus(subagents: Subagent[], activeCount: number, completedCount: number): void {
+    const progress = Math.round((completedCount / subagents.length) * 100);
+    this.sendProgress(`📊 実行状況: ${completedCount}/${subagents.length} 完了 (${progress}%) - アクティブ: ${activeCount}`, 'info');
   }
 } 

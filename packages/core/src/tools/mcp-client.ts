@@ -390,7 +390,7 @@ export async function connectAndDiscover(
 
       if (mcpServerName === IDE_SERVER_NAME) {
         mcpClient.setNotificationHandler(
-          OpenFilesNotificationSchema,
+          OpenFilesNotificationSchema as any,
           (notification) => {
             ideContext.setOpenFilesContext(notification.params);
           },
