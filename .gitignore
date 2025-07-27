@@ -44,3 +44,4 @@ packages/vscode-ide-companion/*.vsix
 doc/
 _doc/
 specstory/
+kiro/
