@@ -20,8 +20,36 @@ With the Gemini CLI you can:
 - **🆕 Sub-Agents**: Create specialized AI agents for different tasks and coordinate them seamlessly
 - **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
 - **🆕 DeepResearch**: Perform comprehensive multi-level research with source validation and topic exploration
+- **🆕 Supervisor Command**: Natural language parallel implementation with sub-agent coordination
 
 ## 🆕 New Features
+
+### Supervisor Command
+Execute parallel implementations using natural language with intelligent sub-agent coordination:
+
+```bash
+# Simple implementation request
+gemini /supervisor "Webアプリケーションのユーザー認証システムを実装したい"
+
+# Detailed specification
+gemini /supervisor "目標: セキュアな認証システムの実装
+コンテキスト: React + Node.js + PostgreSQL
+サブエージェント: セキュリティ研究者, アーキテクト, 開発者
+スタイル: democratic
+戦略: hybrid"
+```
+
+**Features:**
+- Natural language goal parsing and analysis
+- Automatic sub-agent generation (DeepResearch Agent, Architecture Planner, Implementation Specialist)
+- Parallel execution coordination with multiple strategies
+- Real-time progress tracking and decision logging
+- Result integration and comprehensive output
+
+**Available Options:**
+- **Styles**: autocratic, democratic, laissez-faire
+- **Strategies**: sequential, parallel, hybrid
+- **Custom Sub-agents**: Comma-separated custom agent names
 
 ### Load Balancer
 Distribute your requests across multiple Gemini API endpoints for enhanced reliability and performance:
@@ -98,24 +126,21 @@ You have multiple options to install Gemini CLI.
    git clone https://github.com/google-gemini/gemini-cli.git
    cd gemini-cli
    
-   # Install dependencies and build
+   # Install dependencies
    npm install
+   
+   # Build the project
    npm run build
    
-   # Link globally (optional)
-   npm link
+   # Install globally
+   npm install -g .
    ```
 
-   Then, run the CLI from anywhere:
+3. **Verify installation:**
 
    ```bash
-   gemini
-   ```
-
-   Or run directly:
-
-   ```bash
-   node bundle/gemini.js
+   gemini --version
+   # Should output: 0.6.0
    ```
 
 ### With NPX

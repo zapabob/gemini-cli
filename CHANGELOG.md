@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-07-27
+
+### Added
+- **Supervisor Command**: 自然言語での並列実装とサブエージェント調整機能
+  - 自然言語での目標解析と実装要求の処理
+  - 自動サブエージェント生成（DeepResearch Agent, Architecture Planner, Implementation Specialist）
+  - 並列実行戦略の調整（sequential/parallel/hybrid）
+  - 監督者スタイルの選択（autocratic/democratic/laissez-faire）
+  - リアルタイム進捗追跡と決定ログ
+  - 結果統合と包括的な出力表示
+  - カスタムサブエージェントの指定機能
+  - エラーハンドリングと復旧機能
+
+### Fixed
+- **インポートパスの修正**: supervisorCommand.tsのモジュール解決問題を解決
+  - `@google/gemini-cli-core/subagents/supervisor.js` の相対パス修正
+  - `@google/gemini-cli-core/config/subagents.js` の相対パス修正
+  - TypeScript型定義の明示的指定
+- **セマンティクスの統一**: 全体のバージョン管理を統一
+  - CLIパッケージ: 0.3.0 → 0.6.0
+  - Coreパッケージ: 0.5.0 → 0.6.0
+  - メインパッケージ: 0.6.0（維持）
+
+### Changed
+- **README.mdの更新**: Supervisor Command機能の詳細説明を追加
+  - 新機能の使用例とオプション説明
+  - インストール手順の改善
+  - バージョン確認手順の追加
+- **ドキュメントの改善**: 実装ログの自動保存機能
+  - `_docs/2025-07-27_supervisor_command_fix.md` の作成
+  - 仮説検証思考プロセスの記録
+  - 技術的詳細の文書化
+
+### Technical Details
+- 相対パスでのインポート解決（`../../../../core/src/`）
+- 明示的な型定義指定（`DecisionLog`, `any`）
+- 全パッケージのビルド成功確認
+- グローバルインストールの成功確認
+- CLI動作確認（バージョン0.6.0）
+
 ## [0.5.0] - 2025-07-27
 
 ### Added
