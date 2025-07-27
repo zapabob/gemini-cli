@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "test:subagents:advanced": "node scripts/test-subagents-advanced.js"
+  },
+  "dependencies": {
+    "minimatch": "^10.0.3"
+  }
+}
