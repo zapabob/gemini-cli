@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2025-07-27
+
+### Added
+- **公式リポジトリとの統合**: 最新機能との互換性向上
+  - Sandbox Image URIを最新版（0.1.13-nightly.250727.3e81359c）に更新
+  - 公式リポジトリの最新機能を反映
+  - 独自機能を優先した統合実装
+
+### Changed
+- **README.mdの大幅改善**: 公式リポジトリの最新構造を反映
+  - インストール手順の簡素化と改善
+  - 認証方法の詳細説明を追加
+  - 使用例の拡充と改善
+  - ドキュメントリンクの修正
+- **Sandbox Image URI更新**: 公式リポジトリの最新版に同期
+  - `us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.1.13` → `us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.1.13-nightly.250727.3e81359c`
+
+### Technical Details
+- 公式リポジトリの最新コミット（3e81359c）との互換性確保
+- 独自機能（Supervisor Command、Load Balancer、Sub-Agents等）の優先維持
+- ドキュメント構造の公式リポジトリとの統一
+- インストール手順の簡素化
+
 ## [0.6.0] - 2025-07-27
 
 ### Added

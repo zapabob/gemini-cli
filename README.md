@@ -21,8 +21,9 @@ With the Gemini CLI you can:
 - **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
 - **🆕 DeepResearch**: Perform comprehensive multi-level research with source validation and topic exploration
 - **🆕 Supervisor Command**: Natural language parallel implementation with sub-agent coordination
+- **🆕 GitHub Actions Integration**: Automated code analysis and review with PR comments
 
-## 🆕 New Features
+## 🆕 Enhanced Features
 
 ### Supervisor Command
 Execute parallel implementations using natural language with intelligent sub-agent coordination:
@@ -112,6 +113,49 @@ gemini --checkpointing
 - **Signal Handling**: SIGINT, SIGTERM, SIGBREAK support
 - **Data Integrity**: JSON + Pickle composite storage
 
+### DeepResearch
+Perform comprehensive multi-level research with source validation:
+
+```bash
+# Multi-level research
+gemini /deepresearch "AI in healthcare" --levels 3 --sources 10
+
+# Focused research with academic sources
+gemini /deepresearch "Machine learning applications" --strategy focused --academic --recent 5
+```
+
+**Features:**
+- Up to 3-level deep research analysis
+- Maximum 10 sources per level
+- Three research strategies (comprehensive/focused/exploratory)
+- Academic source inclusion option
+- Recent years specification
+- Domain-specific focus
+- Source type exclusion
+
+### GitHub Actions Integration
+Automated code analysis and review with PR comments:
+
+```yaml
+# .github/workflows/gemini-cli-action.yml
+name: Gemini CLI Code Analysis
+on:
+  pull_request:
+    paths: ['**/*.{js,ts,py,java,cpp,c,go,rs}']
+  push:
+    branches: [main]
+    paths: ['**/*.{js,ts,py,java,cpp,c,go,rs}']
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-gemini-cli
+      - name: Analyze Code
+        run: gemini analyze --output-format markdown
+```
+
 ## Quickstart
 
 You have multiple options to install Gemini CLI.
@@ -143,30 +187,16 @@ You have multiple options to install Gemini CLI.
    # Should output: 0.6.0
    ```
 
-### With NPX
-
-Execute the following command in your terminal:
-
-```bash
-npx https://github.com/zapabob/gemini-cli
-```
-
-### With NPM
-
-```bash
-npm install -g @google/gemini-cli
-```
-
 ### With Homebrew
 
-1. **Prerequisites:** Ensure you have [Homebrew](https://brew.sh/) installed.
-2. **Install the CLI** Execute the following command in your terminal:
+1. **Prerequisites:** Ensure you have Homebrew installed.
+2. **Install the CLI:**
 
    ```bash
    brew install gemini-cli
    ```
 
-   Then, run the CLI from anywhere:
+3. **Run the CLI:**
 
    ```bash
    gemini
@@ -174,54 +204,39 @@ npm install -g @google/gemini-cli
 
 ### Common Configuration steps
 
-3. **Pick a color theme**
-4. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
-
-### Installation Verification
-
-After installation, verify that everything is working:
-
-```bash
-# Check version
-gemini --version
-
-# Test basic functionality
-gemini -p "Hello, this is a test" -m gemini-2.5-pro
-
-# List available extensions
-gemini --list-extensions
-```
+1. **Pick a color theme**
+2. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
 
 You are now ready to use the Gemini CLI!
 
 ### Use a Gemini API key:
 
-The Gemini API provides a free tier with [100 requests per day](https://ai.google.dev/gemini-api/docs/rate-limits#free-tier) using Gemini 2.5 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
+The Gemini API provides a free tier with 100 requests per day using Gemini 2.5 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
 
-1. Generate a key from [Google AI Studio](https://aistudio.google.com/apikey).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key.
+1. Generate a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key:
 
    ```bash
    export GEMINI_API_KEY="YOUR_API_KEY"
    ```
 
-3. (Optionally) Upgrade your Gemini API project to a paid plan on the API key page (will automatically unlock [Tier 1 rate limits](https://ai.google.dev/gemini-api/docs/rate-limits#tier-1))
+3. (Optionally) Upgrade your Gemini API project to a paid plan on the API key page (will automatically unlock Tier 1 rate limits)
 
 ### Use a Vertex AI API key:
 
-The Vertex AI API provides a [free tier](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) using express mode for Gemini 2.5 Pro, control over which model you use, and access to higher rate limits with a billing account:
+The Vertex AI API provides a free tier using express mode for Gemini 2.5 Pro, control over which model you use, and access to higher rate limits with a billing account:
 
-1. Generate a key from [Google Cloud](https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true
+1. Generate a key from [Google Cloud](https://console.cloud.google.com/apis/credentials).
+2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true:
 
    ```bash
    export GOOGLE_API_KEY="YOUR_API_KEY"
    export GOOGLE_GENAI_USE_VERTEXAI=true
    ```
 
-3. (Optionally) Add a billing account on your project to get access to [higher usage limits](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
+3. (Optionally) Add a billing account on your project to get access to higher usage limits
 
-For other authentication methods, including Google Workspace accounts, see the [authentication](./docs/cli/authentication.md) guide.
+For other authentication methods, including Google Workspace accounts, see the [authentication guide](docs/cli/authentication.md).
 
 ## Examples
 
@@ -229,7 +244,7 @@ Once the CLI is running, you can start interacting with Gemini from your shell.
 
 You can start a project from a new directory:
 
-```sh
+```bash
 cd new-project/
 gemini
 > Write me a Gemini Discord bot that answers questions using a FAQ.md file I will provide
@@ -237,97 +252,25 @@ gemini
 
 Or work with an existing project:
 
-```sh
-git clone https://github.com/gemini/gemini-cli
+```bash
+git clone https://github.com/google-gemini/gemini-cli
 cd gemini-cli
 gemini
 > Give me a summary of all of the changes that went in yesterday
 ```
 
-### Advanced Examples with New Features
-
-**Load Balancer Example:**
-```sh
-# Set up multiple API endpoints for redundancy
-gemini /loadbalancer add-endpoint "Primary" "https://api.gemini.com" "key1" 100
-gemini /loadbalancer add-endpoint "Secondary" "https://backup.gemini.com" "key2" 50
-gemini /loadbalancer set-algorithm "least-connections"
-
-# Execute requests through load balancer
-gemini /loadbalancer request "Analyze this large codebase for security vulnerabilities"
-```
-
-**Sub-Agents Example:**
-```sh
-# Create specialized agents for a complex project
-gemini /subagents create "Security Expert" "Specialist in security analysis and vulnerability assessment"
-gemini /subagents create "Performance Analyst" "Expert in code optimization and performance tuning"
-gemini /subagents create "Documentation Specialist" "Technical writer focused on clear, comprehensive documentation"
-
-# Coordinate multiple agents for comprehensive analysis
-gemini /subagents coordinate "Security Expert, Performance Analyst, Documentation Specialist" "Review this authentication system and provide security analysis, performance recommendations, and updated documentation"
-```
-
-**Power Failure Protection Example:**
-```sh
-# Enable all protection features
-gemini --checkpointing --show-memory-usage
-
-# Work with confidence - automatic saves every 5 minutes
-# Emergency saves on interruption
-# Session recovery on restart
-```
-
-**DeepResearch Example:**
-```sh
-# Perform comprehensive research on a topic
-gemini -p "DeepResearchツールを使って、量子コンピューティングの最新動向について詳しく調べて"
-
-# Use custom research parameters
-gemini -p "deep_researchツールで、AI技術の最新動向を調査して。戦略はfocused、最大深さ5、最大ソース20で"
-```
 ### Next steps
 
-- Learn how to [contribute to or build from the source](./CONTRIBUTING.md).
-- Explore the available **[CLI Commands](./docs/cli/commands.md)**.
-- If you encounter any issues, review the **[troubleshooting guide](./docs/troubleshooting.md)**.
-- For more comprehensive documentation, see the [full documentation](./docs/index.md).
+- Learn how to [contribute to or build from the source](CONTRIBUTING.md).
+- Explore the available **[CLI Commands](docs/cli/commands.md)**.
+- If you encounter any issues, review the **[troubleshooting guide](docs/cli/troubleshooting.md)**.
+- For more comprehensive documentation, see the [full documentation](docs/).
 - Take a look at some [popular tasks](#popular-tasks) for more inspiration.
-- Check out our **[Official Roadmap](./ROADMAP.md)**
-- **🆕 GitHub Actions Integration**: Automate code analysis with [GitHub Actions](./docs/github-actions.md)
+- Check out our **[Official Roadmap](ROADMAP.md)**
 
 ### Troubleshooting
 
-Head over to the [troubleshooting guide](docs/troubleshooting.md) if you're
-having issues.
-
-#### Common Issues
-
-**Authentication Issues:**
-```bash
-# If you encounter authentication errors, try:
-gcloud auth application-default login
-gcloud auth login
-```
-
-**Build Issues:**
-```bash
-# If build fails, try cleaning and rebuilding:
-npm run clean
-npm install
-npm run build
-```
-
-**Permission Issues (Windows):**
-```bash
-# Run PowerShell as Administrator for global installation
-npm link
-```
-
-**Quota Exceeded:**
-- Check your API quota limits
-- Consider upgrading to a paid plan
-- Use load balancer for better distribution
+Head over to the [troubleshooting guide](docs/cli/troubleshooting.md) if you're having issues.
 
 ## Popular tasks
 
@@ -335,21 +278,21 @@ npm link
 
 Start by `cd`ing into an existing or newly-cloned repository and running `gemini`.
 
-```text
+```
 > Describe the main pieces of this system's architecture.
 ```
 
-```text
+```
 > What security mechanisms are in place?
 ```
 
 ### Work with your existing code
 
-```text
+```
 > Implement a first draft for GitHub issue #123.
 ```
 
-```text
+```
 > Help me migrate this codebase to the latest version of Java. Start with a plan.
 ```
 
@@ -357,28 +300,28 @@ Start by `cd`ing into an existing or newly-cloned repository and running `gemini
 
 Use MCP servers to integrate your local system tools with your enterprise collaboration suite.
 
-```text
+```
 > Make me a slide deck showing the git history from the last 7 days, grouped by feature and team member.
 ```
 
-```text
+```
 > Make a full-screen web app for a wall display to show our most interacted-with GitHub issues.
 ```
 
 ### Interact with your system
 
-```text
+```
 > Convert all the images in this directory to png, and rename them to use dates from the exif data.
 ```
 
-```text
+```
 > Organize my PDF invoices by month of expenditure.
 ```
 
 ### Uninstall
 
-Head over to the [Uninstall](docs/Uninstall.md) guide for uninstallation instructions.
+Head over to the [Uninstall guide](docs/cli/uninstall.md) for uninstallation instructions.
 
 ## Terms of Service and Privacy Notice
 
-For details on the terms of service and privacy notice applicable to your use of Gemini CLI, see the [Terms of Service and Privacy Notice](./docs/tos-privacy.md).
+For details on the terms of service and privacy notice applicable to your use of Gemini CLI, see the [Terms of Service and Privacy Notice](docs/privacy.md).
