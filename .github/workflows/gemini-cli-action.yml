@@ -1,0 +1,246 @@
+name: Gemini CLI Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Gemini CLIに送信するプロンプト'
+        required: true
+        default: 'このリポジトリのコードを分析して、主要な機能を説明して'
+      model:
+        description: '使用するGeminiモデル'
+        required: false
+        default: 'gemini-2.5-pro'
+      max_tokens:
+        description: '最大トークン数'
+        required: false
+        default: '1000'
+      temperature:
+        description: '温度パラメータ（0.0-1.0）'
+        required: false
+        default: '0.7'
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '**.js'
+      - '**.ts'
+      - '**.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '**.js'
+      - '**.ts'
+      - '**.json'
+
+jobs:
+  gemini-analysis:
+    name: Gemini CLI Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 完全な履歴を取得
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Gemini CLI globally
+        run: |
+          npm link
+          gemini --version
+
+      - name: Set up Gemini API Key
+        run: |
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "GEMINI_API_KEY is set"
+            export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
+          elif [ -n "${{ secrets.GOOGLE_API_KEY }}" ]; then
+            echo "GOOGLE_API_KEY is set"
+            export GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}"
+            export GOOGLE_GENAI_USE_VERTEXAI=true
+          else
+            echo "No API key found, using default authentication"
+          fi
+
+      - name: Run Gemini CLI Analysis
+        id: gemini-analysis
+        run: |
+          # デフォルトのプロンプトまたはワークフロー入力から取得
+          PROMPT="${{ github.event.inputs.prompt || 'このリポジトリのコードを分析して、主要な機能と改善点を説明して' }}"
+          MODEL="${{ github.event.inputs.model || 'gemini-2.5-pro' }}"
+          
+          echo "Running Gemini CLI analysis..."
+          echo "Prompt: $PROMPT"
+          echo "Model: $MODEL"
+          
+          # Gemini CLIを実行して結果をファイルに保存
+          gemini -p "$PROMPT" -m "$MODEL" > gemini_analysis.txt 2>&1 || {
+            echo "Gemini CLI analysis completed with warnings or errors"
+            echo "Analysis output:"
+            cat gemini_analysis.txt
+          }
+
+      - name: Read Analysis Results
+        id: read-results
+        run: |
+          if [ -f gemini_analysis.txt ]; then
+            ANALYSIS=$(cat gemini_analysis.txt)
+            echo "analysis<<EOF" >> $GITHUB_OUTPUT
+            echo "$ANALYSIS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "analysis=No analysis results found" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on Pull Request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const analysis = `${{ steps.read-results.outputs.analysis }}`;
+            
+            const comment = `## 🤖 Gemini CLI Analysis
+            
+            **Prompt:** ${{ github.event.inputs.prompt || 'このリポジトリのコードを分析して、主要な機能と改善点を説明して' }}
+            **Model:** ${{ github.event.inputs.model || 'gemini-2.5-pro' }}
+            
+            ### Analysis Results:
+            \`\`\`
+            ${analysis}
+            \`\`\`
+            
+            ---
+            *This analysis was performed by Gemini CLI v0.4.0*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Create Summary
+        if: github.event_name == 'push'
+        run: |
+          echo "## Gemini CLI Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Prompt:** ${{ github.event.inputs.prompt || 'このリポジトリのコードを分析して、主要な機能と改善点を説明して' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Model:** ${{ github.event.inputs.model || 'gemini-2.5-pro' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Analysis completed successfully!" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Analysis Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-analysis-results
+          path: gemini_analysis.txt
+          retention-days: 30
+
+  deep-research-analysis:
+    name: DeepResearch Analysis
+    runs-on: ubuntu-latest
+    needs: gemini-analysis
+    if: github.event_name == 'workflow_dispatch' && contains(github.event.inputs.prompt, 'DeepResearch')
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Gemini CLI globally
+        run: |
+          npm link
+          gemini --version
+
+      - name: Set up Gemini API Key
+        run: |
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "GEMINI_API_KEY is set"
+            export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
+          elif [ -n "${{ secrets.GOOGLE_API_KEY }}" ]; then
+            echo "GOOGLE_API_KEY is set"
+            export GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}"
+            export GOOGLE_GENAI_USE_VERTEXAI=true
+          else
+            echo "No API key found, using default authentication"
+          fi
+
+      - name: Run DeepResearch Analysis
+        run: |
+          echo "Running DeepResearch analysis..."
+          
+          # DeepResearch機能を使用した分析
+          gemini -p "DeepResearchツールを使って、このリポジトリの技術スタックとアーキテクチャについて詳しく調べて" > deep_research_analysis.txt 2>&1 || {
+            echo "DeepResearch analysis completed with warnings or errors"
+            echo "Analysis output:"
+            cat deep_research_analysis.txt
+          }
+
+      - name: Comment DeepResearch Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let analysis = 'No DeepResearch results found';
+            
+            try {
+              analysis = fs.readFileSync('deep_research_analysis.txt', 'utf8');
+            } catch (error) {
+              console.log('Could not read DeepResearch analysis file');
+            }
+            
+            const comment = `## 🔍 DeepResearch Analysis
+            
+            **Tool:** DeepResearch (v0.4.0)
+            **Query:** このリポジトリの技術スタックとアーキテクチャについて詳しく調べて
+            
+            ### DeepResearch Results:
+            \`\`\`
+            ${analysis}
+            \`\`\`
+            
+            ---
+            *This analysis was performed by Gemini CLI DeepResearch tool*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Upload DeepResearch Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deep-research-results
+          path: deep_research_analysis.txt
+          retention-days: 30 

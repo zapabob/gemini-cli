@@ -5,7 +5,7 @@
  */
 
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { LoadBalancerConfig, LoadBalancerEndpoint } from '../services/loadBalancerService.js';
 
 const CONFIG_FILE = 'loadBalancer.json';
