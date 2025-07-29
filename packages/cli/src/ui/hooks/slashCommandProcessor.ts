@@ -138,9 +138,14 @@ export const useSlashCommandProcessor = (
         pendingItem: pendingCompressionItemRef.current,
         setPendingItem: setPendingCompressionItem,
         toggleCorgiMode,
+        toggleVimEnabled: async () => {
+          // TODO: Implement vim mode toggle
+          return false;
+        },
       },
       session: {
         stats: session.stats,
+        sessionShellAllowlist: new Set<string>(),
       },
     }),
     [
@@ -317,6 +322,9 @@ export const useSlashCommandProcessor = (
                   type: 'submit_prompt',
                   content: result.content,
                 };
+              case 'confirm_shell_commands':
+                // Handle shell command confirmation
+                return { type: 'handled' };
               default: {
                 const unhandled: never = result;
                 throw new Error(`Unhandled slash command result: ${unhandled}`);

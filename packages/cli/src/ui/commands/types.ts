@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Content } from '@google/genai';
+import { Content } from '@google/gemini-cli-core';
 import { HistoryItemWithoutId } from '../types.js';
 import { Config, GitService, Logger } from '@google/gemini-cli-core';
 import { LoadedSettings } from '../../config/settings.js';
@@ -89,7 +89,7 @@ export interface QuitActionReturn {
  */
 export interface MessageActionReturn {
   type: 'message';
-  messageType: 'info' | 'error';
+  messageType: 'info' | 'error' | 'success';
   content: string;
 }
 
