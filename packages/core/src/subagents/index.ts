@@ -5,4 +5,12 @@
  */
 
 export * from './executor.js';
+export * from './supervisor.js';
+export * from './collaborativeAgent.js';
+export * from './types.js';
+export * from './autonomousOrchestrator.js';
+export * from './mainAgentInterface.js';
+export * from './checkpointManager.js';
+export * from './colorManager.js';
+export * from './cursorIntegration.js'; // Added
 export { GeminiClient as SubagentGeminiClient } from './geminiClient.js'; 

@@ -6,6 +6,7 @@
 
 import { Subagent } from '../config/subagents.js';
 import { GeminiClient } from './geminiClient.js';
+import { ColorManager, ColorManagerConfig } from './colorManager.js';
 
 /**
  * サブエージェントタスク定義
@@ -29,6 +30,8 @@ export interface SubagentResult {
   status: 'success' | 'failed' | 'partial';
   executionTime: number;
   tokensUsed?: number;
+  qualityScore?: number;
+  confidenceLevel?: number;
   error?: string;
   metadata?: Record<string, any>;
 }
@@ -51,6 +54,7 @@ export class SubagentExecutor {
   private maxConcurrent: number;
   private timeout: number;
   private onProgress?: (message: string, type: 'info' | 'success' | 'error' | 'progress') => void;
+  private colorManager: ColorManager;
 
   constructor(options: SubagentExecutorOptions = {}) {
     this.geminiClient = options.geminiClient || new GeminiClient({
@@ -62,14 +66,27 @@ export class SubagentExecutor {
     this.maxConcurrent = options.maxConcurrent || 5;
     this.timeout = options.timeout || 300000; // 5分
     this.onProgress = options.onProgress;
+    
+    // カラーマネージャーの初期化
+    const colorConfig: ColorManagerConfig = {
+      enableColors: true,
+      enableEmojis: true,
+      enableTimestamps: true,
+      logToFile: false,
+      colorMode: 'ansi'
+    };
+    this.colorManager = new ColorManager(colorConfig);
   }
 
   /**
    * 進捗メッセージを送信
    */
-  private sendProgress(message: string, type: 'info' | 'success' | 'error' | 'progress' = 'info') {
+  private sendProgress(message: string, type: 'info' | 'success' | 'error' | 'progress' = 'info', agentId?: string, agentName?: string) {
     if (this.onProgress) {
-      this.onProgress(message, type);
+      // 色分けされたメッセージを生成
+      const coloredMessage = this.colorManager.createColoredMessage(message, agentId, agentName, undefined, type);
+      const formattedMessage = this.colorManager.formatMessage(coloredMessage);
+      this.onProgress(formattedMessage, type);
     }
   }
 
@@ -83,7 +100,7 @@ export class SubagentExecutor {
     const startTime = Date.now();
     
     try {
-      this.sendProgress(`🚀 ${subagent.name} のタスク実行開始: ${task.task}`, 'progress');
+      this.sendProgress(`🚀 ${subagent.name} のタスク実行開始: ${task.task}`, 'progress', subagent.id, subagent.name);
       
       // サブエージェントの状態を更新
       subagent.status = 'running';
@@ -96,6 +113,15 @@ export class SubagentExecutor {
       });
 
       const executionTime = Date.now() - startTime;
+      
+      // サブエージェントの会話メッセージを色分けして表示
+      const agentSpeech = this.colorManager.formatAgentSpeech(
+        subagent.id,
+        subagent.name,
+        subagent.specialty,
+        response.text
+      );
+      console.log(agentSpeech);
       
       // タスク履歴に追加
       subagent.taskHistory.push({
@@ -110,7 +136,7 @@ export class SubagentExecutor {
       subagent.lastUsed = new Date().toISOString();
       subagent.status = 'idle';
 
-      this.sendProgress(`✅ ${subagent.name} のタスク実行完了 (${executionTime}ms)`, 'success');
+      this.sendProgress(`✅ ${subagent.name} のタスク実行完了 (${executionTime}ms)`, 'success', subagent.id, subagent.name);
 
       return {
         subagentId: subagent.id,
@@ -133,7 +159,7 @@ export class SubagentExecutor {
         status: 'failed'
       });
 
-      this.sendProgress(`❌ ${subagent.name} のタスク実行失敗: ${error instanceof Error ? error.message : String(error)}`, 'error');
+      this.sendProgress(`❌ ${subagent.name} のタスク実行失敗: ${error instanceof Error ? error.message : String(error)}`, 'error', subagent.id, subagent.name);
 
       return {
         subagentId: subagent.id,

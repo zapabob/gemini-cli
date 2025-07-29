@@ -1,0 +1,369 @@
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { CursorIntegrationManager, CursorIntegrationConfig } from '../cursorIntegration.js';
+import { ColorManager, ColorManagerConfig } from '../colorManager.js';
+
+/**
+ * Cursor連携デモクラス
+ * Cursorとの連携機能、並列実行、自律的サブエージェント呼び出しをデモンストレーション
+ */
+export class CursorIntegrationDemo {
+  private cursorManager: CursorIntegrationManager;
+  private colorManager: ColorManager;
+
+  constructor() {
+    // Cursor連携設定
+    const config: CursorIntegrationConfig = {
+      enableRealTimeSync: true,
+      enableAutoCodeReview: true,
+      enableParallelExecution: true,
+      enableCommandPalette: true,
+      enableFileWatcher: true,
+      enableLiveCollaboration: true,
+      maxConcurrentTasks: 5,
+      syncInterval: 3000, // 3秒
+      autoSaveInterval: 60000 // 1分
+    };
+
+    this.cursorManager = new CursorIntegrationManager(config);
+
+    // カラーマネージャー設定
+    const colorConfig: ColorManagerConfig = {
+      enableColors: true,
+      enableEmojis: true,
+      enableTimestamps: true,
+      colorMode: 'ansi',
+      logToFile: false
+    };
+
+    this.colorManager = new ColorManager(colorConfig);
+  }
+
+  /**
+   * デモの実行
+   */
+  async runDemo(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('🎭 Cursor連携デモを開始します', 'info'));
+    console.log('');
+
+    try {
+      // 1. リアルタイム同期デモ
+      await this.demoRealTimeSync();
+
+      // 2. 自動コードレビューデモ
+      await this.demoAutoCodeReview();
+
+      // 3. 並列実行デモ
+      await this.demoParallelExecution();
+
+      // 4. コマンドパレットデモ
+      await this.demoCommandPalette();
+
+      // 5. ファイル監視デモ
+      await this.demoFileWatching();
+
+      // 6. ライブ協調デモ
+      await this.demoLiveCollaboration();
+
+      console.log(this.colorManager.formatSystemMessage('🎉 Cursor連携デモが完了しました', 'success'));
+    } catch (error) {
+      console.error(this.colorManager.formatErrorMessage(`❌ デモ実行エラー: ${error}`));
+    } finally {
+      await this.cursorManager.cleanup();
+    }
+  }
+
+  /**
+   * リアルタイム同期デモ
+   */
+  private async demoRealTimeSync(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('🔄 リアルタイム同期デモ', 'info'));
+
+    // ファイル変更イベントをシミュレート
+    const mockFileEvent = {
+      filePath: '/path/to/example.ts',
+      changeType: 'modified' as const,
+      content: `
+function exampleFunction() {
+  const data = [1, 2, 3, 4, 5];
+  return data.map(x => x * 2);
+}
+      `,
+      timestamp: new Date()
+    };
+
+    console.log(this.colorManager.formatSystemMessage(`📝 ファイル変更をシミュレート: ${mockFileEvent.filePath}`, 'info'));
+    await this.cursorManager.processFileChangeEvent(mockFileEvent);
+
+    await this.sleep(2000);
+    console.log('');
+  }
+
+  /**
+   * 自動コードレビューデモ
+   */
+  private async demoAutoCodeReview(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('🔍 自動コードレビューデモ', 'info'));
+
+    const codeReviewEvent = {
+      filePath: '/path/to/review.ts',
+      changeType: 'modified' as const,
+      content: `
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+class UserService {
+  private users: User[] = [];
+
+  addUser(user: User): void {
+    this.users.push(user); // バリデーションなし
+  }
+
+  getUser(id: number): User | undefined {
+    return this.users.find(u => u.id === id);
+  }
+}
+      `,
+      timestamp: new Date()
+    };
+
+    console.log(this.colorManager.formatSystemMessage(`🔍 コードレビューを開始: ${codeReviewEvent.filePath}`, 'info'));
+    await this.cursorManager.processFileChangeEvent(codeReviewEvent);
+
+    await this.sleep(3000);
+    console.log('');
+  }
+
+  /**
+   * 並列実行デモ
+   */
+  private async demoParallelExecution(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('🚀 並列実行デモ', 'info'));
+
+    const tasks = [
+      'コードレビューを実行してください',
+      'パフォーマンス最適化を実行してください',
+      'セキュリティ監査を実行してください',
+      'ドキュメント生成を実行してください'
+    ];
+
+    console.log(this.colorManager.formatSystemMessage(`🚀 ${tasks.length}個のタスクを並列実行`, 'info'));
+
+    const taskIds: string[] = [];
+    for (const task of tasks) {
+      const taskId = await this.cursorManager.executeParallelTask(task, '/path/to/example.ts');
+      taskIds.push(taskId);
+      console.log(this.colorManager.formatSystemMessage(`📋 タスク開始: ${taskId}`, 'info'));
+    }
+
+    // タスクの状態を監視
+    let completedTasks = 0;
+    while (completedTasks < tasks.length) {
+      await this.sleep(1000);
+      
+      const activeTasks = this.cursorManager.getActiveTasks();
+      completedTasks = activeTasks.filter(task => task.status === 'completed').length;
+      
+      console.log(this.colorManager.formatSystemMessage(`📊 進捗: ${completedTasks}/${tasks.length} 完了`, 'info'));
+    }
+
+    console.log(this.colorManager.formatSuccessMessage('✅ 並列実行が完了しました'));
+    console.log('');
+  }
+
+  /**
+   * コマンドパレットデモ
+   */
+  private async demoCommandPalette(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('⌨️ コマンドパレットデモ', 'info'));
+
+    const commands = [
+      'cursor.subagent.codeReview',
+      'cursor.subagent.debug',
+      'cursor.subagent.optimize',
+      'cursor.subagent.security',
+      'cursor.subagent.parallel'
+    ];
+
+    for (const commandId of commands) {
+      console.log(this.colorManager.formatSystemMessage(`⚡ コマンド実行: ${commandId}`, 'info'));
+      
+      const context = {
+        filePath: '/path/to/demo.ts',
+        content: `
+function demoFunction() {
+  console.log("Hello, World!");
+  return 42;
+}
+        `
+      };
+
+      const result = await this.cursorManager.executeCommand(commandId, context);
+      
+      if (result.success) {
+        console.log(this.colorManager.formatSuccessMessage(`✅ コマンド成功: ${commandId}`));
+        console.log(`   実行時間: ${result.executionTime}ms`);
+      } else {
+        console.log(this.colorManager.formatErrorMessage(`❌ コマンド失敗: ${commandId}`));
+        console.log(`   エラー: ${result.error}`);
+      }
+
+      await this.sleep(1000);
+    }
+
+    console.log('');
+  }
+
+  /**
+   * ファイル監視デモ
+   */
+  private async demoFileWatching(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('👁️ ファイル監視デモ', 'info'));
+
+    const fileEvents = [
+      {
+        filePath: '/path/to/new-file.ts',
+        changeType: 'created' as const,
+        content: '// 新しいファイル',
+        timestamp: new Date()
+      },
+      {
+        filePath: '/path/to/modified-file.ts',
+        changeType: 'modified' as const,
+        content: '// 変更されたファイル',
+        timestamp: new Date()
+      },
+      {
+        filePath: '/path/to/deleted-file.ts',
+        changeType: 'deleted' as const,
+        timestamp: new Date()
+      }
+    ];
+
+    for (const event of fileEvents) {
+      console.log(this.colorManager.formatSystemMessage(`📝 ファイルイベント: ${event.changeType} - ${event.filePath}`, 'info'));
+      await this.cursorManager.processFileChangeEvent(event);
+      await this.sleep(1000);
+    }
+
+    console.log('');
+  }
+
+  /**
+   * ライブ協調デモ
+   */
+  private async demoLiveCollaboration(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('👥 ライブ協調デモ', 'info'));
+
+    // 複数のユーザーが同時に作業している状況をシミュレート
+    const collaborationEvents = [
+      {
+        filePath: '/path/to/collaborative.ts',
+        changeType: 'modified' as const,
+        content: '// ユーザーAの変更',
+        timestamp: new Date(),
+        userId: 'user-a'
+      },
+      {
+        filePath: '/path/to/collaborative.ts',
+        changeType: 'modified' as const,
+        content: '// ユーザーBの変更',
+        timestamp: new Date(),
+        userId: 'user-b'
+      },
+      {
+        filePath: '/path/to/collaborative.ts',
+        changeType: 'modified' as const,
+        content: '// ユーザーCの変更',
+        timestamp: new Date(),
+        userId: 'user-c'
+      }
+    ];
+
+    console.log(this.colorManager.formatSystemMessage('👥 複数ユーザーによる協調作業をシミュレート', 'info'));
+
+    for (const event of collaborationEvents) {
+      console.log(this.colorManager.formatSystemMessage(`👤 ${event.userId} が変更: ${event.filePath}`, 'info'));
+      await this.cursorManager.processFileChangeEvent(event);
+      await this.sleep(1500);
+    }
+
+    console.log(this.colorManager.formatSuccessMessage('✅ ライブ協調デモが完了しました'));
+    console.log('');
+  }
+
+  /**
+   * パフォーマンス統計の表示
+   */
+  async showPerformanceStats(): Promise<void> {
+    console.log(this.colorManager.formatSystemMessage('📊 パフォーマンス統計', 'info'));
+
+    const activeTasks = this.cursorManager.getActiveTasks();
+    
+    if (activeTasks.length === 0) {
+      console.log(this.colorManager.formatSystemMessage('📊 現在アクティブなタスクはありません', 'info'));
+      return;
+    }
+
+    console.log(`📊 アクティブタスク数: ${activeTasks.length}`);
+    
+    const completedTasks = activeTasks.filter(task => task.status === 'completed');
+    const runningTasks = activeTasks.filter(task => task.status === 'running');
+    const failedTasks = activeTasks.filter(task => task.status === 'failed');
+
+    console.log(`✅ 完了タスク: ${completedTasks.length}`);
+    console.log(`🔄 実行中タスク: ${runningTasks.length}`);
+    console.log(`❌ 失敗タスク: ${failedTasks.length}`);
+
+    if (completedTasks.length > 0) {
+      const totalExecutionTime = completedTasks.reduce((total, task) => {
+        if (task.startTime && task.endTime) {
+          return total + (task.endTime.getTime() - task.startTime.getTime());
+        }
+        return total;
+      }, 0);
+
+      const averageExecutionTime = totalExecutionTime / completedTasks.length;
+      console.log(`⏱️ 平均実行時間: ${Math.round(averageExecutionTime)}ms`);
+    }
+  }
+
+  /**
+   * スリープ関数
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+/**
+ * Cursor連携デモの実行関数
+ */
+async function runCursorIntegrationDemo(): Promise<void> {
+  console.log('🎭 Cursor連携デモを開始します...\n');
+
+  const demo = new CursorIntegrationDemo();
+  
+  try {
+    await demo.runDemo();
+    await demo.showPerformanceStats();
+  } catch (error) {
+    console.error('❌ デモ実行エラー:', error);
+  }
+
+  console.log('\n🎉 Cursor連携デモが完了しました！');
+}
+
+// メインモジュールとして実行された場合
+if (require.main === module) {
+  runCursorIntegrationDemo().catch(console.error);
+}
+
+export { runCursorIntegrationDemo }; 

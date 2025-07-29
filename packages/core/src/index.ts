@@ -46,6 +46,26 @@ export type {
   SituationAnalysis
 } from './subagents/types.js';
 
+// 強化版協調エージェントシステム（リアルタイム通信統合）
+export { EnhancedCollaborativeAgentSystem } from './subagents/enhancedCollaborativeAgent.js';
+export { RealTimeCommunicationSystem } from './subagents/realTimeCommunication.js';
+export type {
+  RealTimeMessage,
+  RealTimeMessageType,
+  RealTimeSessionConfig,
+  RealTimeConnectionState,
+  RealTimeCommunicationStats,
+  TaskAssignmentMessage,
+  TaskProgressMessage,
+  TaskCompletionMessage,
+  CoordinationRequestMessage,
+  MainAgentDirectiveMessage,
+  SubagentReportMessage,
+  IntegrationRequestMessage,
+  PerformanceMetricsMessage,
+  SessionControlMessage
+} from './subagents/types.js';
+
 // Export utilities
 export * from './utils/paths.js';
 export * from './utils/schemaValidator.js';

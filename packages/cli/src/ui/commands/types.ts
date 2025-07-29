@@ -86,7 +86,7 @@ export interface QuitActionReturn {
  */
 export interface MessageActionReturn {
   type: 'message';
-  messageType: 'info' | 'error';
+  messageType: 'info' | 'error' | 'success';
   content: string;
 }
 

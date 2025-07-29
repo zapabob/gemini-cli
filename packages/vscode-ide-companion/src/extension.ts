@@ -7,6 +7,7 @@
 import * as vscode from 'vscode';
 import { IDEServer } from './ide-server';
 import { createLogger } from './utils/logger';
+import { activate as activateCursorExtension } from './cursorExtension.js';
 
 let ideServer: IDEServer;
 let logger: vscode.OutputChannel;
@@ -15,7 +16,11 @@ let log: (message: string) => void = () => {};
 export async function activate(context: vscode.ExtensionContext) {
   logger = vscode.window.createOutputChannel('Gemini CLI IDE Companion');
   log = createLogger(context, logger);
-  log('Extension activated');
+  log('🚀 Extension activated with Cursor integration');
+  
+  // Cursor拡張機能をアクティベート
+  activateCursorExtension(context);
+  
   ideServer = new IDEServer(log);
   try {
     await ideServer.start(context);
