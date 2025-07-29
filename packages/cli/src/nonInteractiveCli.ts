@@ -17,7 +17,7 @@ import {
   Part,
   FunctionCall,
   GenerateContentResponse,
-} from '@google/genai';
+} from '@google/gemini-cli-core';
 
 import { parseAndFormatApiError } from './ui/utils/errorParsing.js';
 

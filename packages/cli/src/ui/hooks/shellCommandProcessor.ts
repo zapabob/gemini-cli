@@ -17,7 +17,7 @@ import {
   GeminiClient,
   getCachedEncodingForBuffer,
 } from '@google/gemini-cli-core';
-import { type PartListUnion } from '@google/genai';
+import { type PartListUnion } from '@google/gemini-cli-core';
 import { formatMemoryUsage } from '../utils/formatters.js';
 import { isBinary } from '../utils/textUtils.js';
 import { UseHistoryManagerReturn } from './useHistoryManager.js';

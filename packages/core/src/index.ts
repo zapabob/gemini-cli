@@ -98,6 +98,10 @@ export type {
 } from './mcp/oauth-utils.js';
 export { OAuthUtils } from './mcp/oauth-utils.js';
 
+// Re-export @google/genai types and values
+export type { Part, PartListUnion, PartUnion, Content, FunctionCall, GenerateContentResponse } from '@google/genai';
+export { FinishReason } from '@google/genai';
+
 // Export telemetry functions
 export * from './telemetry/index.js';
 export { sessionId } from './utils/session.js';
