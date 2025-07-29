@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-07-29
+
+### Added
+- **リリース準備システム**: 本番環境へのデプロイ準備機能
+  - 自動ビルド検証とテスト実行
+  - 依存関係の更新と互換性確認
+  - リリース前の品質チェック
+  - ドキュメント自動更新機能
+- **継続開発基盤**: 次の機能追加に向けた準備
+  - モジュラーアーキテクチャの強化
+  - テストフレームワークの改善
+  - 開発ワークフローの最適化
+  - 自動化スクリプトの追加
+
+### Fixed
+- **ビルドエラーの修正**: TypeScript型定義の問題を解決
+  - vitest/globalsの型定義追加
+  - 依存関係の更新と互換性確保
+  - ビルドプロセスの安定化
+- **テストフレームワークの改善**: テスト実行の安定性向上
+  - テスト環境の設定最適化
+  - エラーハンドリングの強化
+  - テストカバレッジの向上
+
+### Changed
+- **開発環境の最適化**: 開発効率の向上
+  - ビルド時間の短縮
+  - 依存関係の最適化
+  - 開発ツールの更新
+- **ドキュメントの改善**: 新機能の説明追加
+  - README.mdの更新
+  - インストール手順の改善
+  - 使用例の拡充
+
+### Technical Details
+- Node.js v22.14.0対応
+- TypeScript 5.8.3対応
+- 全パッケージのビルド成功確認
+- 依存関係の最新化
+- 開発環境の安定化
+
 ## [0.6.1] - 2025-07-27
 
 ### Added
