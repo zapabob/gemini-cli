@@ -195,7 +195,7 @@ ${context ? `**コンテキスト**: ${context}` : ''}
    */
   private async assignSubagentRoles(
     subagents: Subagent[],
-    analysis: any
+    analysis: unknown
   ): Promise<Map<string, SubagentTask>> {
     const taskAssignments = new Map<string, SubagentTask>();
     

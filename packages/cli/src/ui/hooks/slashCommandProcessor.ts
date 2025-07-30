@@ -138,10 +138,7 @@ export const useSlashCommandProcessor = (
         pendingItem: pendingCompressionItemRef.current,
         setPendingItem: setPendingCompressionItem,
         toggleCorgiMode,
-        toggleVimEnabled: async () => {
-          // TODO: Implement vim mode toggle
-          return false;
-        },
+        toggleVimEnabled: async () => false, // TODO: Implement vim mode toggle
       },
       session: {
         stats: session.stats,

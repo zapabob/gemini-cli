@@ -51,6 +51,16 @@ describe('ideCommand', () => {
   let platformSpy: MockInstance;
   let getMCPServerStatusSpy: MockInstance;
   let getMCPDiscoveryStateSpy: MockInstance;
+
+  beforeEach(() => {
+    mockContext = {
+      ui: {
+        addItem: vi.fn(),
+      },
+    } as unknown as CommandContext;
+
+    mockConfig = {
+      getIdeMode: vi.fn(),
     } as unknown as Config;
 
     execSyncSpy = vi.spyOn(child_process, 'execSync');
@@ -58,6 +68,13 @@ describe('ideCommand', () => {
     platformSpy = vi.spyOn(process, 'platform', 'get');
     getMCPServerStatusSpy = vi.mocked(getMCPServerStatus);
     getMCPDiscoveryStateSpy = vi.mocked(getMCPDiscoveryState);
+  });
+
+  describe('status subcommand', () => {
+    it('should show connected status', () => {
+      getMCPServerStatusSpy.mockReturnValue(MCPServerStatus.CONNECTED);
+      const command = ideCommand(mockConfig);
+      const result = command!.subCommands![0].action!(mockContext, '');
       expect(result).toEqual({
         type: 'message',
         messageType: 'info',

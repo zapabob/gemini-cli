@@ -1,4 +1,10 @@
 /**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * 協調エージェントシステム用の型定義
  */
 
@@ -75,7 +81,7 @@ export interface CollaborationAction {
   type: 'execute_subagent' | 'integrate_results' | 'analyze_further';
   subagentId?: string;
   task?: string;
-  data?: any;
+  data?: unknown;
   focus?: string;
 }
 
@@ -115,6 +121,8 @@ export interface CollaborationSession {
   status: 'active' | 'paused' | 'completed' | 'error';
   startTime: string;
   endTime?: string;
+  participants: string[];
+  task: string;
   steps: CollaborationStep[];
   metrics: CollaborationMetrics;
   terminate(): Promise<void>;
@@ -125,7 +133,7 @@ export interface SituationAnalysis {
   recommendedSubagentId?: string;
   subtask?: string;
   needsIntegration: boolean;
-  integrationData?: any;
+  integrationData?: unknown;
   analysisFocus?: string;
 }
 
@@ -141,7 +149,7 @@ export interface RealTimeMessage {
   sender: string;
   receiver?: string;
   sessionId: string;
-  data: any;
+  data: unknown;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   metadata?: Record<string, any>;
 }
@@ -248,7 +256,7 @@ export interface TaskProgressMessage extends RealTimeMessage {
     status: 'started' | 'in_progress' | 'paused' | 'resumed' | 'completed' | 'failed';
     currentStep?: string;
     estimatedTimeRemaining?: number;
-    partialResult?: any;
+    partialResult?: unknown;
     issues?: string[];
   };
 }
@@ -260,13 +268,13 @@ export interface TaskCompletionMessage extends RealTimeMessage {
   type: 'task_completion';
   data: {
     taskId: string;
-    result: any;
+    result: unknown;
     executionTime: number;
     tokensUsed: number;
     qualityScore: number;
     confidenceLevel: number;
     recommendations?: string[];
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -282,7 +290,7 @@ export interface CoordinationRequestMessage extends RealTimeMessage {
     urgency: 'low' | 'medium' | 'high' | 'urgent';
     senderId: string;
     requiredCapabilities?: string[];
-    context?: any;
+    context?: unknown;
   };
 }
 
@@ -310,7 +318,7 @@ export interface SubagentReportMessage extends RealTimeMessage {
     reportType: 'status' | 'performance' | 'error' | 'suggestion' | 'completion';
     taskId?: string;
     content: string;
-    metrics?: Record<string, any>;
+    metrics?: Record<string, unknown>;
     timestamp: string;
   };
 }
@@ -322,7 +330,7 @@ export interface IntegrationRequestMessage extends RealTimeMessage {
   type: 'integration_request';
   data: {
     taskId: string;
-    results: any[];
+    results: unknown[];
     integrationStrategy: 'merge' | 'consensus' | 'best' | 'weighted';
     qualityThreshold: number;
     deadline?: string;
@@ -355,6 +363,6 @@ export interface SessionControlMessage extends RealTimeMessage {
     action: 'start' | 'pause' | 'resume' | 'stop' | 'restart' | 'checkpoint' | 'restore';
     sessionId: string;
     reason?: string;
-    parameters?: Record<string, any>;
+    parameters?: Record<string, unknown>;
   };
 } 

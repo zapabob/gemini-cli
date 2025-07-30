@@ -232,7 +232,7 @@ ${result.finalOutput}
 ${result.coordinationLog.slice(-3).join('\n')}
 
 👥 **サブエージェントの結果**
-${result.subagentResults.map((sr: any) => `- ${sr.subagentId}: ${sr.status}${sr.error ? ` (エラー: ${sr.error})` : ''}`).join('\n')}`
+${result.subagentResults.map((sr: { subagentId: string; status: string; error?: string }) => `- ${sr.subagentId}: ${sr.status}${sr.error ? ` (エラー: ${sr.error})` : ''}`).join('\n')}`
     };
 
   } catch (error) {
@@ -247,7 +247,7 @@ ${result.subagentResults.map((sr: any) => `- ${sr.subagentId}: ${sr.status}${sr.
 /**
  * 監督者コマンドのメインアクション
  */
-async function handleSupervisor(context: any, args: string): Promise<MessageActionReturn> {
+async function handleSupervisor(context: unknown, args: string): Promise<MessageActionReturn> {
   if (!args.trim()) {
     return {
       type: 'message',

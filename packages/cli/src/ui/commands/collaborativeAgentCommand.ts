@@ -223,11 +223,19 @@ async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> 
 
   try {
     // モック実装
-    const mockGeminiClient = {} as any;
-    const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
+    const mockGeminiClient = {} as unknown;
+    // const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
     
     // タスク分析のモック結果
-    const mockAnalysis = {
+    const mockAnalysis: {
+      originalTask: string;
+      requiredSpecialties: string[];
+      complexity: number;
+      estimatedTime: number;
+      requiredSteps: number;
+      riskFactors: string[];
+      successCriteria: string[];
+    } = {
       originalTask: task,
       requiredSpecialties: ['code_review', 'data_analysis'],
       complexity: 7,

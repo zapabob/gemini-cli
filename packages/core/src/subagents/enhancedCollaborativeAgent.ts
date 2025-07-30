@@ -337,7 +337,7 @@ export class EnhancedCollaborativeAgentSystem {
     subagent: Subagent,
     directiveType: string,
     instruction: string,
-    parameters?: Record<string, any>
+    parameters?: Record<string, unknown>
   ): Promise<void> {
     try {
       const result = await this.executor.executeTask(subagent, {
@@ -378,7 +378,7 @@ export class EnhancedCollaborativeAgentSystem {
   /**
    * システム状態の取得
    */
-  getSystemStatus(): any {
+  getSystemStatus(): unknown {
     return {
       activeSessions: this.activeSessions.size,
       registeredSubagents: this.subagents.size,
@@ -609,7 +609,7 @@ class MainAgent {
     };
   }
 
-  async handleCoordinationRequest(data: any): Promise<any> {
+  async handleCoordinationRequest(data: unknown): Promise<unknown> {
     // 協調要求の処理
     return { response: '協調要求を処理しました' };
   }
@@ -619,13 +619,13 @@ class MainAgent {
  * パフォーマンスモニター
  */
 class PerformanceMonitor {
-  private metrics: Map<string, any> = new Map();
+  private metrics: Map<string, unknown> = new Map();
 
-  updateMetrics(agentId: string, metrics: any): void {
-    this.metrics.set(agentId, { ...metrics, timestamp: new Date().toISOString() });
+  updateMetrics(agentId: string, metrics: unknown): void {
+    this.metrics.set(agentId, { metrics, timestamp: new Date().toISOString() });
   }
 
-  getMetrics(): Record<string, any> {
+  getMetrics(): Record<string, unknown> {
     return Object.fromEntries(this.metrics);
   }
 } 

@@ -15,7 +15,7 @@ export interface CheckpointData {
   sessionId: string;
   taskId: string;
   timestamp: number;
-  data: any;
+  data: unknown;
   metadata: {
     version: string;
     checksum: string;
@@ -33,7 +33,7 @@ export interface SessionState {
   lastActivity: number;
   participants: string[];
   taskProgress: number;
-  data: any;
+  data: unknown;
 }
 
 /**
@@ -55,7 +55,7 @@ export interface CheckpointManagerConfig {
 export interface RecoveryInfo {
   sessionId: string;
   lastCheckpoint: number;
-  recoveryData: any;
+  recoveryData: unknown;
   canRecover: boolean;
   estimatedRecoveryTime: number;
 }
@@ -140,7 +140,7 @@ export class CheckpointManager {
   /**
    * セッション開始
    */
-  async startSession(sessionId: string, initialData: any): Promise<void> {
+  async startSession(sessionId: string, initialData: unknown): Promise<void> {
     const sessionState: SessionState = {
       sessionId,
       status: 'active',
@@ -183,7 +183,7 @@ export class CheckpointManager {
   /**
    * セッション終了
    */
-  async endSession(sessionId: string, finalData: any): Promise<void> {
+  async endSession(sessionId: string, finalData: unknown): Promise<void> {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
       throw new Error(`セッションが見つかりません: ${sessionId}`);
@@ -205,7 +205,7 @@ export class CheckpointManager {
   /**
    * チェックポイント保存
    */
-  async saveCheckpoint(sessionId: string, data: any, isFinal: boolean = false): Promise<void> {
+  async saveCheckpoint(sessionId: string, data: unknown, isFinal: boolean = false): Promise<void> {
     try {
       const timestamp = Date.now();
       const checksum = this.calculateChecksum(data);
@@ -264,7 +264,7 @@ export class CheckpointManager {
   /**
    * チェックポイント復元
    */
-  async restoreCheckpoint(taskId: string): Promise<any | null> {
+  async restoreCheckpoint(taskId: string): Promise<unknown | null> {
     try {
       // メモリから復元を試行
       const memoryData = this.checkpointData.get(taskId);
@@ -292,7 +292,7 @@ export class CheckpointManager {
   /**
    * ファイルからの読み込み
    */
-  private async loadFromFile(taskId: string): Promise<any | null> {
+  private async loadFromFile(taskId: string): Promise<unknown | null> {
     try {
       const filename = `${taskId}.json`;
       const filepath = path.join(this.config.checkpointDir, filename);
@@ -527,7 +527,7 @@ export class CheckpointManager {
   /**
    * チェックサム計算
    */
-  private calculateChecksum(data: any): string {
+  private calculateChecksum(data: unknown): string {
     const str = JSON.stringify(data);
     let hash = 0;
     for (let i = 0; i < str.length; i++) {

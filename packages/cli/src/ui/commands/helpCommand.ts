@@ -10,11 +10,10 @@ export const helpCommand: SlashCommand = {
   name: 'help',
   description: 'Show help information',
   kind: CommandKind.BUILT_IN,
-  action: async (_context, _args): Promise<MessageActionReturn> => {
-    return {
-      type: 'message',
-      messageType: 'info',
-      content: `🤖 **Gemini CLI ヘルプ**
+  action: async (_context, _args): Promise<MessageActionReturn> => ({
+    type: 'message',
+    messageType: 'info',
+    content: `🤖 **Gemini CLI ヘルプ**
 
 ## 📋 基本コマンド
 - \`/help\` - このヘルプを表示
@@ -65,6 +64,5 @@ export const helpCommand: SlashCommand = {
 - \`/bug\` - バグ報告
 
 **💡 ヒント**: 自然言語でサブエージェントを起動する際は、「並列」「同時」「複数」などのキーワードを含めてください！`
-    };
-  },
+  }),
 };

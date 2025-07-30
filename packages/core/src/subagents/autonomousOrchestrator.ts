@@ -61,8 +61,8 @@ export class AutonomousOrchestrator {
   private config: AutonomousOrchestratorConfig;
   private executor: SubagentExecutor;
   private geminiClient: GeminiClient;
-  private activeSessions: Map<string, any> = new Map();
-  private checkpointData: Map<string, any> = new Map();
+  private activeSessions: Map<string, unknown> = new Map();
+  private checkpointData: Map<string, unknown> = new Map();
 
   constructor(config: AutonomousOrchestratorConfig) {
     this.config = config;
@@ -461,10 +461,10 @@ ${result.result}
   /**
    * チェックポイント保存
    */
-  private async saveCheckpoint(taskId: string, data: any): Promise<void> {
+  private async saveCheckpoint(taskId: string, data: unknown): Promise<void> {
     if (this.config.enableCheckpointing) {
       this.checkpointData.set(taskId, {
-        ...data,
+        data,
         timestamp: Date.now()
       });
     }
@@ -473,7 +473,7 @@ ${result.result}
   /**
    * チェックポイント復元
    */
-  private async restoreCheckpoint(taskId: string): Promise<any | null> {
+  private async restoreCheckpoint(taskId: string): Promise<unknown | null> {
     return this.checkpointData.get(taskId) || null;
   }
 } 

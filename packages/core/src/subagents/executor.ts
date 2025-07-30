@@ -18,7 +18,7 @@ export interface SubagentTask {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   timeout?: number;
   dependencies?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -33,7 +33,7 @@ export interface SubagentResult {
   qualityScore?: number;
   confidenceLevel?: number;
   error?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**

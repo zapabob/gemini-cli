@@ -11,11 +11,9 @@ import {
   getSubagent, 
   updateSubagent, 
   deleteSubagent, 
-  getActiveSubagents,
   getSubagentsBySpecialty,
   SubagentSpecialtySchema,
   SubagentExecutor,
-  SubagentGeminiClient
 } from '@google/gemini-cli-core';
 
 // ハンドラー関数の実装

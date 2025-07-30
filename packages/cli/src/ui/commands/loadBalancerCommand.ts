@@ -7,14 +7,11 @@
 import type { MessageActionReturn, SlashCommand } from './types.js';
 import {
   readLoadBalancerConfig,
-  writeLoadBalancerConfig,
   addLoadBalancerEndpoint,
   removeLoadBalancerEndpoint,
-  updateLoadBalancerEndpoint,
   updateLoadBalancerAlgorithm,
   resetLoadBalancerConfig,
   createDefaultEndpoint,
-  validateLoadBalancerConfig
 } from '@google/gemini-cli-core';
 import { LoadBalancerService } from '@google/gemini-cli-core';
 
@@ -285,16 +282,16 @@ async function handleExecuteRequest(args: string[]): Promise<MessageActionReturn
  * アルゴリズムを更新
  */
 async function handleUpdateAlgorithm(args: string[]): Promise<MessageActionReturn> {
-  if (args.length < 1) {
-    return {
-      type: 'message',
-      messageType: 'error',
-      content: '❌ 使用方法: `/loadbalancer algorithm <algorithm>`\n\n利用可能なアルゴリズム: round-robin, least-connections, weighted, ip-hash'
-    };
-  }
-
   try {
-    const algorithm = args[0] as any;
+    if (args.length < 1) {
+      return {
+        type: 'message',
+        messageType: 'error',
+        content: '❌ アルゴリズム名を指定してください\n\n使用例: `/loadbalancer update-algorithm round-robin`'
+      };
+    }
+
+    const algorithm = args[0] as 'round-robin' | 'least-connections' | 'weighted' | 'ip-hash';
     const validAlgorithms = ['round-robin', 'least-connections', 'weighted', 'ip-hash'];
     
     if (!validAlgorithms.includes(algorithm)) {

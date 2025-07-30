@@ -24,7 +24,7 @@ export interface GeminiResponse {
 export interface GeminiError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
 }
 
 /**

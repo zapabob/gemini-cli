@@ -326,7 +326,7 @@ export class RealTimeCommunicationSystem extends EventEmitter {
    */
   async reportCompletion(
     taskId: string,
-    result: any,
+    result: unknown,
     executionTime: number,
     tokensUsed: number,
     qualityScore: number,

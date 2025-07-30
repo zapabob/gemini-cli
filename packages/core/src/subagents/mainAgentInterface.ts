@@ -7,7 +7,7 @@
 import { AutonomousOrchestrator, AutonomousOrchestratorConfig } from './autonomousOrchestrator.js';
 import { SupervisorAgent, SupervisorConfig } from './supervisor.js';
 import { GeminiClient } from './geminiClient.js';
-import { CollaborativeTaskResult, CollaborativeTaskOptions } from './types.js';
+import { CollaborativeTaskResult, CollaborativeTaskOptions, CollaborationSession } from './types.js';
 import { Subagent } from '../config/subagents.js';
 
 /**
@@ -24,9 +24,6 @@ export interface MainAgentInterfaceConfig {
   enableCheckpointing: boolean;
 }
 
-/**
- * タスク実行モード
- */
 export type TaskExecutionMode = 'autonomous' | 'supervisor' | 'manual' | 'auto';
 
 /**
@@ -39,7 +36,7 @@ export class MainAgentInterface {
   private supervisor: SupervisorAgent;
   private geminiClient: GeminiClient;
   private taskHistory: Map<string, CollaborativeTaskResult> = new Map();
-  private activeSessions: Map<string, any> = new Map();
+  private activeSessions: Map<string, CollaborationSession> = new Map();
 
   constructor(config: MainAgentInterfaceConfig) {
     this.config = config;
@@ -294,11 +291,19 @@ ${context ? `コンテキスト: ${context}` : ''}
     
     // セッション情報を保存
     this.activeSessions.set(sessionId, {
+      sessionId,
+      participants: [],
+      startTime: new Date().toISOString(),
       task,
-      context,
-      options,
-      startTime: Date.now(),
-      status: 'active'
+      status: 'active',
+      steps: [],
+      metrics: {
+        totalSteps: 0,
+        successfulSteps: 0,
+        totalTokensUsed: 0,
+        averageResponseTime: 0
+      },
+      terminate: async () => {}
     });
     
     return sessionId;
@@ -337,7 +342,7 @@ ${context ? `コンテキスト: ${context}` : ''}
     const result: CollaborativeTaskResult = {
       taskId: sessionId,
       success: true,
-      executionTime: Date.now() - session.startTime,
+      executionTime: Date.now() - Date.parse(session.startTime),
       finalResult: {
         finalResult: 'リアルタイム協調セッション完了',
         qualityScore: 8,
@@ -348,7 +353,7 @@ ${context ? `コンテキスト: ${context}` : ''}
         totalSteps: session.participants?.length || 0,
         successfulSteps: session.participants?.length || 0,
         totalTokensUsed: 0,
-        averageResponseTime: (Date.now() - session.startTime) / (session.participants?.length || 1),
+        averageResponseTime: (Date.now() - Date.parse(session.startTime)) / (session.participants?.length || 1),
         subagentsUsed: session.participants?.length || 0,
         subtasksCreated: session.participants?.length || 0
       }
@@ -377,8 +382,8 @@ ${context ? `コンテキスト: ${context}` : ''}
   /**
    * アクティブセッションの取得
    */
-  getActiveSessions(): Map<string, any> {
-    return new Map(this.activeSessions);
+  getActiveSessions(): Map<string, CollaborationSession> {
+    return this.activeSessions;
   }
 
   /**
