@@ -12,6 +12,7 @@ env:
 
 jobs:
   test:
+<<<<<<< HEAD
     name: Test Suite
     runs-on: ${{ matrix.os }}
     
@@ -20,6 +21,19 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [18, 20]
     
+=======
+    name: Test
+    runs-on: ${{ matrix.os }}
+    needs: lint
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [20.x, 22.x, 24.x]
+>>>>>>> upstream/main
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -36,12 +50,20 @@ jobs:
     - name: Run linting
       run: npm run lint
 
+<<<<<<< HEAD
     - name: Run tests
       run: npm run test:ci
+=======
+      - name: Run tests and generate reports
+        run: npm run test:ci
+        env:
+          NO_COLOR: true
+>>>>>>> upstream/main
 
     - name: Build packages
       run: npm run build
 
+<<<<<<< HEAD
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
@@ -56,10 +78,41 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     
+=======
+      - name: Upload Test Results Artifact (for forks)
+        if: always() && (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: test-results-fork-${{ matrix.node-version }}-${{ matrix.os }}
+          path: packages/*/junit.xml
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: coverage-reports-${{ matrix.node-version }}-${{ matrix.os }}
+          path: packages/*/coverage
+
+  post_coverage_comment:
+    name: Post Coverage Comment
+    runs-on: ubuntu-latest
+    needs: test
+    if: always() && github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name == github.repository)
+    continue-on-error: true
+    permissions:
+      contents: read # For checkout
+      pull-requests: write # For commenting
+    strategy:
+      matrix:
+        # Reduce noise by only posting the comment once
+        os: [ubuntu-latest]
+        node-version: [22.x]
+>>>>>>> upstream/main
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
+<<<<<<< HEAD
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -74,6 +127,27 @@ jobs:
       
   security:
     name: Security Scan
+=======
+      - name: Download coverage reports artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: coverage-reports-${{ matrix.node-version }}-${{ matrix.os }}
+          path: coverage_artifact # Download to a specific directory
+
+      - name: Post Coverage Comment using Composite Action
+        uses: ./.github/actions/post-coverage-comment # Path to the composite action directory
+        with:
+          cli_json_file: coverage_artifact/cli/coverage/coverage-summary.json
+          core_json_file: coverage_artifact/core/coverage/coverage-summary.json
+          cli_full_text_summary_file: coverage_artifact/cli/coverage/full-text-summary.txt
+          core_full_text_summary_file: coverage_artifact/core/coverage/full-text-summary.txt
+          node_version: ${{ matrix.node-version }}
+          os: ${{ matrix.os }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    name: CodeQL
+>>>>>>> upstream/main
     runs-on: ubuntu-latest
     
     steps:

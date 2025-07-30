@@ -222,8 +222,7 @@ const deleteCommand: SlashCommand = {
 
     const { logger } = context.services;
     await logger.initialize();
-    // TODO: Implement deleteCheckpoint method
-    const deleted = false; // await logger.deleteCheckpoint(tag);
+    const deleted = await logger.deleteCheckpoint(tag);
 
     if (deleted) {
       return {

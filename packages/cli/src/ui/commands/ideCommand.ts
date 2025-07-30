@@ -5,13 +5,14 @@
  */
 
 import { fileURLToPath } from 'url';
+import path from 'path';
+import { glob } from 'glob';
+import child_process from 'child_process';
 import {
   Config,
-  getMCPDiscoveryState,
-  getMCPServerStatus,
-  IDE_SERVER_NAME,
-  MCPDiscoveryState,
-  MCPServerStatus,
+  IDEConnectionStatus,
+  getIdeDisplayName,
+  getIdeInstaller,
 } from '@google/gemini-cli-core';
 import {
   CommandContext,
@@ -19,151 +20,189 @@ import {
   SlashCommandActionReturn,
   CommandKind,
 } from './types.js';
-import * as child_process from 'child_process';
-import * as process from 'process';
-import { glob } from 'glob';
-import * as path from 'path';
+import { SettingScope } from '../../config/settings.js';
 
-const VSCODE_COMMAND = process.platform === 'win32' ? 'code.cmd' : 'code';
+// VSCode専用の定数（独自拡張用）
+const VSCODE_COMMAND = 'code';
 const VSCODE_COMPANION_EXTENSION_FOLDER = 'vscode-ide-companion';
 
-function isVSCodeInstalled(): boolean {
-  try {
-    child_process.execSync(
-      process.platform === 'win32'
-        ? `where.exe ${VSCODE_COMMAND}`
-        : `command -v ${VSCODE_COMMAND}`,
-      { stdio: 'ignore' },
-    );
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export const ideCommand = (config: Config | null): SlashCommand | null => {
-  if (!config?.getIdeMode()) {
+  // 型安全のためanyキャストで独自メソッドを許容
+  const configAny = config as any;
+  if (!configAny?.getIdeModeFeature?.()) {
+    return null;
+  }
+  const currentIDE = configAny.getIdeClient?.().getCurrentIde?.();
+  if (!currentIDE) {
     return null;
   }
 
-  return {
+  const ideSlashCommand: SlashCommand = {
     name: 'ide',
     description: 'manage IDE integration',
     kind: CommandKind.BUILT_IN,
-    subCommands: [
-      {
-        name: 'status',
-        description: 'check status of IDE integration',
-        kind: CommandKind.BUILT_IN,
-        action: (_context: CommandContext): SlashCommandActionReturn => {
-          const status = getMCPServerStatus(IDE_SERVER_NAME);
-          const discoveryState = getMCPDiscoveryState();
-          switch (status) {
-            case MCPServerStatus.CONNECTED:
-              return {
-                type: 'message',
-                messageType: 'info',
-                content: `🟢 Connected`,
-              };
-            case MCPServerStatus.CONNECTING:
-              return {
-                type: 'message',
-                messageType: 'info',
-                content: `🔄 Initializing...`,
-              };
-            case MCPServerStatus.DISCONNECTED:
-            default:
-              if (discoveryState === MCPDiscoveryState.IN_PROGRESS) {
-                return {
-                  type: 'message',
-                  messageType: 'info',
-                  content: `🔄 Initializing...`,
-                };
-              } else {
-                return {
-                  type: 'message',
-                  messageType: 'error',
-                  content: `🔴 Disconnected`,
-                };
-              }
+    subCommands: [],
+  };
+
+  // 公式の汎用サブコマンド
+  const statusCommand: SlashCommand = {
+    name: 'status',
+    description: 'check status of IDE integration',
+    kind: CommandKind.BUILT_IN,
+    action: (_context: CommandContext): SlashCommandActionReturn => {
+      const connection = configAny.getIdeClient().getConnectionStatus();
+      switch (connection?.status) {
+        case IDEConnectionStatus.Connected:
+          return {
+            type: 'message',
+            messageType: 'info',
+            content: `🟢 Connected`,
+          } as const;
+        case IDEConnectionStatus.Connecting:
+          return {
+            type: 'message',
+            messageType: 'info',
+            content: `🟡 Connecting...`,
+          } as const;
+        default: {
+          let content = `🔴 Disconnected`;
+          if (connection?.details) {
+            content += `: ${connection.details}`;
           }
+          return {
+            type: 'message',
+            messageType: 'error',
+            content,
+          } as const;
+        }
+      }
+    },
+  };
+
+  const installCommand: SlashCommand = {
+    name: 'install',
+    description: `install required IDE companion ${getIdeDisplayName(currentIDE)} extension `,
+    kind: CommandKind.BUILT_IN,
+    action: async (context) => {
+      const installer = getIdeInstaller(currentIDE);
+      if (!installer) {
+        context.ui.addItem(
+          {
+            type: 'error',
+            text: 'No installer available for your configured IDE.',
+          },
+          Date.now(),
+        );
+        return;
+      }
+      context.ui.addItem(
+        {
+          type: 'info',
+          text: `Installing IDE companion extension...`,
         },
-      },
-      {
-        name: 'install',
-        description: 'install required VS Code companion extension',
-        kind: CommandKind.BUILT_IN,
-        action: async (context) => {
-          if (!isVSCodeInstalled()) {
-            context.ui.addItem(
-              {
-                type: 'error',
-                text: `VS Code command-line tool "${VSCODE_COMMAND}" not found in your PATH.`,
-              },
-              Date.now(),
-            );
-            return;
-          }
+        Date.now(),
+      );
+      const result = await installer.install();
+      context.ui.addItem(
+        {
+          type: result.success ? 'info' : 'error',
+          text: result.message,
+        },
+        Date.now(),
+      );
+    },
+  };
 
-          const bundleDir = path.dirname(fileURLToPath(import.meta.url));
-          // The VSIX file is copied to the bundle directory as part of the build.
-          let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
-          if (vsixFiles.length === 0) {
-            // If the VSIX file is not in the bundle, it might be a dev
-            // environment running with `npm start`. Look for it in the original
-            // package location, relative to the bundle dir.
-            const devPath = path.join(
-              bundleDir,
-              '..',
-              '..',
-              '..',
-              '..',
-              '..',
-              VSCODE_COMPANION_EXTENSION_FOLDER,
-              '*.vsix',
-            );
-            vsixFiles = glob.sync(devPath);
-          }
-          if (vsixFiles.length === 0) {
-            context.ui.addItem(
-              {
-                type: 'error',
-                text: 'Could not find the required VS Code companion extension. Please file a bug via /bug.',
-              },
-              Date.now(),
-            );
-            return;
-          }
+  const enableCommand: SlashCommand = {
+    name: 'enable',
+    description: 'enable IDE integration',
+    kind: CommandKind.BUILT_IN,
+    action: async (context: CommandContext) => {
+      context.services.settings.setValue(SettingScope.User, 'ideMode', true);
+      configAny.setIdeMode?.(true);
+      configAny.setIdeClientConnected?.();
+    },
+  };
 
-          const vsixPath = vsixFiles[0];
-          const command = `${VSCODE_COMMAND} --install-extension ${vsixPath} --force`;
+  const disableCommand: SlashCommand = {
+    name: 'disable',
+    description: 'disable IDE integration',
+    kind: CommandKind.BUILT_IN,
+    action: async (context: CommandContext) => {
+      context.services.settings.setValue(SettingScope.User, 'ideMode', false);
+      configAny.setIdeMode?.(false);
+      configAny.setIdeClientDisconnected?.();
+    },
+  };
+
+  // VSCode専用の独自サブコマンド（VSIXインストール）
+  if (getIdeDisplayName(currentIDE) === 'VS Code') {
+    const vsixInstallCommand: SlashCommand = {
+      name: 'install-vsix',
+      description: 'install required VS Code companion extension (local VSIX)',
+      kind: CommandKind.BUILT_IN,
+      action: async (context) => {
+        // VSIXファイルの探索とインストール処理
+        const bundleDir = path.dirname(fileURLToPath(import.meta.url));
+        let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
+        if (vsixFiles.length === 0) {
+          const devPath = path.join(
+            bundleDir,
+            '..', '..', '..', '..', '..',
+            VSCODE_COMPANION_EXTENSION_FOLDER,
+            '*.vsix',
+          );
+          vsixFiles = glob.sync(devPath);
+        }
+        if (vsixFiles.length === 0) {
           context.ui.addItem(
             {
-              type: 'info',
-              text: `Installing VS Code companion extension...`,
+              type: 'error',
+              text: 'Could not find the required VS Code companion extension. Please file a bug via /bug.',
             },
             Date.now(),
           );
-          try {
-            child_process.execSync(command, { stdio: 'pipe' });
-            context.ui.addItem(
-              {
-                type: 'info',
-                text: 'VS Code companion extension installed successfully. Restart gemini-cli in a fresh terminal window.',
-              },
-              Date.now(),
-            );
-          } catch (_error) {
-            context.ui.addItem(
-              {
-                type: 'error',
-                text: `Failed to install VS Code companion extension.`,
-              },
-              Date.now(),
-            );
-          }
-        },
+          return;
+        }
+        const vsixPath = vsixFiles[0];
+        const command = `${VSCODE_COMMAND} --install-extension ${vsixPath} --force`;
+        context.ui.addItem(
+          {
+            type: 'info',
+            text: `Installing VS Code companion extension...`,
+          },
+          Date.now(),
+        );
+        try {
+          child_process.execSync(command, { stdio: 'pipe' });
+          context.ui.addItem(
+            {
+              type: 'info',
+              text: 'VS Code companion extension installed successfully. Restart gemini-cli in a fresh terminal window.',
+            },
+            Date.now(),
+          );
+        } catch (_error) {
+          context.ui.addItem(
+            {
+              type: 'error',
+              text: `Failed to install VS Code companion extension.`,
+            },
+            Date.now(),
+          );
+        }
       },
-    ],
-  };
+    };
+    ideSlashCommand.subCommands.push(vsixInstallCommand);
+  }
+
+  // サブコマンドの組み立て（IDE有効/無効で切り替え）
+  const ideModeEnabled = configAny.getIdeMode?.();
+  if (ideModeEnabled) {
+    ideSlashCommand.subCommands.push(disableCommand, statusCommand, installCommand);
+  } else {
+    ideSlashCommand.subCommands.push(enableCommand, statusCommand, installCommand);
+  }
+
+  return ideSlashCommand;
 };

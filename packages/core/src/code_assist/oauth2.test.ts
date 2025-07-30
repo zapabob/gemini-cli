@@ -255,13 +255,6 @@ describe('oauth2', () => {
     let mockComputeClient: Compute;
 
     beforeEach(() => {
-      vi.spyOn(os, 'homedir').mockReturnValue('/user/home');
-      vi.spyOn(fs.promises, 'mkdir').mockResolvedValue(undefined);
-      vi.spyOn(fs.promises, 'writeFile').mockResolvedValue(undefined);
-      vi.spyOn(fs.promises, 'readFile').mockRejectedValue(
-        new Error('File not found'),
-      ); // Default to no cached creds
-
       mockGetAccessToken.mockResolvedValue({ token: 'test-access-token' });
       mockComputeClient = {
         credentials: { refresh_token: 'test-refresh-token' },
@@ -272,6 +265,7 @@ describe('oauth2', () => {
     });
 
     it('should attempt to load cached credentials first', async () => {
+      // キャッシュ有りパターン
       const mockCredentials = {
         access_token: 'test-token',
         refresh_token: 'test-refresh',
@@ -279,49 +273,152 @@ describe('oauth2', () => {
         token_type: 'Bearer',
         expiry_date: Date.now() + 3600000,
       };
+      const cachedCreds = { refresh_token: 'cached-token' };
+      const credsPath = path.join(tempHomeDir, '.gemini', 'oauth_creds.json');
+      await fs.promises.mkdir(path.dirname(credsPath), { recursive: true });
+      await fs.promises.writeFile(credsPath, JSON.stringify(cachedCreds));
 
+      const mockClient = {
+        setCredentials: vi.fn(),
+        getAccessToken: vi.fn().mockResolvedValue({ token: 'test-token' }),
+        getTokenInfo: vi.fn().mockResolvedValue({}),
+        on: vi.fn(),
+      };
       vi.spyOn(fs.promises, 'readFile').mockResolvedValue(JSON.stringify(mockCredentials));
 
       const result = await getOauthClient(AuthType.LOGIN_WITH_GOOGLE, mockConfig);
-
-      // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
       expect(fs.promises.readFile).toHaveBeenCalledWith(
         expect.stringMatching(/[\\\/]user[\\\/]home[\\\/]\.gemini[\\\/]oauth_creds\.json/),
         'utf-8',
       );
+      expect(mockClient.setCredentials).toHaveBeenCalledWith(cachedCreds);
+      expect(mockClient.getAccessToken).toHaveBeenCalled();
+      expect(mockClient.getTokenInfo).toHaveBeenCalled();
+      expect(Compute).not.toHaveBeenCalled(); // Should not fetch new client if cache is valid
     });
 
-    it('should use Compute to get a client if no cached credentials exist', async () => {
-      await getOauthClient(AuthType.CLOUD_SHELL, mockConfig);
+    // 公式のGCP環境変数テストも残す
+    describe('with GCP environment variables', () => {
+      it('should use GOOGLE_CLOUD_ACCESS_TOKEN when GOOGLE_GENAI_USE_GCA is true', async () => {
+        process.env.GOOGLE_GENAI_USE_GCA = 'true';
+        process.env.GOOGLE_CLOUD_ACCESS_TOKEN = 'gcp-access-token';
 
-      expect(Compute).toHaveBeenCalledWith({});
-      expect(mockGetAccessToken).toHaveBeenCalled();
-    });
+        const mockSetCredentials = vi.fn();
+        const mockGetAccessToken = vi
+          .fn()
+          .mockResolvedValue({ token: 'gcp-access-token' });
+        const mockOAuth2Client = {
+          setCredentials: mockSetCredentials,
+          getAccessToken: mockGetAccessToken,
+          on: vi.fn(),
+        } as unknown as OAuth2Client;
+        (OAuth2Client as unknown as Mock).mockImplementation(
+          () => mockOAuth2Client,
+        );
 
-    it('should not cache the credentials after fetching them via ADC', async () => {
-      const newCredentials = { refresh_token: 'new-adc-token' };
-      mockComputeClient.credentials = newCredentials;
-      mockGetAccessToken.mockResolvedValue({ token: 'new-adc-token' });
+        // Mock the UserInfo API response for fetchAndCacheUserInfo
+        (global.fetch as Mock).mockResolvedValue({
+          ok: true,
+          json: vi
+            .fn()
+            .mockResolvedValue({ email: 'test-gcp-account@gmail.com' }),
+        } as unknown as Response);
 
-      await getOauthClient(AuthType.CLOUD_SHELL, mockConfig);
+        const client = await getOauthClient(
+          AuthType.LOGIN_WITH_GOOGLE,
+          mockConfig,
+        );
 
-      expect(fs.promises.writeFile).not.toHaveBeenCalled();
-    });
+        expect(client).toBe(mockOAuth2Client);
+        expect(mockSetCredentials).toHaveBeenCalledWith({
+          access_token: 'gcp-access-token',
+        });
 
-    it('should return the Compute client on successful ADC authentication', async () => {
-      const client = await getOauthClient(AuthType.CLOUD_SHELL, mockConfig);
-      expect(client).toBe(mockComputeClient);
-    });
+        // Verify fetchAndCacheUserInfo was effectively called
+        expect(mockGetAccessToken).toHaveBeenCalled();
+        expect(global.fetch).toHaveBeenCalledWith(
+          'https://www.googleapis.com/oauth2/v2/userinfo',
+          {
+            headers: {
+              Authorization: 'Bearer gcp-access-token',
+            },
+          },
+        );
 
-    it('should throw an error if ADC fails', async () => {
-      const testError = new Error('ADC Failed');
-      mockGetAccessToken.mockRejectedValue(testError);
+        // Verify Google Account was cached
+        const googleAccountPath = path.join(
+          tempHomeDir,
+          '.gemini',
+          'google_accounts.json',
+        );
+        const cachedContent = fs.readFileSync(googleAccountPath, 'utf-8');
+        expect(JSON.parse(cachedContent)).toEqual({
+          active: 'test-gcp-account@gmail.com',
+          old: [],
+        });
+      });
 
-      await expect(
-        getOauthClient(AuthType.CLOUD_SHELL, mockConfig),
-      ).rejects.toThrow(
-        'Could not authenticate using Cloud Shell credentials. Please select a different authentication method or ensure you are in a properly configured environment. Error: ADC Failed',
-      );
+      it('should not use GCP token if GOOGLE_CLOUD_ACCESS_TOKEN is not set', async () => {
+        process.env.GOOGLE_GENAI_USE_GCA = 'true';
+
+        const mockSetCredentials = vi.fn();
+        const mockGetAccessToken = vi
+          .fn()
+          .mockResolvedValue({ token: 'cached-access-token' });
+        const mockGetTokenInfo = vi.fn().mockResolvedValue({});
+        const mockOAuth2Client = {
+          setCredentials: mockSetCredentials,
+          getAccessToken: mockGetAccessToken,
+          getTokenInfo: mockGetTokenInfo,
+          on: vi.fn(),
+        } as unknown as OAuth2Client;
+        (OAuth2Client as unknown as Mock).mockImplementation(
+          () => mockOAuth2Client,
+        );
+
+        // Make it fall through to cached credentials path
+        const cachedCreds = { refresh_token: 'cached-token' };
+        const credsPath = path.join(tempHomeDir, '.gemini', 'oauth_creds.json');
+        await fs.promises.mkdir(path.dirname(credsPath), { recursive: true });
+        await fs.promises.writeFile(credsPath, JSON.stringify(cachedCreds));
+
+        await getOauthClient(AuthType.LOGIN_WITH_GOOGLE, mockConfig);
+
+        // It should be called with the cached credentials, not the GCP access token.
+        expect(mockSetCredentials).toHaveBeenCalledTimes(1);
+        expect(mockSetCredentials).toHaveBeenCalledWith(cachedCreds);
+      });
+
+      it('should not use GCP token if GOOGLE_GENAI_USE_GCA is not set', async () => {
+        process.env.GOOGLE_CLOUD_ACCESS_TOKEN = 'gcp-access-token';
+
+        const mockSetCredentials = vi.fn();
+        const mockGetAccessToken = vi
+          .fn()
+          .mockResolvedValue({ token: 'cached-access-token' });
+        const mockGetTokenInfo = vi.fn().mockResolvedValue({});
+        const mockOAuth2Client = {
+          setCredentials: mockSetCredentials,
+          getAccessToken: mockGetAccessToken,
+          getTokenInfo: mockGetTokenInfo,
+          on: vi.fn(),
+        } as unknown as OAuth2Client;
+        (OAuth2Client as unknown as Mock).mockImplementation(
+          () => mockOAuth2Client,
+        );
+
+        // Make it fall through to cached credentials path
+        const cachedCreds = { refresh_token: 'cached-token' };
+        const credsPath = path.join(tempHomeDir, '.gemini', 'oauth_creds.json');
+        await fs.promises.mkdir(path.dirname(credsPath), { recursive: true });
+        await fs.promises.writeFile(credsPath, JSON.stringify(cachedCreds));
+
+        await getOauthClient(AuthType.LOGIN_WITH_GOOGLE, mockConfig);
+
+        // It should be called with the cached credentials, not the GCP access token.
+        expect(mockSetCredentials).toHaveBeenCalledTimes(1);
+        expect(mockSetCredentials).toHaveBeenCalledWith(cachedCreds);
+      });
     });
   });
 });
