@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "deepresearch-mcp": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\downl\\Desktop\\gemini-cli-main\\mcp-servers\\deepresearch-mcp\\dist\\index.js"
+      ]
+    }
+  }
+} 

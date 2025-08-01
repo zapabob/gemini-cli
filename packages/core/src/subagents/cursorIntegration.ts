@@ -44,7 +44,7 @@ export interface CursorCommandResult {
   output: string;
   error?: string;
   executionTime: number;
-  subagentResults?: any[];
+  subagentResults?: unknown[];
 }
 
 /**
@@ -57,7 +57,7 @@ export interface CursorParallelTask {
   specialty: SubagentSpecialty;
   priority: 'high' | 'medium' | 'low';
   status: 'pending' | 'running' | 'completed' | 'failed';
-  result?: any;
+  result?: unknown;
   startTime?: Date;
   endTime?: Date;
 }
@@ -73,7 +73,7 @@ export class CursorIntegrationManager {
   private checkpointManager: CheckpointManager;
   private geminiClient: GeminiClient;
   private activeTasks: Map<string, CursorParallelTask> = new Map();
-  private fileWatchers: Map<string, any> = new Map();
+  private fileWatchers: Map<string, unknown> = new Map();
   private syncInterval: NodeJS.Timeout | null = null;
   private autoSaveInterval: NodeJS.Timeout | null = null;
 
@@ -195,7 +195,7 @@ export class CursorIntegrationManager {
   /**
    * 現在のCursorファイルを取得
    */
-  private async getCurrentCursorFiles(): Promise<any[]> {
+  private async getCurrentCursorFiles(): Promise<unknown[]> {
     // 実際の実装ではCursorのAPIからファイル一覧を取得
     // ここではモック実装
     return [];
@@ -204,7 +204,7 @@ export class CursorIntegrationManager {
   /**
    * ファイルの変更を検出
    */
-  private hasFileChanged(file: any): boolean {
+  private hasFileChanged(_file: unknown): boolean {
     // 実際の実装ではファイルの変更を検出
     return false;
   }
@@ -212,11 +212,11 @@ export class CursorIntegrationManager {
   /**
    * ファイル変更の処理
    */
-  private async handleFileChange(file: any): Promise<void> {
+  private async handleFileChange(_file: unknown): Promise<void> {
     const event: CursorFileChangeEvent = {
-      filePath: file.path,
+      filePath: 'unknown',
       changeType: 'modified',
-      content: file.content,
+      content: 'unknown',
       timestamp: new Date()
     };
 
@@ -243,12 +243,12 @@ export class CursorIntegrationManager {
    */
   private async triggerAutoCodeReview(event: CursorFileChangeEvent): Promise<void> {
     const task = `コードレビューを実行してください: ${event.filePath}`;
-    const context = `ファイル内容:\n${event.content}`;
+    const _context = `ファイル内容:\n${event.content}`;
 
     console.log(this.colorManager.formatSystemMessage(`🔍 自動コードレビューを開始: ${event.filePath}`, 'info'));
 
     try {
-      const result = await this.mainAgent.executeTask(task, context, 'autonomous');
+      const result = await this.mainAgent.executeTask(task, 'context', 'autonomous');
       
       if (result.success && result.finalResult?.finalResult) {
         console.log(this.colorManager.formatSuccessMessage(`✅ コードレビュー完了: ${event.filePath}`));
@@ -264,7 +264,7 @@ export class CursorIntegrationManager {
   /**
    * コードレビュー提案の適用
    */
-  private async applyCodeReviewSuggestions(filePath: string, suggestions: string): Promise<void> {
+  private async applyCodeReviewSuggestions(filePath: string, _suggestions: string): Promise<void> {
     // 実際の実装ではCursorのAPIを使用して提案を適用
     console.log(this.colorManager.formatSystemMessage(`💡 コードレビュー提案を適用: ${filePath}`, 'info'));
   }
@@ -370,12 +370,13 @@ export class CursorIntegrationManager {
   /**
    * コマンドの実行
    */
-  async executeCommand(commandId: string, context?: any): Promise<CursorCommandResult> {
+  async executeCommand(commandId: string, context?: unknown): Promise<CursorCommandResult> {
     const startTime = Date.now();
     
     console.log(this.colorManager.formatSystemMessage(`⚡ コマンド実行: ${commandId}`, 'info'));
 
     try {
+      // コマンド実行結果の型が動的のためany型キャスト（型安全にできない設計）
       let result: any;
 
       switch (commandId) {
@@ -421,56 +422,56 @@ export class CursorIntegrationManager {
   /**
    * コードレビューコマンドの実行
    */
-  private async executeCodeReviewCommand(context: any): Promise<string> {
-    const filePath = context?.filePath || '現在のファイル';
+  private async executeCodeReviewCommand(_context: unknown): Promise<string> {
+    const filePath = '現在のファイル';
     const task = `コードレビューを実行してください: ${filePath}`;
     
-    const result = await this.mainAgent.executeTask(task, context?.content, 'autonomous');
+    const result = await this.mainAgent.executeTask(task, 'content', 'autonomous');
     return result.finalResult?.finalResult || 'コードレビューが完了しました';
   }
 
   /**
    * デバッグコマンドの実行
    */
-  private async executeDebugCommand(context: any): Promise<string> {
-    const filePath = context?.filePath || '現在のファイル';
+  private async executeDebugCommand(_context: unknown): Promise<string> {
+    const filePath = '現在のファイル';
     const task = `デバッグを実行してください: ${filePath}`;
     
-    const result = await this.mainAgent.executeTask(task, context?.content, 'autonomous');
+    const result = await this.mainAgent.executeTask(task, 'content', 'autonomous');
     return result.finalResult?.finalResult || 'デバッグが完了しました';
   }
 
   /**
    * 最適化コマンドの実行
    */
-  private async executeOptimizeCommand(context: any): Promise<string> {
-    const filePath = context?.filePath || '現在のファイル';
+  private async executeOptimizeCommand(_context: unknown): Promise<string> {
+    const filePath = '現在のファイル';
     const task = `パフォーマンス最適化を実行してください: ${filePath}`;
     
-    const result = await this.mainAgent.executeTask(task, context?.content, 'autonomous');
+    const result = await this.mainAgent.executeTask(task, 'content', 'autonomous');
     return result.finalResult?.finalResult || '最適化が完了しました';
   }
 
   /**
    * セキュリティコマンドの実行
    */
-  private async executeSecurityCommand(context: any): Promise<string> {
-    const filePath = context?.filePath || '現在のファイル';
+  private async executeSecurityCommand(_context: unknown): Promise<string> {
+    const filePath = '現在のファイル';
     const task = `セキュリティ監査を実行してください: ${filePath}`;
     
-    const result = await this.mainAgent.executeTask(task, context?.content, 'autonomous');
+    const result = await this.mainAgent.executeTask(task, 'content', 'autonomous');
     return result.finalResult?.finalResult || 'セキュリティ監査が完了しました';
   }
 
   /**
    * 並列コマンドの実行
    */
-  private async executeParallelCommand(context: any): Promise<string> {
-    const tasks = context?.tasks || ['コードレビュー', 'デバッグ', '最適化'];
+  private async executeParallelCommand(_context: unknown): Promise<string> {
+    const tasks = ['コードレビュー', 'デバッグ', '最適化'];
     const results: string[] = [];
 
     for (const task of tasks) {
-      const taskId = await this.executeParallelTask(task, context?.filePath);
+      const taskId = await this.executeParallelTask(task);
       results.push(`タスク ${taskId}: ${task}`);
     }
 

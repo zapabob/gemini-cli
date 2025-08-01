@@ -108,11 +108,11 @@ export class SupervisorAgent {
     try {
       // 1. 初期分析と計画立案
       this.logCoordination('🎯 実装目標の分析開始');
-      const analysis = await this.analyzeImplementationGoal(implementationGoal, context);
+      const _analysis = await this.analyzeImplementationGoal(implementationGoal, context);
       
       // 2. サブエージェントの役割割り当て
       this.logCoordination('👥 サブエージェントの役割割り当て');
-      const taskAssignments = await this.assignSubagentRoles(subagents, analysis);
+      const taskAssignments = await this.assignSubagentRoles(subagents, _analysis);
       
       // 3. 並列実行の調整
       this.logCoordination('⚡ 並列実行の開始');
@@ -177,7 +177,7 @@ ${context ? `**コンテキスト**: ${context}` : ''}
 分析結果を構造化して返してください。
     `;
 
-    const response = await this.geminiClient.generateText({ prompt });
+    const _response = await this.geminiClient.generateText({ prompt });
     this.logDecision('実装目標の分析完了', '分析結果を基にサブエージェントの役割を決定', 'high');
     
     // 実際の実装では、レスポンスをパースして構造化データを返す
@@ -195,7 +195,7 @@ ${context ? `**コンテキスト**: ${context}` : ''}
    */
   private async assignSubagentRoles(
     subagents: Subagent[],
-    analysis: unknown
+    _analysis: unknown
   ): Promise<Map<string, SubagentTask>> {
     const taskAssignments = new Map<string, SubagentTask>();
     
@@ -337,10 +337,10 @@ ${results.map(result => `
 統合された結果を構造化して返してください。
     `;
 
-    const response = await this.geminiClient.generateText({ prompt });
+    const _response = await this.geminiClient.generateText({ prompt });
     this.logDecision('結果の統合完了', 'サブエージェントの結果を統合して最終計画を作成', 'high');
     
-    return response.text || response.toString();
+    return _response.text || _response.toString();
   }
 
   /**

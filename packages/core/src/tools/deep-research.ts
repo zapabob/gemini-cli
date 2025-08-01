@@ -10,7 +10,9 @@ import { getErrorMessage } from '../utils/errors.js';
 import { Config } from '../config/config.js';
 import { recordFileOperationMetric, FileOperation } from '../telemetry/metrics.js';
 import { getResponseText } from '../utils/generateContentResponseUtilities.js';
-import { PartListUnion, Type } from '@google/genai';
+import { Type } from '@google/genai';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * Parameters for the DeepResearchTool.
@@ -90,6 +92,7 @@ export interface DeepResearchToolResult extends ToolResult {
     strategy_used: string;
     time_taken_ms: number;
     topics_explored: string[];
+    saved_file_path?: string;
   };
 }
 
@@ -170,7 +173,7 @@ export class DeepResearchTool extends BaseTool<
    */
   async shouldConfirmExecute(
     params: DeepResearchToolParams,
-    abortSignal: AbortSignal,
+    _abortSignal: AbortSignal,
   ): Promise<ToolCallConfirmationDetails | false> {
     // Deep research can be resource-intensive, so we ask for confirmation
     // if the query is complex or involves many sources
@@ -188,7 +191,7 @@ export class DeepResearchTool extends BaseTool<
                  Max depth: ${params.max_depth || 3}
                  
                  Do you want to proceed with this comprehensive research?`,
-        onConfirm: async (outcome) => {
+        onConfirm: async (_outcome) => {
           // Handle confirmation outcome
         },
       };
@@ -264,6 +267,14 @@ export class DeepResearchTool extends BaseTool<
         max_sources,
       });
 
+      // Save research results to markdown file
+      const savedFilePath = await this.saveResearchToMarkdown(query, researchResults, {
+        strategy,
+        timeTaken,
+        max_depth,
+        max_sources,
+      });
+
       return {
         llmContent: formattedResults.analysis,
         returnDisplay: formattedResults.display,
@@ -273,6 +284,7 @@ export class DeepResearchTool extends BaseTool<
           strategy_used: strategy,
           time_taken_ms: timeTaken,
           topics_explored: researchResults.topics,
+          saved_file_path: savedFilePath,
         },
       };
     } catch (error) {
@@ -339,7 +351,7 @@ export class DeepResearchTool extends BaseTool<
    */
   private async performMultiLevelResearch(
     prompt: string,
-    geminiClient: any,
+    geminiClient: ReturnType<Config['getGeminiClient']>,
     signal: AbortSignal,
     options: {
       max_depth: number;
@@ -421,6 +433,162 @@ export class DeepResearchTool extends BaseTool<
     }
     
     return topics;
+  }
+
+  /**
+   * Saves research results to a markdown file in the _docs directory.
+   */
+  private async saveResearchToMarkdown(
+    query: string,
+    results: {
+      analysis: string;
+      sourcesCount: number;
+      depth: number;
+      topics: string[];
+    },
+    options: {
+      strategy: string;
+      timeTaken: number;
+      max_depth: number;
+      max_sources: number;
+    },
+  ): Promise<string> {
+    try {
+      // Create _docs directory if it doesn't exist
+      const docsDir = path.join(process.cwd(), '_docs');
+      if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir, { recursive: true });
+      }
+
+      // Generate filename with timestamp
+      const now = new Date();
+      const timestamp = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const timeStr = now.toISOString().split('T')[1].split('.')[0].replace(/:/g, '-'); // HH-MM-SS format
+      
+      // Create a safe filename from the query
+      const safeQuery = query
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .toLowerCase()
+        .substring(0, 50); // Limit length
+      
+      const filename = `${timestamp}_deepresearch_${safeQuery}.md`;
+      const filepath = path.join(docsDir, filename);
+
+      // Generate markdown content
+      const markdownContent = this.generateMarkdownContent(query, results, options);
+
+      // Write to file
+      await fs.promises.writeFile(filepath, markdownContent, 'utf-8');
+
+      // Record file operation metric
+      recordFileOperationMetric(this.config, FileOperation.CREATE, undefined, 'text/markdown', '.md');
+
+      console.log(`📄 DeepResearch results saved to: ${filepath}`);
+      return filepath;
+
+    } catch (error) {
+      console.warn('Failed to save DeepResearch results to markdown:', error);
+      return '';
+    }
+  }
+
+  /**
+   * Generates markdown content for the research results.
+   */
+  private generateMarkdownContent(
+    query: string,
+    results: {
+      analysis: string;
+      sourcesCount: number;
+      depth: number;
+      topics: string[];
+    },
+    options: {
+      strategy: string;
+      timeTaken: number;
+      max_depth: number;
+      max_sources: number;
+    },
+  ): string {
+    const { strategy, timeTaken, max_depth, max_sources } = options;
+    const { analysis, sourcesCount, depth, topics } = results;
+    const now = new Date();
+
+    return `# DeepResearch Report: ${query}
+
+**Date**: ${now.toISOString().split('T')[0]} ${now.toISOString().split('T')[1].split('.')[0]}  
+**Research Topic**: ${query}  
+**Research Method**: ${strategy} deep research with multi-level analysis  
+**Language**: English and Japanese (英語・日本語)
+
+---
+
+## Research Summary
+
+- **Strategy Used**: ${strategy}
+- **Depth Achieved**: ${depth}/${max_depth} levels
+- **Sources Analyzed**: ${sourcesCount}/${max_sources}
+- **Time Taken**: ${timeTaken}ms
+- **Topics Explored**: ${topics.length}
+
+## Key Topics
+
+${topics.map(topic => `- ${topic}`).join('\n')}
+
+## Detailed Analysis
+
+${analysis}
+
+## Research Methodology
+
+This deep research employed a multi-level analysis approach:
+
+1. **Level 1**: Initial exploration and source identification
+2. **Level 2**: Deep dive into key findings and connections  
+3. **Level 3+**: Cross-validation and synthesis of insights
+
+The research utilized Google Search grounding for real-time information and source validation.
+
+---
+
+## English Report
+
+${this.generateEnglishReport(analysis)}
+
+---
+
+## 日本語レポート
+
+${this.generateJapaneseReport(analysis)}
+
+---
+
+*Report generated by DeepResearch tool on ${now.toISOString().split('T')[0]}*`;
+  }
+
+  /**
+   * Generates English report section.
+   */
+  private generateEnglishReport(analysis: string): string {
+    // Extract and format the English content from the analysis
+    const englishSections = analysis.split('\n\n').filter(section => 
+      !section.includes('日本語') && !section.includes('Japanese')
+    );
+    
+    return englishSections.join('\n\n');
+  }
+
+  /**
+   * Generates Japanese report section.
+   */
+  private generateJapaneseReport(analysis: string): string {
+    // Extract and format the Japanese content from the analysis
+    const japaneseSections = analysis.split('\n\n').filter(section => 
+      section.includes('日本語') || section.includes('Japanese')
+    );
+    
+    return japaneseSections.join('\n\n');
   }
 
   /**

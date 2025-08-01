@@ -6,7 +6,6 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { CollaborativeTaskResult } from './types.js';
 
 /**
  * チェックポイントデータ構造
@@ -132,8 +131,8 @@ export class CheckpointManager {
     try {
       await fs.mkdir(this.config.checkpointDir, { recursive: true });
       console.log(`📁 チェックポイントディレクトリ初期化: ${this.config.checkpointDir}`);
-    } catch (error) {
-      console.error(`❌ チェックポイントディレクトリ初期化エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ チェックポイントディレクトリ初期化エラー: ${_error}`);
     }
   }
 
@@ -233,9 +232,9 @@ export class CheckpointManager {
       
       console.log(`💾 チェックポイント保存: ${checkpointData.taskId} (${isFinal ? '最終' : '定期'})`);
       
-    } catch (error) {
-      console.error(`❌ チェックポイント保存エラー: ${error}`);
-      throw error;
+    } catch (_error) {
+      console.error(`❌ チェックポイント保存エラー: ${_error}`);
+      throw _error;
     }
   }
 
@@ -283,8 +282,8 @@ export class CheckpointManager {
       console.warn(`⚠️ チェックポイントが見つかりません: ${taskId}`);
       return null;
       
-    } catch (error) {
-      console.error(`❌ チェックポイント復元エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ チェックポイント復元エラー: ${_error}`);
       return null;
     }
   }
@@ -318,8 +317,8 @@ export class CheckpointManager {
       
       return checkpointData.data;
       
-    } catch (error) {
-      console.error(`❌ ファイル読み込みエラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ ファイル読み込みエラー: ${_error}`);
       return null;
     }
   }
@@ -345,8 +344,8 @@ export class CheckpointManager {
         estimatedRecoveryTime: this.estimateRecoveryTime(checkpoints.length)
       };
       
-    } catch (error) {
-      console.error(`❌ リカバリー情報取得エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ リカバリー情報取得エラー: ${_error}`);
       return null;
     }
   }
@@ -377,8 +376,8 @@ export class CheckpointManager {
       console.log(`🔄 セッション復旧完了: ${sessionId}`);
       return true;
       
-    } catch (error) {
-      console.error(`❌ セッション復旧エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ セッション復旧エラー: ${_error}`);
       return false;
     }
   }
@@ -397,8 +396,8 @@ export class CheckpointManager {
         async ([sessionId, session]) => {
           try {
             await this.saveCheckpoint(sessionId, session.data, true);
-          } catch (error) {
-            console.error(`❌ セッション ${sessionId} の緊急保存エラー: ${error}`);
+          } catch (_error) {
+            console.error(`❌ セッション ${sessionId} の緊急保存エラー: ${_error}`);
           }
         }
       );
@@ -407,8 +406,8 @@ export class CheckpointManager {
       
       console.log('🛡️ 緊急チェックポイント保存完了');
       
-    } catch (error) {
-      console.error(`❌ 緊急保存エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ 緊急保存エラー: ${_error}`);
     }
   }
 
@@ -434,8 +433,8 @@ export class CheckpointManager {
         
         await Promise.allSettled(savePromises);
         
-      } catch (error) {
-        console.error(`❌ 自動保存エラー: ${error}`);
+      } catch (_error) {
+        console.error(`❌ 自動保存エラー: ${_error}`);
       }
     }, this.config.autoSaveInterval * 1000);
   }
@@ -465,8 +464,8 @@ export class CheckpointManager {
         console.log(`🗑️ バックアップローテーション: ${toDelete.length}個の古いチェックポイントを削除`);
       }
       
-    } catch (error) {
-      console.error(`❌ バックアップローテーションエラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ バックアップローテーションエラー: ${_error}`);
     }
   }
 
@@ -486,15 +485,15 @@ export class CheckpointManager {
           const data = await fs.readFile(filepath, 'utf8');
           const checkpoint: CheckpointData = JSON.parse(data);
           checkpoints.push(checkpoint);
-        } catch (error) {
+        } catch (_error) {
           console.warn(`⚠️ チェックポイントファイル読み込みエラー: ${file}`);
         }
       }
       
       return checkpoints.sort((a, b) => a.timestamp - b.timestamp);
       
-    } catch (error) {
-      console.error(`❌ セッションチェックポイント取得エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ セッションチェックポイント取得エラー: ${_error}`);
       return [];
     }
   }
@@ -511,8 +510,8 @@ export class CheckpointManager {
       // メモリからも削除
       this.checkpointData.delete(taskId);
       
-    } catch (error) {
-      console.error(`❌ チェックポイント削除エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ チェックポイント削除エラー: ${_error}`);
     }
   }
 
@@ -565,7 +564,7 @@ export class CheckpointManager {
   /**
    * データ暗号化（簡易版）
    */
-  private async encryptData(data: string, key: string): Promise<string> {
+  private async encryptData(data: string, _key: string): Promise<string> {
     // 実際の実装ではcrypto等を使用
     return data;
   }
@@ -573,7 +572,7 @@ export class CheckpointManager {
   /**
    * データ復号化（簡易版）
    */
-  private async decryptData(data: string, key: string): Promise<string> {
+  private async decryptData(data: string, _key: string): Promise<string> {
     // 実際の実装ではcrypto等を使用
     return data;
   }

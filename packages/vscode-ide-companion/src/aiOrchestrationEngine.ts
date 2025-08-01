@@ -9,10 +9,12 @@ import { CursorIntegrationManager } from './cursorIntegration.js';
 
 // モック実装（実際の実装ではcoreパッケージを使用）
 class MockAutonomousOrchestrator {
+  // モック実装のためany型キャスト（型安全にできない設計）
   constructor(config: any) {
     console.log('モック自律的オーケストレーターを初期化:', config);
   }
 
+  // モック実装のためany型キャスト（型安全にできない設計）
   async executeAutonomousTask(task: string, context?: string, options?: any): Promise<any> {
     console.log('モック自律的タスク実行:', task, context, options);
     
@@ -35,6 +37,7 @@ class MockAutonomousOrchestrator {
 }
 
 class MockGeminiClient {
+  // モック実装のためany型キャスト（型安全にできない設計）
   constructor(config: any) {
     console.log('モックGeminiClientを初期化:', config);
   }
@@ -95,6 +98,7 @@ export class AIOrchestrationEngine {
   private cursorManager: CursorIntegrationManager;
   private orchestrator: MockAutonomousOrchestrator;
   private geminiClient: MockGeminiClient;
+  // モック実装のためany型キャスト（型安全にできない設計）
   private learningData: Map<string, any> = new Map();
   private contextHistory: Map<string, any[]> = new Map();
   private predictiveModels: Map<string, any> = new Map();

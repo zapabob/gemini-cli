@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { MessageActionReturn, SlashCommand } from './types.js';
+import type { MessageActionReturn, SlashCommand, CommandKind } from './types.js';
 import {
   readLoadBalancerConfig,
   addLoadBalancerEndpoint,
@@ -386,7 +386,7 @@ export const loadBalancerCommand: SlashCommand = {
   name: 'loadbalancer',
   altNames: ['lb'],
   description: 'ロードバランサー機能 - 複数のGemini APIエンドポイント間でリクエストを分散',
-  kind: 'built-in' as any,
+  kind: 'built-in' as CommandKind,
   action: async (_context, args) => {
     const argsArray = args.trim().split(' ').filter((arg: string) => arg.length > 0);
     return await action(argsArray);

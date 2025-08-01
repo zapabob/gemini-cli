@@ -11,7 +11,6 @@ import {
   CollaborativeTaskOptions, 
   CollaborativeTaskResult, 
   TaskAnalysis,
-  SituationAnalysis,
   IntegratedResult,
   CollaborationMetrics 
 } from './types.js';
@@ -81,7 +80,7 @@ export class AutonomousOrchestrator {
   async executeAutonomousTask(
     task: string,
     context?: string,
-    options?: CollaborativeTaskOptions
+    _options?: CollaborativeTaskOptions
   ): Promise<CollaborativeTaskResult> {
     const taskId = this.generateTaskId();
     const startTime = Date.now();
@@ -117,13 +116,13 @@ export class AutonomousOrchestrator {
         collaborationMetrics: this.calculateMetrics(results, executionTime, selection.selectedSubagents.length)
       };
       
-    } catch (error) {
-      console.error(`❌ 自律的タスク実行エラー: ${error}`);
+    } catch (_error) {
+      console.error(`❌ 自律的タスク実行エラー: ${_error}`);
       return {
         taskId,
         success: false,
         executionTime: Date.now() - startTime,
-        error: error instanceof Error ? error.message : String(error)
+        error: _error instanceof Error ? _error.message : String(_error)
       };
     }
   }
@@ -158,7 +157,7 @@ ${context ? `コンテキスト: ${context}` : ''}
 
     try {
       return JSON.parse(response.text);
-    } catch (error) {
+    } catch (_error) {
       // フォールバック: デフォルト分析
       return {
         complexity: 5,
@@ -279,7 +278,7 @@ ${result.result}
 
     try {
       return JSON.parse(response.text);
-    } catch (error) {
+    } catch (_error) {
       // フォールバック: シンプルな統合
       return {
         finalResult: results.map(r => r.result).join('\n\n'),

@@ -16,15 +16,11 @@ import {
 import { ideCommand } from './ideCommand.js';
 import { type CommandContext } from './types.js';
 import { type Config, DetectedIde } from '@google/gemini-cli-core';
-import * as child_process from 'child_process';
-import { glob } from 'glob';
 import * as core from '@google/gemini-cli-core';
 
 import {
-  getMCPDiscoveryState,
-  getMCPServerStatus,
-  MCPDiscoveryState,
-  MCPServerStatus,
+  MCPDiscoveryState as _MCPDiscoveryState,
+  MCPServerStatus as _MCPServerStatus,
 } from '@google/gemini-cli-core';
 
 vi.mock('child_process');
@@ -45,8 +41,7 @@ describe('ideCommand', () => {
   let mockContext: CommandContext;
   let mockConfig: Config;
   let platformSpy: MockInstance;
-  let getMCPServerStatusSpy: MockInstance;
-  let getMCPDiscoveryStateSpy: MockInstance;
+
 
   beforeEach(() => {
     mockContext = {
@@ -69,8 +64,6 @@ describe('ideCommand', () => {
     } as unknown as Config;
 
     platformSpy = vi.spyOn(process, 'platform', 'get');
-    getMCPServerStatusSpy = vi.mocked(getMCPServerStatus);
-    getMCPDiscoveryStateSpy = vi.mocked(getMCPDiscoveryState);
   });
 
   afterEach(() => {

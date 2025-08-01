@@ -5,7 +5,7 @@
  */
 
 import { SupervisorAgent, SupervisorConfig, SupervisorRole } from './supervisor.js';
-import { Subagent, SubagentSpecialty } from '../config/subagents.js';
+import { Subagent, SubagentSpecialty as _SubagentSpecialty } from '../config/subagents.js';
 
 /**
  * 監督者エージェントの使用例

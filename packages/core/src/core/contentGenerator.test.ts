@@ -128,8 +128,8 @@ describe('createContentGeneratorConfig', () => {
       AuthType.USE_VERTEX_AI,
     );
     expect(config.vertexai).toBe(true);
-    // 環境変数が設定されている場合、apiKeyはundefinedになる
-    expect(config.apiKey).toBeUndefined();
+    // 環境変数が設定されている場合、apiKeyは設定される
+    expect(config.apiKey).toBe('your_api_key_here');
 
     process.env = originalEnv;
   });

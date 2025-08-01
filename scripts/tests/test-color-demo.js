@@ -32,7 +32,7 @@ function demoColoredSubagents() {
     { name: 'バックエンドエージェント', color: ANSI_COLORS.BRIGHT_CYAN, message: 'データベースの最適化を提案します。' }
   ];
 
-  agents.forEach((agent, index) => {
+  agents.forEach((agent, _index) => {
     const timestamp = new Date().toLocaleTimeString();
     console.log(`${ANSI_COLORS.WHITE}[${timestamp}]${ANSI_COLORS.RESET} ${agent.color}${agent.name}${ANSI_COLORS.RESET}: 💬 ${agent.color}${agent.message}${ANSI_COLORS.RESET}`);
     

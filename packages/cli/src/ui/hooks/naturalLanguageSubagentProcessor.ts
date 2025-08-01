@@ -332,6 +332,9 @@ export class NaturalLanguageSubagentProcessor {
         case 'hybrid':
           results = await this.executeHybridMode(subagents, task, executor, priority, collaborationType);
           break;
+        default:
+          results = await this.executeParallelMode(subagents, task, executor, priority);
+          break;
       }
 
       const totalExecutionTime = Date.now() - startTime;
@@ -532,7 +535,7 @@ export class NaturalLanguageSubagentProcessor {
     const groups: Subagent[][] = [];
 
     switch (collaborationType) {
-      case 'hierarchical':
+      case 'hierarchical': {
         // 階層的: 監督者と作業者に分ける
         const supervisor = subagents.find(s => s.specialty === 'architecture_design');
         const workers = subagents.filter(s => s.specialty !== 'architecture_design');
@@ -547,8 +550,9 @@ export class NaturalLanguageSubagentProcessor {
           }
         }
         break;
+      }
 
-      case 'coordinated':
+      case 'coordinated': {
         // 協調的: 専門分野別にグループ化
         const specialtyGroups = new Map<string, Subagent[]>();
         subagents.forEach(subagent => {
@@ -564,14 +568,16 @@ export class NaturalLanguageSubagentProcessor {
           }
         });
         break;
+      }
 
       case 'independent':
-      default:
+      default: {
         // 独立的: 2-3人ずつの小さなグループ
         for (let i = 0; i < subagents.length; i += 2) {
           groups.push(subagents.slice(i, i + 2));
         }
         break;
+      }
     }
 
     return groups;

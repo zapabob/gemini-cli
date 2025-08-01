@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DeepResearchTool, DeepResearchToolParams } from './deep-research.js';
 import { Config } from '../config/config.js';
-import { ToolConfirmationOutcome } from './tools.js';
+import { ToolConfirmationOutcome as _ToolConfirmationOutcome } from './tools.js';
 
 // Mock the Gemini client
 const mockGeminiClient = {

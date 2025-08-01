@@ -35,6 +35,11 @@
 
 ## 🏁 進捗
 - [x] process.onのpromiseリネーム
+- [x] packages/core/src/tools/deep-research.tsのESLintエラー修正
+  - [x] PartListUnionの未使用import削除
+  - [x] abortSignalを_abortSignalにリネーム
+  - [x] geminiClient: anyをReturnType<Config['getGeminiClient']>に型定義追加
+  - [x] outcomeを_outcomeにリネーム
 - [ ] packages/cli/src/config/config.tsの未使用変数修正
 - [ ] 全体の未使用変数・any型・不要import修正
 - [ ] lint/testパスまで自動化

@@ -59,8 +59,8 @@ class RepositoryOrganizer {
       console.log('\n✅ リポジトリ整理整頓と独自機能統合が完了しました！');
       this.showSummary();
 
-    } catch (error) {
-      console.error('❌ 整理整頓中にエラーが発生しました:', error.message);
+    } catch (_error) {
+      console.error('❌ 整理整頓中にエラーが発生しました:', _error.message);
       process.exit(1);
     }
   }
@@ -91,8 +91,8 @@ class RepositoryOrganizer {
       
       console.log(`🌿 Git状態: ${gitBranch}ブランチ`);
       console.log(`📝 変更ファイル数: ${gitStatus.split('\n').filter(line => line.trim()).length}`);
-    } catch (error) {
-      console.warn('⚠️ Git状態の取得に失敗:', error.message);
+    } catch (_error) {
+      console.warn('⚠️ Git状態の取得に失敗:', _error.message);
     }
   }
 
@@ -113,15 +113,15 @@ class RepositoryOrganizer {
         try {
           execSync('git fetch upstream', { stdio: 'pipe' });
           console.log('✅ 公式リポジトリから最新変更を取得');
-        } catch (error) {
-          console.warn('⚠️ 公式リポジトリからの取得に失敗:', error.message);
+        } catch (_error) {
+          console.warn('⚠️ 公式リポジトリからの取得に失敗:', _error.message);
         }
       } else {
         console.log('❌ upstreamリモートが未設定');
         console.log('💡 公式リポジトリとの統合が必要です');
       }
-    } catch (error) {
-      console.warn('⚠️ リモート確認に失敗:', error.message);
+    } catch (_error) {
+      console.warn('⚠️ リモート確認に失敗:', _error.message);
     }
   }
 
@@ -177,7 +177,7 @@ class RepositoryOrganizer {
         try {
           const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
           console.log(`✅ ${pkg}: v${packageJson.version}`);
-        } catch (error) {
+        } catch (_error) {
           console.log(`❌ ${pkg}: package.jsonの読み込みに失敗`);
         }
       } else {
@@ -236,7 +236,7 @@ class RepositoryOrganizer {
           const content = fs.readFileSync(workflowPath, 'utf8');
           const hasSyntaxError = this.checkYAMLSyntax(content);
           console.log(`  ${hasSyntaxError ? '❌' : '✅'} ${workflow}: ${hasSyntaxError ? '構文エラー' : '正常'}`);
-        } catch (error) {
+        } catch (_error) {
           console.log(`  ❌ ${workflow}: 読み込みエラー`);
         }
       });
@@ -282,8 +282,8 @@ class RepositoryOrganizer {
           fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
           console.log('✅ package.jsonにスクリプトを追加');
         }
-      } catch (error) {
-        console.warn('⚠️ package.jsonの更新に失敗:', error.message);
+      } catch (_error) {
+        console.warn('⚠️ package.jsonの更新に失敗:', _error.message);
       }
     } else {
       console.log('❌ チェックポイントマネージャーが存在しません');

@@ -151,7 +151,7 @@ export interface RealTimeMessage {
   sessionId: string;
   data: unknown;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -304,7 +304,7 @@ export interface MainAgentDirectiveMessage extends RealTimeMessage {
     targetSubagentId?: string;
     taskId?: string;
     instruction: string;
-    parameters?: Record<string, any>;
+    parameters?: Record<string, unknown>;
     priority: 'low' | 'medium' | 'high' | 'urgent';
   };
 }

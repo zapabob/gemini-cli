@@ -27,7 +27,7 @@ const VSCODE_COMMAND = 'code';
 const VSCODE_COMPANION_EXTENSION_FOLDER = 'vscode-ide-companion';
 
 export const ideCommand = (config: Config | null): SlashCommand | null => {
-  // 型安全のためanyキャストで独自メソッドを許容
+  // Configの拡張メソッド許容のためany型キャスト（型安全にできない設計）
   const configAny = config as any;
   if (!configAny?.getIdeModeFeature?.()) {
     return null;

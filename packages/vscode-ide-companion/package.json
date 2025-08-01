@@ -8,8 +8,7 @@
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/google-gemini/gemini-cli.git",
-    "directory": "packages/vscode-ide-companion"
+    "url": "https://github.com/google/gemini-cli.git"
   },
   "scripts": {
     "build": "npm run compile",
@@ -17,8 +16,8 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "watch": "node esbuild.js --watch",
-    "package": "vsce package",
-    "publish": "vsce publish"
+    "package": "@vscode/vsce package",
+    "publish": "@vscode/vsce publish"
   },
   "engines": {
     "vscode": "^1.85.0"
@@ -322,14 +321,14 @@
           "type": "number",
           "default": 0.1,
           "minimum": 0.01,
-          "maximum": 1.0,
+          "maximum": 1,
           "description": "学習率"
         },
         "cursorAI.confidenceThreshold": {
           "type": "number",
           "default": 0.8,
           "minimum": 0.5,
-          "maximum": 1.0,
+          "maximum": 1,
           "description": "信頼度閾値"
         }
       }
@@ -345,13 +344,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
     "typescript": "^5.3.3",
-    "vsce": "^2.0.0"
+    "@vscode/vsce": "^3.6.0"
   },
-  "publisher": "google",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/google/gemini-cli.git"
-  },
-  "license": "Apache-2.0",
-  "icon": "assets/icon.png"
+  "license": "Apache-2.0"
 }

@@ -286,9 +286,9 @@ describe('oauth2', () => {
       };
       vi.spyOn(fs.promises, 'readFile').mockResolvedValue(JSON.stringify(mockCredentials));
 
-      const result = await getOauthClient(AuthType.LOGIN_WITH_GOOGLE, mockConfig);
+      await getOauthClient(AuthType.LOGIN_WITH_GOOGLE, mockConfig);
       expect(fs.promises.readFile).toHaveBeenCalledWith(
-        expect.stringMatching(/[\\\/]user[\\\/]home[\\\/]\.gemini[\\\/]oauth_creds\.json/),
+        expect.stringMatching(/[/\\]user[/\\]home[/\\]\.gemini[/\\]oauth_creds\.json/),
         'utf-8',
       );
       expect(mockClient.setCredentials).toHaveBeenCalledWith(cachedCreds);

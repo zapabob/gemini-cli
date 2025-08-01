@@ -11,9 +11,9 @@
  * 定期的に公式リポジトリの最新変更を取得し、独自機能を保護しながら統合する
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 // 設定
 const CONFIG = {

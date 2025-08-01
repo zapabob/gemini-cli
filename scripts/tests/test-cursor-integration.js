@@ -54,8 +54,8 @@ function demoCursorIntegration() {
 
   log(`🚀 ${tasks.length}個のタスクを並列実行`, ANSI_COLORS.BRIGHT_YELLOW);
   
-  tasks.forEach((task, index) => {
-    const taskId = `task-${Date.now()}-${index}`;
+  tasks.forEach((task, _index) => {
+    const taskId = `task-${Date.now()}-${_index}`;
     log(`📋 タスク開始: ${taskId}`, ANSI_COLORS.BRIGHT_GREEN);
     log(`   ${task}`, ANSI_COLORS.BRIGHT_CYAN);
   });
@@ -133,7 +133,7 @@ function demoSubagentColors() {
     { name: '最適化エージェント', color: ANSI_COLORS.BRIGHT_YELLOW, message: 'アルゴリズムの効率化を提案します。' }
   ];
 
-  agents.forEach((agent, index) => {
+  agents.forEach((agent, _index) => {
     const timestamp = new Date().toLocaleTimeString();
     console.log(`${ANSI_COLORS.WHITE}[${timestamp}]${ANSI_COLORS.RESET} ${agent.color}${agent.name}${ANSI_COLORS.RESET}: 💬 ${agent.color}${agent.message}${ANSI_COLORS.RESET}`);
     
@@ -157,8 +157,8 @@ function demoParallelExecution() {
 
   log(`🚀 ${parallelTasks.length}個のタスクを並列実行開始`, ANSI_COLORS.BRIGHT_BLUE);
 
-  parallelTasks.forEach((task, index) => {
-    const taskId = `parallel-task-${index + 1}`;
+  parallelTasks.forEach((task, _index) => {
+    const taskId = `parallel-task-${_index + 1}`;
     log(`📋 並列タスク開始: ${taskId} - ${task.name}`, task.color);
     
     // タスクの完了をシミュレート
@@ -197,7 +197,7 @@ function demoAutonomousAgent() {
     }
   ];
 
-  scenarios.forEach((scenario, index) => {
+  scenarios.forEach((scenario, _index) => {
     log(`📋 タスク: ${scenario.task}`, ANSI_COLORS.BRIGHT_YELLOW);
     log(`🤔 判断: ${scenario.decision}`, ANSI_COLORS.BRIGHT_CYAN);
     log(`👥 呼び出しエージェント: ${scenario.agents.join(', ')}`, ANSI_COLORS.BRIGHT_MAGENTA);

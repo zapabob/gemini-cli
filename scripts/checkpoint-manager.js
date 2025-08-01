@@ -73,7 +73,7 @@ class CheckpointManager {
       process.exit(1);
     });
 
-    process.on('unhandledRejection', (reason, promise) => {
+    process.on('unhandledRejection', (reason, _promise) => {
       console.error('🚨 未処理のPromise拒否が発生しました。緊急保存を実行中...', reason);
       this.emergencySave();
       process.exit(1);

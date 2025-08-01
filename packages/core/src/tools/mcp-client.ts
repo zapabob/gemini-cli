@@ -391,6 +391,7 @@ export async function connectAndDiscover(
 
       if (mcpServerName === IDE_SERVER_NAME) {
         mcpClient.setNotificationHandler(
+          // MCP SDKの型定義の制約によりany型キャストが必要
           OpenFilesNotificationSchema as any,
           (notification) => {
             ideContext.setOpenFilesContext(notification.params);

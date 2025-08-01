@@ -6,9 +6,7 @@
 
 import { CommandKind, MessageActionReturn, SlashCommand } from './types.js';
 import { 
-  CollaborativeAgentSystem,
-  CollaborativeTaskOptions,
-  RealTimeCollaborationOptions
+  CollaborativeAgentSystem
 } from '@google/gemini-cli-core';
 
 /**
@@ -86,8 +84,14 @@ async function handleCollaborativeExecute(args: string[]): Promise<MessageAction
   const task = args.join(' ');
 
   try {
-    // モック実装（実際のGeminiClient統合は後で実装）
-    const mockGeminiClient = {} as any;
+    // モック実装のためany型キャスト（型安全にできない設計）
+    const mockGeminiClient = {
+      apiKey: 'mock-api-key',
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+      defaultModel: 'models/gemini-1.5-flash',
+      defaultTemperature: 0.7,
+      defaultMaxTokens: 4096
+    } as any;
     const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
     
     const result = await collaborativeSystem.executeCollaborativeTask(task, undefined, {
@@ -156,8 +160,14 @@ async function handleRealTimeCollaboration(args: string[]): Promise<MessageActio
   const task = args.join(' ');
 
   try {
-    // モック実装
-    const mockGeminiClient = {} as any;
+    // モック実装のためany型キャスト（型安全にできない設計）
+    const mockGeminiClient = {
+      apiKey: 'mock-api-key',
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+      defaultModel: 'models/gemini-1.5-flash',
+      defaultTemperature: 0.7,
+      defaultMaxTokens: 4096
+    } as any;
     const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
     
     const result = await collaborativeSystem.executeRealTimeCollaboration(task, undefined, {
@@ -184,7 +194,7 @@ async function handleRealTimeCollaboration(args: string[]): Promise<MessageActio
 **総トークン使用量**: ${metrics?.totalTokensUsed || 0}
 
 **実行ステップ詳細**:
-${steps?.map((step: any, i: number) => 
+${steps?.map((step, i) => 
   `${i + 1}. ${step.action.type} - ${step.result.success ? '成功' : '失敗'} (${step.executionTime}ms)`
 ).join('\n') || 'なし'}
 
@@ -223,7 +233,7 @@ async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> 
 
   try {
     // モック実装
-    const mockGeminiClient = {} as unknown;
+    // const mockGeminiClient = {} as unknown;
     // const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
     
     // タスク分析のモック結果

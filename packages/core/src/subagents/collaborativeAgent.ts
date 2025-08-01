@@ -5,12 +5,10 @@
  */
 
 import { 
-  Subagent, 
-  SubagentSpecialtySchema 
+  Subagent
 } from '../config/subagents.js';
 import { 
   SubagentExecutor, 
-  SubagentTask, 
   SubagentResult 
 } from './executor.js';
 import { GeminiClient } from './geminiClient.js';
@@ -58,7 +56,7 @@ export class CollaborativeAgentSystem {
   async executeCollaborativeTask(
     task: string,
     context?: string,
-    options: CollaborativeTaskOptions = {}
+    _options: CollaborativeTaskOptions = {}
   ): Promise<CollaborativeTaskResult> {
     const taskId = this.generateTaskId();
     const startTime = Date.now();
@@ -247,7 +245,7 @@ ${context ? `**コンテキスト**: ${context}` : ''}
     const history = subagent.taskHistory || [];
     if (history.length === 0) return 0.5; // デフォルト値
     
-    const successCount = history.filter((h: unknown) => (h as any).status === 'success').length;
+    const successCount = history.filter((h: unknown) => (h as Record<string, unknown>).status === 'success').length;
     return successCount / history.length;
   }
 
@@ -617,7 +615,7 @@ class CollaborationSession {
   /**
    * 統合アクション実行
    */
-  private async executeIntegrationAction(action: CollaborationAction): Promise<CollaborationActionResult> {
+  private async executeIntegrationAction(_action: CollaborationAction): Promise<CollaborationActionResult> {
     const integratedResult = await this.mainAgent.integrateResults(
       'Current task',
       [], // 実際の結果を使用

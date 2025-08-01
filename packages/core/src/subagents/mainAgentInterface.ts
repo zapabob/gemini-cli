@@ -182,11 +182,11 @@ ${context ? `コンテキスト: ${context}` : ''}
    */
   private async executeAutonomousMode(
     task: string,
-    context?: string,
-    options?: CollaborativeTaskOptions
+    _context?: string,
+    _options?: CollaborativeTaskOptions
   ): Promise<CollaborativeTaskResult> {
     console.log(`🤖 自律モードで実行: ${task}`);
-    return await this.orchestrator.executeAutonomousTask(task, context, options);
+    return await this.orchestrator.executeAutonomousTask(task, _context, _options);
   }
 
   /**
@@ -194,14 +194,14 @@ ${context ? `コンテキスト: ${context}` : ''}
    */
   private async executeSupervisorMode(
     task: string,
-    context?: string,
-    options?: CollaborativeTaskOptions
+    _context?: string,
+    _options?: CollaborativeTaskOptions
   ): Promise<CollaborativeTaskResult> {
     console.log(`👨‍💼 監督者モードで実行: ${task}`);
     
     // サブエージェントのリストを取得（実際の実装では設定から取得）
     const subagents: Subagent[] = [];
-    const supervisorResult = await this.supervisor.superviseImplementation(task, subagents, context);
+    const supervisorResult = await this.supervisor.superviseImplementation(task, subagents, _context);
     
     return {
       taskId: this.generateTaskId(),
@@ -230,8 +230,8 @@ ${context ? `コンテキスト: ${context}` : ''}
    */
   private async executeManualMode(
     task: string,
-    context?: string,
-    options?: CollaborativeTaskOptions
+    _context?: string,
+    _options?: CollaborativeTaskOptions
   ): Promise<CollaborativeTaskResult> {
     console.log(`👤 手動モードで実行: ${task}`);
     
@@ -240,7 +240,7 @@ ${context ? `コンテキスト: ${context}` : ''}
     try {
       // メインエージェントが直接タスクを実行
       const response = await this.geminiClient.generateText({
-        prompt: `タスク: ${task}\n${context ? `コンテキスト: ${context}` : ''}\n\nこのタスクを実行してください。`,
+        prompt: `タスク: ${task}\n${_context ? `コンテキスト: ${_context}` : ''}\n\nこのタスクを実行してください。`,
         maxTokens: 4000,
         temperature: 0.7
       });
@@ -282,8 +282,8 @@ ${context ? `コンテキスト: ${context}` : ''}
    */
   async startRealTimeCollaboration(
     task: string,
-    context?: string,
-    options?: CollaborativeTaskOptions
+    _context?: string,
+    _options?: CollaborativeTaskOptions
   ): Promise<string> {
     console.log(`🔄 リアルタイム協調セッション開始: ${task}`);
     

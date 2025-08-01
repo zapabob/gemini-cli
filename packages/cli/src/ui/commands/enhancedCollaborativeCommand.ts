@@ -133,9 +133,10 @@ async function handleRealTimeCollaboration(args: string[]): Promise<MessageActio
 
     // システム初期化（実際の実装では適切なGeminiClientを使用）
     const mockGeminiClient = {
-      generateContent: async (prompt: string) => ({ text: () => 'モックレスポンス' })
+      generateContent: async (_prompt: string) => ({ text: () => 'モックレスポンス' })
     };
 
+    // モック実装のためany型キャスト（型安全にできない設計）
     const system = new EnhancedCollaborativeAgentSystem(mockGeminiClient as any, sessionConfig);
 
     // サブエージェントの登録

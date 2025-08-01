@@ -41,6 +41,7 @@ interface CollaborativeTaskResult {
 
 // モック実装（実際の実装ではcoreパッケージを使用）
 class MockAutonomousOrchestrator {
+  // モック実装のためany型キャスト（型安全にできない設計）
   constructor(config: any) {
     console.log('モック自律的オーケストレーターを初期化:', config);
   }
@@ -67,6 +68,7 @@ class MockAutonomousOrchestrator {
 }
 
 class MockGeminiClient {
+  // モック実装のためany型キャスト（型安全にできない設計）
   constructor(config: any) {
     console.log('モックGeminiClientを初期化:', config);
   }
@@ -121,6 +123,7 @@ export class CursorIntegrationManager {
   private config: CursorIntegrationConfig;
   private orchestrator: MockAutonomousOrchestrator;
   private geminiClient: MockGeminiClient;
+  // モック実装のためany型キャスト（型安全にできない設計）
   private activeTasks: Map<string, any> = new Map();
   private fileWatchers: Map<string, vscode.FileSystemWatcher> = new Map();
   private syncTimer: NodeJS.Timeout | null = null;
@@ -371,6 +374,7 @@ export class CursorIntegrationManager {
     const startTime = Date.now();
     
     try {
+      // モック実装のためany型キャスト（型安全にできない設計）
       let result: any;
       
       switch (commandId) {

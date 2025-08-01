@@ -20,7 +20,6 @@ import {
   TelemetryTarget,
   FileFilteringOptions,
   MCPServerConfig,
-  IdeClient,
 } from '@google/gemini-cli-core';
 import { Settings } from './settings.js';
 
@@ -270,12 +269,6 @@ export async function loadCliConfig(
     );
 
   const ideMode = settings.ideMode ?? false;
-
-  const ideModeFeature =
-    (argv.ideModeFeature ?? false) &&
-    !process.env.SANDBOX;
-
-  const ideClient = IdeClient.getInstance(ideMode && ideModeFeature);
 
   const allExtensions = annotateActiveExtensions(
     extensions,

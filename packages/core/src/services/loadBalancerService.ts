@@ -274,7 +274,7 @@ export class LoadBalancerService {
         } else {
           this.disableEndpoint(endpoint.id);
         }
-      } catch (error) {
+      } catch (_error) {
         this.disableEndpoint(endpoint.id);
       }
     });

@@ -5,24 +5,22 @@
  */
 
 import { 
-  Subagent, 
-  SubagentSpecialtySchema 
+  Subagent
 } from '../config/subagents.js';
 import { 
   SubagentExecutor, 
-  SubagentTask, 
-  SubagentResult 
+  SubagentResult as _SubagentResult 
 } from './executor.js';
 import { GeminiClient } from './geminiClient.js';
 import { RealTimeCommunicationSystem } from './realTimeCommunication.js';
 import {
-  CollaborativeTaskOptions,
-  CollaborativeTaskResult,
+  CollaborativeTaskOptions as _CollaborativeTaskOptions,
+  CollaborativeTaskResult as _CollaborativeTaskResult,
   RealTimeCollaborationOptions,
   RealTimeCollaborationResult,
   TaskAnalysis,
-  IntegratedResult,
-  Subtask,
+  IntegratedResult as _IntegratedResult,
+  Subtask as _Subtask,
   CollaborationStep,
   CollaborationAction,
   CollaborationActionResult,
@@ -32,7 +30,6 @@ import {
   SituationAnalysis,
   RealTimeSessionConfig,
   RealTimeMessage,
-  RealTimeMessageType,
   TaskAssignmentMessage,
   TaskProgressMessage,
   TaskCompletionMessage,
@@ -75,38 +72,38 @@ export class EnhancedCollaborativeAgentSystem {
    */
   private setupRealTimeHandlers(): void {
     // タスク割り当てハンドラー
-    this.realTimeSystem.onMessage('task_assignment', (message: TaskAssignmentMessage) => {
-      this.handleTaskAssignment(message);
+    this.realTimeSystem.onMessage('task_assignment', (message: RealTimeMessage) => {
+      this.handleTaskAssignment(message as TaskAssignmentMessage);
     });
 
     // タスク進捗ハンドラー
-    this.realTimeSystem.onMessage('task_progress', (message: TaskProgressMessage) => {
-      this.handleTaskProgress(message);
+    this.realTimeSystem.onMessage('task_progress', (message: RealTimeMessage) => {
+      this.handleTaskProgress(message as TaskProgressMessage);
     });
 
     // タスク完了ハンドラー
-    this.realTimeSystem.onMessage('task_completion', (message: TaskCompletionMessage) => {
-      this.handleTaskCompletion(message);
+    this.realTimeSystem.onMessage('task_completion', (message: RealTimeMessage) => {
+      this.handleTaskCompletion(message as TaskCompletionMessage);
     });
 
     // 協調要求ハンドラー
-    this.realTimeSystem.onMessage('coordination_request', (message: CoordinationRequestMessage) => {
-      this.handleCoordinationRequest(message);
+    this.realTimeSystem.onMessage('coordination_request', (message: RealTimeMessage) => {
+      this.handleCoordinationRequest(message as CoordinationRequestMessage);
     });
 
     // メインエージェント指示ハンドラー
-    this.realTimeSystem.onMessage('main_agent_directive', (message: MainAgentDirectiveMessage) => {
-      this.handleMainAgentDirective(message);
+    this.realTimeSystem.onMessage('main_agent_directive', (message: RealTimeMessage) => {
+      this.handleMainAgentDirective(message as MainAgentDirectiveMessage);
     });
 
     // サブエージェントレポートハンドラー
-    this.realTimeSystem.onMessage('subagent_report', (message: SubagentReportMessage) => {
-      this.handleSubagentReport(message);
+    this.realTimeSystem.onMessage('subagent_report', (message: RealTimeMessage) => {
+      this.handleSubagentReport(message as SubagentReportMessage);
     });
 
     // パフォーマンスメトリクスハンドラー
-    this.realTimeSystem.onMessage('performance_metrics', (message: PerformanceMetricsMessage) => {
-      this.handlePerformanceMetrics(message);
+    this.realTimeSystem.onMessage('performance_metrics', (message: RealTimeMessage) => {
+      this.handlePerformanceMetrics(message as PerformanceMetricsMessage);
     });
 
     // 接続イベントハンドラー
@@ -157,6 +154,7 @@ export class EnhancedCollaborativeAgentSystem {
       await this.startRealTimeSession(sessionId, initialAnalysis);
 
       // 3. 協調セッション作成
+      const _taskId = this.generateTaskId();
       const session = new EnhancedCollaborationSession(
         sessionId,
         this.mainAgent,
@@ -201,7 +199,7 @@ export class EnhancedCollaborativeAgentSystem {
   /**
    * リアルタイムセッション開始
    */
-  private async startRealTimeSession(sessionId: string, analysis: TaskAnalysis): Promise<void> {
+  private async startRealTimeSession(sessionId: string, _analysis: TaskAnalysis): Promise<void> {
     // 利用可能なサブエージェントに接続
     const availableSubagents = Array.from(this.subagents.values()).filter(s => s.isActive);
     
@@ -282,7 +280,7 @@ export class EnhancedCollaborativeAgentSystem {
    * タスク完了ハンドラー
    */
   private handleTaskCompletion(message: TaskCompletionMessage): void {
-    const { taskId, result, executionTime, qualityScore, confidenceLevel } = message.data;
+    const { taskId, result: _result, executionTime, qualityScore, confidenceLevel } = message.data;
     console.log(`✅ タスク完了: ${taskId} - 品質: ${qualityScore}, 信頼度: ${confidenceLevel}, 時間: ${executionTime}ms`);
   }
 
@@ -340,7 +338,7 @@ export class EnhancedCollaborativeAgentSystem {
     parameters?: Record<string, unknown>
   ): Promise<void> {
     try {
-      const result = await this.executor.executeTask(subagent, {
+      const _result = await this.executor.executeTask(subagent, {
         id: this.generateTaskId(),
         task: `指示: ${directiveType}\n内容: ${instruction}\nパラメータ: ${JSON.stringify(parameters || {})}`,
         priority: 'high',

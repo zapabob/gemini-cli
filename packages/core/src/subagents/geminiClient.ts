@@ -145,8 +145,8 @@ export class GeminiClient {
         finishReason: candidate.finishReason || 'STOP'
       };
 
-    } catch (error) {
-      throw new Error(`Gemini API request failed: ${error instanceof Error ? error.message : String(error)}`);
+    } catch (_error) {
+      throw new Error(`Gemini API request failed: ${_error instanceof Error ? _error.message : String(_error)}`);
     }
   }
 
@@ -183,8 +183,8 @@ export class GeminiClient {
       try {
         const response = await this.executeSubagentTask(subagent, task, context, options);
         return { subagent, response };
-      } catch (error) {
-        throw new Error(`Subagent ${subagent.name} failed: ${error instanceof Error ? error.message : String(error)}`);
+      } catch (_error) {
+        throw new Error(`Subagent ${subagent.name} failed: ${_error instanceof Error ? _error.message : String(_error)}`);
       }
     });
 
@@ -201,7 +201,7 @@ export class GeminiClient {
         maxTokens: 10
       });
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
