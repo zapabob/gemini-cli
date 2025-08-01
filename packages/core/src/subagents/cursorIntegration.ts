@@ -83,7 +83,7 @@ export class CursorIntegrationManager {
     // Geminiクライアントの初期化
     this.geminiClient = new GeminiClient({
       apiKey: process.env.GEMINI_API_KEY || 'mock-api-key',
-      defaultModel: 'models/gemini-1.5-flash',
+      defaultModel: 'models/gemini-2.5-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096
     });
@@ -91,13 +91,16 @@ export class CursorIntegrationManager {
     // メインエージェントの初期化
     const mainAgentConfig: MainAgentInterfaceConfig = {
       geminiClient: this.geminiClient,
+      config: this.config as any,
       enableAutonomousMode: true,
       enableSupervisorMode: true,
+      enableNaturalLanguageProcessing: false,
       maxConcurrentSubagents: config.maxConcurrentTasks,
       autoAnalysisThreshold: 0.7,
       decisionTimeout: 30000,
       enableRealTimeCoordination: true,
-      enableCheckpointing: true
+      enableCheckpointing: true,
+      researchOutputPath: './_docs'
     };
     this.mainAgent = new MainAgentInterface(mainAgentConfig);
 

@@ -10,3 +10,19 @@ code_review:
     summary: true
     code_review: true
 ignore_patterns: []
+
+# MCP Servers Configuration
+mcpServers:
+  deepresearch-mcp:
+    command: "node"
+    args:
+      - "C:\\Users\\downl\\Desktop\\gemini-cli-main\\mcp-servers\\deepresearch-mcp\\dist\\index.js"
+    env:
+      NODE_ENV: "production"
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
+    description: "Deep Research MCP Server for comprehensive research capabilities"
+    capabilities:
+      - deep_research
+      - web_search
+      - document_analysis
+      - research_report_generation

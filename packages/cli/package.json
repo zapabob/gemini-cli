@@ -9,7 +9,8 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "gemini": "dist/index.js"
+    "gemini": "dist/index.js",
+    "gemini-natural": "dist/naturalLanguageCli.js"
   },
   "scripts": {
     "build": "node ../../scripts/build_package.js",

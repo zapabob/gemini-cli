@@ -29,13 +29,16 @@ export class ColoredSubagentsDemo {
     // メインエージェントインターフェースの設定
     const mainAgentConfig: MainAgentInterfaceConfig = {
       geminiClient,
+      config: {} as any,
       enableAutonomousMode: true,
       enableSupervisorMode: true,
+      enableNaturalLanguageProcessing: false,
       maxConcurrentSubagents: 5,
       autoAnalysisThreshold: 5,
       decisionTimeout: 30000,
       enableRealTimeCoordination: true,
-      enableCheckpointing: true
+      enableCheckpointing: true,
+      researchOutputPath: './_docs'
     };
 
     this.mainAgent = new MainAgentInterface(mainAgentConfig);

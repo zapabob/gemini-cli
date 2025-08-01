@@ -49,7 +49,20 @@
     "telemetry": "node scripts/telemetry.js",
     "clean": "node scripts/clean.js",
     "sync:upstream": "node scripts/sync-upstream.js",
-    "sync:check": "node scripts/sync-upstream.js --check-only"
+    "sync:check": "node scripts/sync-upstream.js --check-only",
+    "install:global": "node scripts/install-global.js",
+    "uninstall:global": "node scripts/uninstall-global.js",
+    "version:current": "node scripts/version-manager.js current",
+    "version:update": "node scripts/version-manager.js update",
+    "version:check": "node scripts/version-manager.js check",
+    "version:changelog": "node scripts/version-manager.js changelog",
+    "update:check": "node scripts/auto-updater.js check",
+    "update:auto": "node scripts/auto-updater.js update",
+    "update:settings": "node scripts/auto-updater.js settings",
+    "update:history": "node scripts/auto-updater.js history",
+    "error:analyze": "node scripts/error-handler.js analyze",
+    "error:system-info": "node scripts/error-handler.js system-info",
+    "progress:demo": "node scripts/progress-bar.js"
   },
   "bin": {
     "gemini": "bundle/gemini.js"

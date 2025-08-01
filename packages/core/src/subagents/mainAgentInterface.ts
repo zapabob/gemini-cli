@@ -9,22 +9,27 @@ import { SupervisorAgent, SupervisorConfig } from './supervisor.js';
 import { GeminiClient } from './geminiClient.js';
 import { CollaborativeTaskResult, CollaborativeTaskOptions, CollaborationSession } from './types.js';
 import { Subagent } from '../config/subagents.js';
+import { NaturalLanguageProcessor, NaturalLanguageProcessorConfig } from './naturalLanguageProcessor.js';
+import { Config } from '../config/config.js';
 
 /**
  * メインエージェントインターフェース設定
  */
 export interface MainAgentInterfaceConfig {
   geminiClient: GeminiClient;
+  config: Config;
   enableAutonomousMode: boolean;
   enableSupervisorMode: boolean;
+  enableNaturalLanguageProcessing: boolean;
   maxConcurrentSubagents: number;
   autoAnalysisThreshold: number; // 複雑度がこの値を超えると自動的にサブエージェントを使用
   decisionTimeout: number;
   enableRealTimeCoordination: boolean;
   enableCheckpointing: boolean;
+  researchOutputPath: string;
 }
 
-export type TaskExecutionMode = 'autonomous' | 'supervisor' | 'manual' | 'auto';
+export type TaskExecutionMode = 'autonomous' | 'supervisor' | 'manual' | 'auto' | 'natural_language';
 
 /**
  * メインエージェントインターフェース
@@ -34,6 +39,7 @@ export class MainAgentInterface {
   private config: MainAgentInterfaceConfig;
   private orchestrator: AutonomousOrchestrator;
   private supervisor: SupervisorAgent;
+  private naturalLanguageProcessor?: NaturalLanguageProcessor;
   private geminiClient: GeminiClient;
   private taskHistory: Map<string, CollaborativeTaskResult> = new Map();
   private activeSessions: Map<string, CollaborationSession> = new Map();
@@ -72,6 +78,21 @@ export class MainAgentInterface {
       errorHandling: 'adaptive'
     };
     this.supervisor = new SupervisorAgent(supervisorConfig);
+    
+    // 自然言語プロンプトプロセッサーの初期化
+    if (config.enableNaturalLanguageProcessing) {
+      const nlpConfig: NaturalLanguageProcessorConfig = {
+        geminiClient: this.geminiClient,
+        config: config.config,
+        enableAutoResearch: true,
+        enableParallelExecution: true,
+        maxConcurrentTasks: config.maxConcurrentSubagents,
+        researchOutputPath: config.researchOutputPath,
+        enableCheckpointing: config.enableCheckpointing,
+        autoSaveInterval: 300 // 5分
+      };
+      this.naturalLanguageProcessor = new NaturalLanguageProcessor(nlpConfig);
+    }
   }
 
   /**
@@ -104,6 +125,9 @@ export class MainAgentInterface {
           break;
         case 'manual':
           result = await this.executeManualMode(task, context, options);
+          break;
+        case 'natural_language':
+          result = await this.executeNaturalLanguageMode(task, context, options);
           break;
         default:
           throw new Error(`不明な実行モード: ${mode}`);
@@ -272,6 +296,33 @@ ${context ? `コンテキスト: ${context}` : ''}
         taskId: this.generateTaskId(),
         success: false,
         executionTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
+
+  /**
+   * 自然言語プロンプト実行モード
+   */
+  private async executeNaturalLanguageMode(
+    task: string,
+    context?: string,
+    options?: CollaborativeTaskOptions
+  ): Promise<CollaborativeTaskResult> {
+    if (!this.naturalLanguageProcessor) {
+      throw new Error('自然言語プロンプト処理が有効になっていません');
+    }
+    
+    console.log(`🤖 自然言語プロンプト実行モード: ${task}`);
+    
+    try {
+      return await this.naturalLanguageProcessor.processNaturalLanguagePrompt(task, context, options);
+    } catch (error) {
+      console.error(`❌ 自然言語プロンプト実行エラー: ${error}`);
+      return {
+        taskId: this.generateTaskId(),
+        success: false,
+        executionTime: 0,
         error: error instanceof Error ? error.message : String(error)
       };
     }
