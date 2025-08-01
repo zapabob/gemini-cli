@@ -11,13 +11,11 @@ import {
   ToolRegistry,
   shutdownTelemetry,
   isTelemetrySdkInitialized,
-} from '@google/gemini-cli-core';
-import {
+
   Content,
   Part,
   FunctionCall,
-  GenerateContentResponse,
-} from '@google/gemini-cli-core';
+  GenerateContentResponse} from '@google/gemini-cli-core';
 
 import { parseAndFormatApiError } from './ui/utils/errorParsing.js';
 

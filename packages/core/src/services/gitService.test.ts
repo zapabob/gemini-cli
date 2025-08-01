@@ -194,25 +194,6 @@ describe('GitService', () => {
     });
 
     it('should copy .gitignore from projectRoot if it exists', async () => {
-<<<<<<< HEAD
-      const visibleGitIgnorePath = path.join(mockProjectRoot, '.gitignore');
-      hoistedMockReadFile.mockResolvedValue('*.log\nnode_modules/');
-
-      const service = new GitService(mockProjectRoot);
-      await service.setupShadowGitRepository();
-      // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
-      expect(hoistedMockReadFile).toHaveBeenCalledWith(
-        visibleGitIgnorePath,
-        'utf-8',
-      );
-    });
-
-    it('should throw an error if reading projectRoot .gitignore fails with other errors', async () => {
-      hoistedMockReadFile.mockRejectedValue(new Error('Read permission denied'));
-
-      const service = new GitService(mockProjectRoot);
-      // エラーが発生した場合、Promiseがrejectされることを確認
-=======
       const gitignoreContent = 'node_modules/\n.env';
       const visibleGitIgnorePath = path.join(projectRoot, '.gitignore');
       await fs.writeFile(visibleGitIgnorePath, gitignoreContent);
@@ -242,7 +223,6 @@ describe('GitService', () => {
 
       const service = new GitService(projectRoot);
       // EISDIR is the expected error code on Unix-like systems
->>>>>>> upstream/main
       await expect(service.setupShadowGitRepository()).rejects.toThrow(
         /EISDIR: illegal operation on a directory, read|EBUSY: resource busy or locked, read/,
       );

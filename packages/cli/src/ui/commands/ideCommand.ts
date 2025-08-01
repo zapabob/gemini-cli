@@ -193,15 +193,19 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         }
       },
     };
-    ideSlashCommand.subCommands.push(vsixInstallCommand);
+    if (ideSlashCommand.subCommands) {
+      ideSlashCommand.subCommands.push(vsixInstallCommand);
+    }
   }
 
   // サブコマンドの組み立て（IDE有効/無効で切り替え）
   const ideModeEnabled = configAny.getIdeMode?.();
-  if (ideModeEnabled) {
-    ideSlashCommand.subCommands.push(disableCommand, statusCommand, installCommand);
-  } else {
-    ideSlashCommand.subCommands.push(enableCommand, statusCommand, installCommand);
+  if (ideSlashCommand.subCommands) {
+    if (ideModeEnabled) {
+      ideSlashCommand.subCommands.push(disableCommand, statusCommand, installCommand);
+    } else {
+      ideSlashCommand.subCommands.push(enableCommand, statusCommand, installCommand);
+    }
   }
 
   return ideSlashCommand;

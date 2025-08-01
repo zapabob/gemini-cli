@@ -133,7 +133,7 @@ export class LoadBalancerService {
   /**
    * エンドポイントを選択
    */
-  public selectEndpoint(clientIp?: string): LoadBalancerEndpoint | null {
+  selectEndpoint(clientIp?: string): LoadBalancerEndpoint | null {
     switch (this.config.algorithm) {
       case 'round-robin':
         return this.selectRoundRobin();
@@ -151,7 +151,7 @@ export class LoadBalancerService {
   /**
    * リクエストを実行
    */
-  public async executeRequest(
+  async executeRequest(
     prompt: string,
     options: {
       maxTokens?: number;
@@ -308,7 +308,7 @@ export class LoadBalancerService {
   /**
    * 統計情報を取得
    */
-  public getStats(): LoadBalancerStats {
+  getStats(): LoadBalancerStats {
     const activeEndpoints = this.getAvailableEndpoints();
     const totalRequests = this.config.endpoints.reduce((sum, e) => sum + e.successCount + e.errorCount, 0);
     const successfulRequests = this.config.endpoints.reduce((sum, e) => sum + e.successCount, 0);
@@ -330,7 +330,7 @@ export class LoadBalancerService {
   /**
    * 設定を更新
    */
-  public updateConfig(newConfig: Partial<LoadBalancerConfig>): void {
+  updateConfig(newConfig: Partial<LoadBalancerConfig>): void {
     this.config = { ...this.config, ...newConfig };
     this.startHealthChecks();
   }
@@ -338,14 +338,14 @@ export class LoadBalancerService {
   /**
    * エンドポイントを追加
    */
-  public addEndpoint(endpoint: LoadBalancerEndpoint): void {
+  addEndpoint(endpoint: LoadBalancerEndpoint): void {
     this.config.endpoints.push(endpoint);
   }
 
   /**
    * エンドポイントを削除
    */
-  public removeEndpoint(endpointId: string): boolean {
+  removeEndpoint(endpointId: string): boolean {
     const index = this.config.endpoints.findIndex(e => e.id === endpointId);
     if (index !== -1) {
       this.config.endpoints.splice(index, 1);
@@ -357,7 +357,7 @@ export class LoadBalancerService {
   /**
    * サービスを停止
    */
-  public destroy(): void {
+  destroy(): void {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
       this.healthCheckInterval = null;

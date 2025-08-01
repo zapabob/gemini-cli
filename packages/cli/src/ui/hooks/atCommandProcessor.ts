@@ -6,8 +6,7 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { PartListUnion, PartUnion } from '@google/gemini-cli-core';
-import {
+import { PartListUnion, PartUnion ,
   Config,
   getErrorMessage,
   isNodeError,

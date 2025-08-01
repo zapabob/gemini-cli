@@ -344,7 +344,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.3.3",
     "vsce": "^2.0.0"
   },
   "publisher": "google",

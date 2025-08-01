@@ -34,14 +34,6 @@ describe('FileDiscoveryService', () => {
   });
 
   describe('initialization', () => {
-<<<<<<< HEAD
-    it('should initialize git ignore parser by default', () => {
-      service = new FileDiscoveryService(mockProjectRoot);
-      // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
-      expect(GitIgnoreParser).toHaveBeenCalledWith(mockProjectRoot);
-      expect(GitIgnoreParser).toHaveBeenCalledTimes(2);
-      expect(mockGitIgnoreParser.loadGitRepoPatterns).toHaveBeenCalled();
-=======
     it('should initialize git ignore parser by default in a git repo', async () => {
       await fs.mkdir(path.join(projectRoot, '.git'));
       await createTestFile('.gitignore', 'node_modules/');
@@ -50,7 +42,6 @@ describe('FileDiscoveryService', () => {
       // Let's check the effect of the parser instead of mocking it.
       expect(service.shouldGitIgnoreFile('node_modules/foo.js')).toBe(true);
       expect(service.shouldGitIgnoreFile('src/foo.js')).toBe(false);
->>>>>>> upstream/main
     });
 
     it('should not load git repo patterns when not in a git repo', async () => {

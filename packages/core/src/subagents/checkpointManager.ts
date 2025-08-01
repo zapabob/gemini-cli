@@ -110,7 +110,7 @@ export class CheckpointManager {
     });
 
     // 未処理のPromise拒否
-    process.on('unhandledRejection', async (reason, promise) => {
+    process.on('unhandledRejection', async (reason, _promise) => {
       console.error('\n🛡️ 未処理Promise拒否検出:', reason);
       await this.emergencySave();
       process.exit(1);

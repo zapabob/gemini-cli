@@ -185,7 +185,9 @@ export class CursorIntegrationManager {
    */
   private setupFileWatchers(): void {
     const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (!workspaceFolders) return;
+    if (!workspaceFolders) {
+      return;
+    }
 
     workspaceFolders.forEach(folder => {
       const watcher = vscode.workspace.createFileSystemWatcher(

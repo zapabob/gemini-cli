@@ -21,11 +21,10 @@ import {
   getErrorMessage,
   isWithinRoot,
   getErrorStatus,
-} from '@google/gemini-cli-core';
+ Content, Part, FunctionCall, PartListUnion } from '@google/gemini-cli-core';
 import * as acp from './acp.js';
 import { Agent } from './acp.js';
 import { Readable, Writable } from 'node:stream';
-import { Content, Part, FunctionCall, PartListUnion } from '@google/gemini-cli-core';
 import { LoadedSettings, SettingScope } from '../config/settings.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';

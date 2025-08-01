@@ -296,16 +296,10 @@ describe('modifyWithEditor', () => {
     const [oldFilePath, newFilePath] = mockOpenDiff.mock.calls[0];
     expect(oldFilePath).toMatch(/gemini-cli-modify-test-file-old-\d+\.txt$/);
     expect(newFilePath).toMatch(/gemini-cli-modify-test-file-new-\d+\.txt$/);
-<<<<<<< HEAD
-    // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
-    expect(oldFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
-    expect(newFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
-=======
 
     const diffDir = path.join(os.tmpdir(), 'gemini-cli-tool-modify-diffs');
     expect(path.dirname(oldFilePath)).toBe(diffDir);
     expect(path.dirname(newFilePath)).toBe(diffDir);
->>>>>>> upstream/main
   });
 
   it('should create temp files with correct naming without extension', async () => {
@@ -323,16 +317,10 @@ describe('modifyWithEditor', () => {
     const [oldFilePath, newFilePath] = mockOpenDiff.mock.calls[0];
     expect(oldFilePath).toMatch(/gemini-cli-modify-test-file-old-\d+$/);
     expect(newFilePath).toMatch(/gemini-cli-modify-test-file-new-\d+$/);
-<<<<<<< HEAD
-    // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
-    expect(oldFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
-    expect(newFilePath).toMatch(new RegExp(tempDir.replace(/\\/g, '[\\\\/]') + '[\\\\/]gemini-cli-tool-modify-diffs[\\\\/]'));
-=======
 
     const diffDir = path.join(os.tmpdir(), 'gemini-cli-tool-modify-diffs');
     expect(path.dirname(oldFilePath)).toBe(diffDir);
     expect(path.dirname(newFilePath)).toBe(diffDir);
->>>>>>> upstream/main
   });
 });
 

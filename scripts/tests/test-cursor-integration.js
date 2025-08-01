@@ -1,4 +1,10 @@
 /**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * Cursor連携デモスクリプト
  * 並列実装とメインエージェントの自律的なサブエージェント呼び出しをデモンストレーション
  */

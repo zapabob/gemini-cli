@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
 /**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * 公式リポジトリとの同期スクリプト
  * 定期的に公式リポジトリの最新変更を取得し、独自機能を保護しながら統合する
  */

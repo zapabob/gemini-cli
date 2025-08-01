@@ -66,9 +66,7 @@ export function getEnvVar(key: string, defaultValue?: string): string | undefine
 export function expandEnvVars(command: string): string {
   if (process.platform === 'win32') {
     // Windows環境での環境変数展開
-    return command.replace(/\$([A-Z_][A-Z0-9_]*)/g, (match, varName) => {
-      return process.env[varName] || match;
-    });
+    return command.replace(/\$([A-Z_][A-Z0-9_]*)/g, (match, varName) => process.env[varName] || match);
   }
   return command;
 }

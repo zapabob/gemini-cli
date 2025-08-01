@@ -23,7 +23,7 @@ import { DEFAULT_GEMINI_FLASH_MODEL } from '../config/models.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
 import { setSimulate429 } from '../utils/testUtils.js';
 import { tokenLimit } from './tokenLimits.js';
-import { ideContext } from '../services/ideContext.js';
+import { ideContext } from '../ide/ideContext.js';
 
 // --- Mocks ---
 const mockChatCreateFn = vi.fn();

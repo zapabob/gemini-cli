@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
 /**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
  * リポジトリ整理整頓と独自機能統合スクリプト
  * 公式リポジトリとの統合を尊重しつつ独自機能を保護
  */

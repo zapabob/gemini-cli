@@ -327,16 +327,26 @@ export class AIOrchestrationEngine {
     let confidence = 0.8; // ベース信頼度
 
     // 複雑度による調整
-    if (analysis.complexity < 0.3) confidence += 0.1;
-    else if (analysis.complexity > 0.7) confidence -= 0.1;
+    if (analysis.complexity < 0.3) {
+      confidence += 0.1;
+    } else if (analysis.complexity > 0.7) {
+      confidence -= 0.1;
+    }
 
     // リスクレベルによる調整
-    if (analysis.riskLevel === 'low') confidence += 0.1;
-    else if (analysis.riskLevel === 'high') confidence -= 0.2;
+    if (analysis.riskLevel === 'low') {
+      confidence += 0.1;
+    } else if (analysis.riskLevel === 'high') {
+      confidence -= 0.2;
+    }
 
     // コードの長さによる調整
-    if (code.length > 1000) confidence += 0.05;
-    if (code.length < 100) confidence -= 0.05;
+    if (code.length > 1000) {
+      confidence += 0.05;
+    }
+    if (code.length < 100) {
+      confidence -= 0.05;
+    }
 
     return Math.max(0, Math.min(1, confidence));
   }

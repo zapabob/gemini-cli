@@ -355,7 +355,7 @@ export class DeepResearchTool extends BaseTool<
     const { max_depth, max_sources, strategy } = options;
     let currentAnalysis = '';
     let sourcesCount = 0;
-    let topics: string[] = [];
+    const topics: string[] = [];
     let currentDepth = 0;
 
     // Perform iterative deepening research

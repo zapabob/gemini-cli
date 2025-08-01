@@ -66,12 +66,6 @@ describe('ShellTool', () => {
       Buffer.from('abcdef', 'hex'),
     );
 
-<<<<<<< HEAD
-    // Windows環境では改行コードが\r\nになる場合があるため、柔軟にマッチ
-    expect(result.returnDisplay).toMatch(/^("hello"|hello)\r?\n$/);
-    expect(result.llmContent).toBe('summarized output');
-    expect(summarizeSpy).toHaveBeenCalled();
-=======
     // Capture the output callback to simulate streaming events from the service
     mockShellExecutionService.mockImplementation((_cmd, _cwd, callback) => {
       mockShellOutputCallback = callback;
@@ -82,7 +76,6 @@ describe('ShellTool', () => {
         }),
       };
     });
->>>>>>> upstream/main
   });
 
   describe('isCommandAllowed', () => {
@@ -92,28 +85,11 @@ describe('ShellTool', () => {
       expect(isCommandAllowed('ls -l', mockConfig).allowed).toBe(true);
     });
 
-<<<<<<< HEAD
-    const summarizeSpy = vi
-      .spyOn(summarizer, 'summarizeToolOutput')
-      .mockResolvedValue('summarized output');
-
-    const abortSignal = new AbortController().signal;
-    const result = await shellTool.execute(
-      { command: 'echo "hello"' },
-      abortSignal,
-    );
-
-    // Windows環境では改行コードが\r\nになる場合があるため、柔軟にマッチ
-    expect(result.returnDisplay).toMatch(/^("hello"|hello)\r?\n$/);
-    expect(result.llmContent).not.toBe('summarized output');
-    expect(summarizeSpy).not.toHaveBeenCalled();
-=======
     it('should block a command with command substitution using $()', () => {
       expect(isCommandAllowed('echo $(rm -rf /)', mockConfig).allowed).toBe(
         false,
       );
     });
->>>>>>> upstream/main
   });
 
   describe('validateToolParams', () => {
@@ -402,28 +378,6 @@ describe('ShellTool', () => {
       expect(secondConfirmation).toBe(false);
     });
 
-<<<<<<< HEAD
-  it('should pass GEMINI_CLI environment variable to executed commands', async () => {
-    config = {
-      getCoreTools: () => undefined,
-      getExcludeTools: () => undefined,
-      getDebugMode: () => false,
-      getGeminiClient: () => ({}) as GeminiClient,
-      getTargetDir: () => '.',
-      getSummarizeToolOutputConfig: () => ({}),
-    } as unknown as Config;
-    shellTool = new ShellTool(config);
-
-    const abortSignal = new AbortController().signal;
-    const result = await shellTool.execute(
-      { command: 'echo "$GEMINI_CLI"' },
-      abortSignal,
-    );
-
-    // Windows環境では環境変数が正しく展開されない場合があるため、
-    // より柔軟なマッチングを使用
-    expect(result.returnDisplay).toMatch(/^(\$GEMINI_CLI|1|"\\\$GEMINI_CLI")\r?\n$/);
-=======
     it('should skip confirmation if validation fails', async () => {
       const confirmation = await shellTool.shouldConfirmExecute(
         { command: '' },
@@ -465,6 +419,5 @@ describe('validateToolParams', () => {
       directory: 'test2',
     });
     expect(result).toContain('is not a registered workspace directory');
->>>>>>> upstream/main
   });
 });

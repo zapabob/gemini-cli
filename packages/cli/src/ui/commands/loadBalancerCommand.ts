@@ -12,8 +12,7 @@ import {
   updateLoadBalancerAlgorithm,
   resetLoadBalancerConfig,
   createDefaultEndpoint,
-} from '@google/gemini-cli-core';
-import { LoadBalancerService } from '@google/gemini-cli-core';
+ LoadBalancerService } from '@google/gemini-cli-core';
 
 /**
  * ロードバランサーコマンドのメイン処理
@@ -283,13 +282,13 @@ async function handleExecuteRequest(args: string[]): Promise<MessageActionReturn
  */
 async function handleUpdateAlgorithm(args: string[]): Promise<MessageActionReturn> {
   try {
-    if (args.length < 1) {
-      return {
-        type: 'message',
-        messageType: 'error',
+  if (args.length < 1) {
+    return {
+      type: 'message',
+      messageType: 'error',
         content: '❌ アルゴリズム名を指定してください\n\n使用例: `/loadbalancer update-algorithm round-robin`'
-      };
-    }
+    };
+  }
 
     const algorithm = args[0] as 'round-robin' | 'least-connections' | 'weighted' | 'ip-hash';
     const validAlgorithms = ['round-robin', 'least-connections', 'weighted', 'ip-hash'];

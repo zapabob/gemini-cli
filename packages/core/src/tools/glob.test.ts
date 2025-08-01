@@ -153,12 +153,6 @@ describe('GlobTool', () => {
 
       const filesListed = llmContent
         .trim()
-<<<<<<< HEAD
-        .split('\n');
-      // Windows環境ではパス区切り文字が異なるため、柔軟にマッチ
-      expect(filesListed[0]).toMatch(new RegExp(path.join(tempRootDir, 'newer\\.sortme').replace(/\\/g, '[\\\\/]')));
-      expect(filesListed[1]).toMatch(new RegExp(path.join(tempRootDir, 'older\\.sortme').replace(/\\/g, '[\\\\/]')));
-=======
         .split(/\r?\n/)
         .slice(1)
         .map((line) => line.trim())
@@ -171,7 +165,6 @@ describe('GlobTool', () => {
       expect(path.resolve(filesListed[1])).toBe(
         path.resolve(tempRootDir, 'older.sortme'),
       );
->>>>>>> upstream/main
     });
   });
 

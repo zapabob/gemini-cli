@@ -39,9 +39,7 @@ vi.mock('@google/gemini-cli-core', async (importOriginal) => {
   };
 });
 
-function regexEscape(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+
 
 describe('ideCommand', () => {
   let mockContext: CommandContext;
