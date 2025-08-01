@@ -230,9 +230,15 @@ describe('ReadFileTool', () => {
         offset: 10,
         limit: 5,
       };
-      mockProcessSingleFileContent.mockResolvedValue({
-        llmContent: 'some lines',
-        returnDisplay: 'Read text file (paginated)',
+
+      expect(await tool.execute(params, abortSignal)).toEqual({
+        llmContent: [
+          '[File content truncated: showing lines 6-8 of 20 total lines. Use offset/limit parameters to view more.]',
+          'Line 6',
+          'Line 7',
+          'Line 8',
+        ].join('\n'),
+        returnDisplay: 'Read lines 6-8 of 20 from paginated.txt',
       });
 
       await tool.execute(params, abortSignal);

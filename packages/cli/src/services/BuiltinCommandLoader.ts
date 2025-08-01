@@ -16,6 +16,7 @@ import { compressCommand } from '../ui/commands/compressCommand.js';
 import { copyCommand } from '../ui/commands/copyCommand.js';
 import { corgiCommand } from '../ui/commands/corgiCommand.js';
 import { docsCommand } from '../ui/commands/docsCommand.js';
+import { directoryCommand } from '../ui/commands/directoryCommand.js';
 import { editorCommand } from '../ui/commands/editorCommand.js';
 import { extensionsCommand } from '../ui/commands/extensionsCommand.js';
 import { helpCommand } from '../ui/commands/helpCommand.js';
@@ -34,6 +35,8 @@ import { loadBalancerCommand } from '../ui/commands/loadBalancerCommand.js';
 import { collaborativeAgentCommand } from '../ui/commands/collaborativeAgentCommand.js';
 import { enhancedCollaborativeCommand } from '../ui/commands/enhancedCollaborativeCommand.js';
 import { vimCommand } from '../ui/commands/vimCommand.js';
+import { setupGithubCommand } from '../ui/commands/setupGithubCommand.js';
+import { isGitHubRepository } from '../utils/gitUtils.js';
 
 /**
  * Loads the core, hard-coded slash commands that are an integral part
@@ -60,6 +63,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       copyCommand,
       corgiCommand,
       docsCommand,
+      directoryCommand,
       editorCommand,
       extensionsCommand,
       helpCommand,
@@ -78,6 +82,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       collaborativeAgentCommand,
       enhancedCollaborativeCommand,
       vimCommand,
+      ...(isGitHubRepository() ? [setupGithubCommand] : []),
     ];
 
     return allDefinitions.filter((cmd): cmd is SlashCommand => cmd !== null);
