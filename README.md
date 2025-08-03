@@ -24,6 +24,77 @@ With the Gemini CLI you can:
 - **🆕 GitHub Actions Integration**: Automated code analysis and review with PR comments
 - **🆕 Release Preparation System**: Automated deployment preparation and quality assurance
 - **🆕 Continuous Development Platform**: Enhanced development workflow and modular architecture
+- **🆕 Global Installation System**: One-command installation and management with advanced features
+- **🆕 Natural Language CLI**: Intuitive command interface with natural language processing
+- **🆕 Advanced Error Handling**: Comprehensive error classification and recovery systems
+
+## 🆕 Latest Features (v0.7.0)
+
+### Global Installation System
+One-command installation and management with advanced features:
+
+```bash
+# Quick global installation
+npm run install:global
+
+# Uninstall with cleanup
+npm run uninstall:global
+
+# Check current version
+npm run version:current
+
+# Update to latest version
+npm run update:auto
+```
+
+**Features:**
+- One-command global installation and uninstallation
+- Automatic version management and updates
+- Advanced error handling and recovery
+- Progress tracking and status monitoring
+- System information collection for troubleshooting
+
+### Natural Language CLI
+Intuitive command interface with natural language processing:
+
+```bash
+# Natural language commands
+gemini-natural "Webアプリケーションのユーザー認証システムを実装したい"
+
+# Interactive mode with natural language
+gemini-natural
+> このコードベースのセキュリティ問題を分析して
+```
+
+**Features:**
+- Natural language command processing
+- Interactive mode with conversational interface
+- Context-aware command interpretation
+- Multi-language support (Japanese/English)
+- Intelligent command suggestions
+
+### Advanced Error Handling
+Comprehensive error classification and recovery systems:
+
+```bash
+# Analyze system errors
+npm run error:analyze
+
+# Get system information
+npm run error:system-info
+
+# Demo progress tracking
+npm run progress:demo
+```
+
+**Error Categories:**
+- Installation Errors (権限、依存関係、ネットワーク)
+- Configuration Errors (設定ファイル、環境変数)
+- Runtime Errors (API制限、メモリ不足)
+- Network Errors (接続、タイムアウト)
+- Permission Errors (ファイル、ディレクトリ)
+- Dependency Errors (パッケージ、バージョン)
+- System Errors (OS、ハードウェア)
 
 ## 🆕 Enhanced Features
 
@@ -217,8 +288,8 @@ You have multiple options to install Gemini CLI.
    # Build the project
    npm run build
    
-   # Install globally
-   npm install -g .
+   # Install globally (NEW: One-command installation)
+   npm run install:global
    ```
 
 3. **Verify installation:**
@@ -226,6 +297,9 @@ You have multiple options to install Gemini CLI.
    ```bash
    gemini --version
    # Should output: 0.7.0
+   
+   # Test natural language CLI
+   gemini-natural --version
    ```
 
 ### With Homebrew
@@ -242,6 +316,24 @@ You have multiple options to install Gemini CLI.
    ```bash
    gemini
    ```
+
+### Global Installation (NEW)
+
+For advanced users who want one-command installation and management:
+
+```bash
+# Quick global installation with all features
+npm run install:global
+
+# Check installation status
+npm run version:current
+
+# Update to latest version
+npm run update:auto
+
+# Uninstall with cleanup
+npm run uninstall:global
+```
 
 ### Common Configuration steps
 
@@ -300,6 +392,21 @@ gemini
 > Give me a summary of all of the changes that went in yesterday
 ```
 
+### Natural Language Examples (NEW)
+
+Use the natural language CLI for more intuitive interactions:
+
+```bash
+# Natural language commands
+gemini-natural "このプロジェクトのアーキテクチャを分析して"
+
+# Interactive mode
+gemini-natural
+> セキュリティの問題点を教えて
+> パフォーマンスの改善点は？
+> テストカバレッジを向上させるには？
+```
+
 ### Next steps
 
 - Learn how to [contribute to or build from the source](CONTRIBUTING.md).
@@ -312,6 +419,19 @@ gemini
 ### Troubleshooting
 
 Head over to the [troubleshooting guide](docs/cli/troubleshooting.md) if you're having issues.
+
+For advanced error handling and system diagnostics:
+
+```bash
+# Analyze current errors
+npm run error:analyze
+
+# Get system information
+npm run error:system-info
+
+# Check for updates
+npm run update:check
+```
 
 ## Popular tasks
 
@@ -390,6 +510,13 @@ Use MCP servers to integrate your local system tools with your enterprise collab
 ### Uninstall
 
 Head over to the [Uninstall guide](docs/cli/uninstall.md) for uninstallation instructions.
+
+For global installation users:
+
+```bash
+# Clean uninstall with all cleanup
+npm run uninstall:global
+```
 
 ## Terms of Service and Privacy Notice
 
