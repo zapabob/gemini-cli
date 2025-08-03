@@ -101,6 +101,7 @@ export * from './services/loadBalancerService.js';
 
 // Export base tool definitions
 export * from './tools/tools.js';
+export * from './tools/tool-error.js';
 export * from './tools/tool-registry.js';
 
 // Export prompt logic
