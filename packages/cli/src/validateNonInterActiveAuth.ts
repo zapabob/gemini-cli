@@ -23,6 +23,7 @@ import { validateAuthMethod } from './config/auth.js';
 
 export async function validateNonInteractiveAuth(
   configuredAuthType: AuthType | undefined,
+  useExternalAuth: boolean | undefined,
   nonInteractiveConfig: Config,
 ) {
   const effectiveAuthType =
@@ -40,10 +41,12 @@ export async function validateNonInteractiveAuth(
     process.exit(1);
   }
 
-  const err = validateAuthMethod(effectiveAuthType);
-  if (err != null) {
-    console.error(err);
-    process.exit(1);
+  if (!useExternalAuth) {
+    const err = validateAuthMethod(effectiveAuthType);
+    if (err != null) {
+      console.error(err);
+      process.exit(1);
+    }
   }
 
   await nonInteractiveConfig.refreshAuth(effectiveAuthType);

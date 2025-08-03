@@ -5,9 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2025-07-29
+## [0.7.0] - 2025-08-01
 
 ### Added
+- **グローバルインストールシステム**: ワンコマンドインストールと管理機能
+  - グローバルインストールスクリプト (install-global.js)
+  - 自然言語CLIエントリーポイント (naturalLanguageCli.js)
+  - アンインストールスクリプト (uninstall-global.js)
+  - バージョン管理機能強化 (version-manager.js)
+  - 自動更新機能 (auto-updater.js)
+  - 詳細エラーハンドラー (error-handler.js)
+  - プログレスバー機能 (progress-bar.js)
+- **自然言語CLI**: 直感的なコマンドインターフェース
+  - 自然言語コマンド処理機能
+  - インタラクティブモードと会話型インターフェース
+  - コンテキスト認識コマンド解釈
+  - 多言語サポート (日本語/英語)
+  - インテリジェントコマンド提案
+- **高度なエラーハンドリング**: 包括的なエラー分類と復旧システム
+  - 7種類のエラー分類システム
+  - 自動エラー分析と診断
+  - システム情報収集機能
+  - エラー復旧ガイダンス
+  - プログレス追跡機能
+- **電源断保護機能**: システムの堅牢性向上
+  - 自動チェックポイント保存（5分間隔）
+  - 緊急保存機能（Ctrl+C対応）
+  - バックアップローテーション（最大10個）
+  - セッション管理（固有ID追跡）
+  - シグナルハンドラー対応（SIGINT, SIGTERM, SIGBREAK）
+  - 異常終了検出と自動データ保護
+  - 復旧システム（前回セッション復旧）
+  - データ整合性保証（JSON + Pickle複合保存）
 - **リリース準備システム**: 本番環境へのデプロイ準備機能
   - 自動ビルド検証とテスト実行
   - 依存関係の更新と互換性確認
@@ -28,6 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - テスト環境の設定最適化
   - エラーハンドリングの強化
   - テストカバレッジの向上
+- **CLIフレームワークの移行**: Commanderからyargsへの移行
+  - 型安全性の向上
+  - コマンド処理の改善
+  - エラーハンドリングの強化
 
 ### Changed
 - **開発環境の最適化**: 開発効率の向上
@@ -35,9 +68,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 依存関係の最適化
   - 開発ツールの更新
 - **ドキュメントの改善**: 新機能の説明追加
-  - README.mdの更新
+  - README.mdの大幅更新
   - インストール手順の改善
   - 使用例の拡充
+  - トラブルシューティングガイドの強化
+- **npmスクリプトの大幅拡張**: 14個の新しいスクリプト追加
+  - install:global, uninstall:global
+  - version:current, version:update, version:check, version:changelog
+  - update:check, update:auto, update:settings, update:history
+  - error:analyze, error:system-info
+  - progress:demo
 
 ### Technical Details
 - Node.js v22.14.0対応
@@ -45,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 全パッケージのビルド成功確認
 - 依存関係の最新化
 - 開発環境の安定化
+- セマンティックバージョニング対応
+- 24時間間隔自動更新チェック機能
 
 ## [0.6.1] - 2025-07-27
 
@@ -190,8 +232,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Windows 11環境での完全動作検証
 - 認証なしでも基本機能が動作することを確認
 - グローバルインストール機能の実装完了
-
-## [0.2.1] - 2025-07-26
 
 ## [0.2.1] - 2025-07-26
 
