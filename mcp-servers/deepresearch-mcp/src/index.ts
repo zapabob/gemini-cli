@@ -17,6 +17,7 @@ import { DeepResearchService } from './services/deepResearchService.js';
 import { WebSearchService } from './services/webSearchService.js';
 import { DocumentAnalysisService } from './services/documentAnalysisService.js';
 import { ResearchReportService } from './services/researchReportService.js';
+import { AdvancedResearchProtocolService } from './services/advancedResearchProtocolService.js';
 import { Logger } from './utils/logger.js';
 
 /**
@@ -29,6 +30,7 @@ class DeepresearchMCPServer {
   private webSearchService: WebSearchService;
   private documentAnalysisService: DocumentAnalysisService;
   private researchReportService: ResearchReportService;
+  private advancedResearchProtocolService: AdvancedResearchProtocolService;
   private logger: Logger;
 
   constructor() {
@@ -45,6 +47,7 @@ class DeepresearchMCPServer {
     this.webSearchService = new WebSearchService(this.logger);
     this.documentAnalysisService = new DocumentAnalysisService(this.logger);
     this.researchReportService = new ResearchReportService(this.logger);
+    this.advancedResearchProtocolService = new AdvancedResearchProtocolService(this.logger);
 
     this.setupToolHandlers();
     this.setupErrorHandling();
@@ -103,6 +106,86 @@ class DeepresearchMCPServer {
                   type: 'array',
                   items: { type: 'string' },
                   description: 'Exclude certain types of sources',
+                },
+              },
+              required: ['query'],
+            },
+          },
+          {
+            name: 'advanced_research_protocol',
+            description: 'Execute advanced research protocol v2 (Robust) based on structured research methodology',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                query: {
+                  type: 'string',
+                  description: 'The research query to investigate using advanced protocol',
+                },
+                max_depth: {
+                  type: 'number',
+                  description: 'Maximum depth of research (default: 3)',
+                  default: 3,
+                },
+                max_sources: {
+                  type: 'number',
+                  description: 'Maximum number of sources to analyze (default: 10)',
+                  default: 10,
+                },
+                strategy: {
+                  type: 'string',
+                  enum: ['comprehensive', 'focused', 'exploratory'],
+                  description: 'Research strategy to use',
+                  default: 'comprehensive',
+                },
+                include_academic: {
+                  type: 'boolean',
+                  description: 'Include academic sources in research',
+                  default: true,
+                },
+                recent_years: {
+                  type: 'number',
+                  description: 'Include recent sources within specified years',
+                  default: 5,
+                },
+                focus_domains: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Specific domains to focus on',
+                },
+                exclude_types: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Exclude certain types of sources',
+                },
+                enable_planning: {
+                  type: 'boolean',
+                  description: 'Enable research planning phase',
+                  default: true,
+                },
+                enable_structured_output: {
+                  type: 'boolean',
+                  description: 'Enable structured output format',
+                  default: true,
+                },
+                enable_evidence_tracking: {
+                  type: 'boolean',
+                  description: 'Enable evidence tracking',
+                  default: true,
+                },
+                enable_objective_analysis: {
+                  type: 'boolean',
+                  description: 'Enable objective analysis',
+                  default: true,
+                },
+                enable_dialogue_confirmation: {
+                  type: 'boolean',
+                  description: 'Enable dialogue confirmation',
+                  default: true,
+                },
+                enable_exception_handling: {
+                  type: 'boolean',
+                  description: 'Enable exception handling',
+                  default: true,
                 },
               },
               required: ['query'],
@@ -207,6 +290,9 @@ class DeepresearchMCPServer {
         switch (name) {
           case 'deep_research':
             return await this.deepResearchService.execute(args as any);
+
+          case 'advanced_research_protocol':
+            return await this.advancedResearchProtocolService.execute(args as any);
 
           case 'web_search':
             return await this.webSearchService.execute(args as any);
