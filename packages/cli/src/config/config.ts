@@ -22,10 +22,7 @@ import {
   FileDiscoveryService,
   TelemetryTarget,
   FileFilteringOptions,
-<<<<<<< HEAD
   MCPServerConfig,
-=======
->>>>>>> upstream/main
 } from '@google/gemini-cli-core';
 import { Settings } from './settings.js';
 
@@ -301,11 +298,8 @@ export async function loadCliConfig(
   const memoryImportFormat = settings.memoryImportFormat || 'tree';
 
   const ideMode = settings.ideMode ?? false;
-<<<<<<< HEAD
-=======
   const ideModeFeature =
     argv.ideModeFeature ?? settings.ideModeFeature ?? false;
->>>>>>> upstream/main
 
   const allExtensions = annotateActiveExtensions(
     extensions,
@@ -442,14 +436,11 @@ export async function loadCliConfig(
     embeddingModel: DEFAULT_GEMINI_EMBEDDING_MODEL,
     sandbox: sandboxConfig,
     targetDir: process.cwd(),
-<<<<<<< HEAD
-=======
     includeDirectories,
     loadMemoryFromIncludeDirectories:
       argv.loadMemoryFromIncludeDirectories ||
       settings.loadMemoryFromIncludeDirectories ||
       false,
->>>>>>> upstream/main
     debugMode,
     question: argv.promptInteractive || argv.prompt || '',
     fullContext: argv.allFiles || argv.all_files || false,
@@ -507,10 +498,7 @@ export async function loadCliConfig(
     noBrowser: !!process.env.NO_BROWSER,
     summarizeToolOutput: settings.summarizeToolOutput,
     ideMode,
-<<<<<<< HEAD
-=======
     ideModeFeature,
->>>>>>> upstream/main
   });
 }
 

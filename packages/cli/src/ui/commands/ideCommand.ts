@@ -115,7 +115,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         Date.now(),
       );
       const result = await installer.install();
-      if (result.success) {
+      if (result.success && config) {
         config.setIdeMode(true);
         context.services.settings.setValue(SettingScope.User, 'ideMode', true);
       }
@@ -135,9 +135,12 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', true);
-      await config.setIdeModeAndSyncConnection(true);
+      if (config) {
+        await config.setIdeModeAndSyncConnection(true);
+      }
       configAny.setIdeMode?.(true);
       configAny.setIdeClientConnected?.();
+      const ideClient = configAny.getIdeClient();
       const { messageType, content } = getIdeStatusMessage(ideClient);
       context.ui.addItem(
         {
@@ -155,9 +158,12 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', false);
-      await config.setIdeModeAndSyncConnection(false);
+      if (config) {
+        await config.setIdeModeAndSyncConnection(false);
+      }
       configAny.setIdeMode?.(false);
       configAny.setIdeClientDisconnected?.();
+      const ideClient = configAny.getIdeClient();
       const { messageType, content } = getIdeStatusMessage(ideClient);
       context.ui.addItem(
         {
