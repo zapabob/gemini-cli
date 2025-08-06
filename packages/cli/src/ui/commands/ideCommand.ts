@@ -10,6 +10,7 @@ import { glob } from 'glob';
 import child_process from 'child_process';
 import {
   Config,
+  DetectedIde,
   IDEConnectionStatus,
   getIdeDisplayName,
   getIdeInstaller,
@@ -56,7 +57,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
           return {
             type: 'message',
             messageType: 'info',
-            content: `🟢 Connected`,
+            content: `🟢 Connected to ${configAny.getIdeClient().getDetectedIdeDisplayName()}`,
           } as const;
         case IDEConnectionStatus.Connecting:
           return {
@@ -81,7 +82,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
 
   const installCommand: SlashCommand = {
     name: 'install',
-    description: `install required IDE companion ${getIdeDisplayName(currentIDE)} extension `,
+    description: `install required IDE companion for ${configAny.getIdeClient().getDetectedIdeDisplayName()}`,
     kind: CommandKind.BUILT_IN,
     action: async (context) => {
       const installer = getIdeInstaller(currentIDE);
@@ -89,7 +90,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         context.ui.addItem(
           {
             type: 'error',
-            text: 'No installer available for your configured IDE.',
+            text: `No installer is available for ${configAny.getIdeClient().getDetectedIdeDisplayName()}. Please install the IDE companion manually from its marketplace.`,
           },
           Date.now(),
         );
@@ -98,7 +99,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
       context.ui.addItem(
         {
           type: 'info',
-          text: `Installing IDE companion extension...`,
+          text: `Installing IDE companion...`,
         },
         Date.now(),
       );
@@ -143,7 +144,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
       kind: CommandKind.BUILT_IN,
       action: async (context) => {
         // VSIXファイルの探索とインストール処理
-        const bundleDir = path.dirname(fileURLToPath(import.meta.url));
+        const bundleDir = path.dirname(fileURLToPath(new URL(import.meta.url)));
         let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
         if (vsixFiles.length === 0) {
           const devPath = path.join(
