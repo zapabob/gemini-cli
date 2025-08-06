@@ -5,9 +5,9 @@
  */
 
 import * as vscode from 'vscode';
-import { IDEServer } from './ide-server';
+import { IDEServer } from './ide-server.js';
 import { DiffContentProvider, DiffManager } from './diff-manager.js';
-import { createLogger } from './utils/logger';
+import { createLogger } from './utils/logger.js';
 import { activate as activateCursorExtension } from './cursorExtension.js';
 
 const INFO_MESSAGE_SHOWN_KEY = 'geminiCliInfoMessageShown';
