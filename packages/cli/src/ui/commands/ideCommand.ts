@@ -14,6 +14,7 @@ import {
   IDEConnectionStatus,
   getIdeDisplayName,
   getIdeInstaller,
+  IdeClient,
 } from '@google/gemini-cli-core';
 import {
   CommandContext,
@@ -26,6 +27,35 @@ import { SettingScope } from '../../config/settings.js';
 // VSCode専用の定数（独自拡張用）
 const VSCODE_COMMAND = 'code';
 const VSCODE_COMPANION_EXTENSION_FOLDER = 'vscode-ide-companion';
+
+function getIdeStatusMessage(ideClient: IdeClient): {
+  messageType: 'info' | 'error';
+  content: string;
+} {
+  const connection = ideClient.getConnectionStatus();
+  switch (connection.status) {
+    case IDEConnectionStatus.Connected:
+      return {
+        messageType: 'info',
+        content: `🟢 Connected to ${ideClient.getDetectedIdeDisplayName()}`,
+      };
+    case IDEConnectionStatus.Connecting:
+      return {
+        messageType: 'info',
+        content: `🟡 Connecting...`,
+      };
+    default: {
+      let content = `🔴 Disconnected`;
+      if (connection?.details) {
+        content += `: ${connection.details}`;
+      }
+      return {
+        messageType: 'error',
+        content,
+      };
+    }
+  }
+}
 
 export const ideCommand = (config: Config | null): SlashCommand | null => {
   // Configの拡張メソッド許容のためany型キャスト（型安全にできない設計）
@@ -50,33 +80,14 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     name: 'status',
     description: 'check status of IDE integration',
     kind: CommandKind.BUILT_IN,
-    action: (_context: CommandContext): SlashCommandActionReturn => {
-      const connection = configAny.getIdeClient().getConnectionStatus();
-      switch (connection?.status) {
-        case IDEConnectionStatus.Connected:
-          return {
-            type: 'message',
-            messageType: 'info',
-            content: `🟢 Connected to ${configAny.getIdeClient().getDetectedIdeDisplayName()}`,
-          } as const;
-        case IDEConnectionStatus.Connecting:
-          return {
-            type: 'message',
-            messageType: 'info',
-            content: `🟡 Connecting...`,
-          } as const;
-        default: {
-          let content = `🔴 Disconnected`;
-          if (connection?.details) {
-            content += `: ${connection.details}`;
-          }
-          return {
-            type: 'message',
-            messageType: 'error',
-            content,
-          } as const;
-        }
-      }
+    action: (): SlashCommandActionReturn => {
+      const ideClient = configAny.getIdeClient();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      return {
+        type: 'message',
+        messageType,
+        content,
+      } as const;
     },
   };
 
@@ -104,6 +115,10 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         Date.now(),
       );
       const result = await installer.install();
+      if (result.success) {
+        config.setIdeMode(true);
+        context.services.settings.setValue(SettingScope.User, 'ideMode', true);
+      }
       context.ui.addItem(
         {
           type: result.success ? 'info' : 'error',
@@ -120,8 +135,17 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', true);
+      await config.setIdeModeAndSyncConnection(true);
       configAny.setIdeMode?.(true);
       configAny.setIdeClientConnected?.();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      context.ui.addItem(
+        {
+          type: messageType,
+          text: content,
+        },
+        Date.now(),
+      );
     },
   };
 
@@ -131,8 +155,17 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', false);
+      await config.setIdeModeAndSyncConnection(false);
       configAny.setIdeMode?.(false);
       configAny.setIdeClientDisconnected?.();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      context.ui.addItem(
+        {
+          type: messageType,
+          text: content,
+        },
+        Date.now(),
+      );
     },
   };
 
