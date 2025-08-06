@@ -17,8 +17,7 @@ export type PackageJson = BasePackageJson & {
   };
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = process.cwd();
 
 let packageJson: PackageJson | undefined;
 

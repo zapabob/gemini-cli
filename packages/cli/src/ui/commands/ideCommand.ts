@@ -10,9 +10,11 @@ import { glob } from 'glob';
 import child_process from 'child_process';
 import {
   Config,
+  DetectedIde,
   IDEConnectionStatus,
   getIdeDisplayName,
   getIdeInstaller,
+  IdeClient,
 } from '@google/gemini-cli-core';
 import {
   CommandContext,
@@ -25,6 +27,35 @@ import { SettingScope } from '../../config/settings.js';
 // VSCode専用の定数（独自拡張用）
 const VSCODE_COMMAND = 'code';
 const VSCODE_COMPANION_EXTENSION_FOLDER = 'vscode-ide-companion';
+
+function getIdeStatusMessage(ideClient: IdeClient): {
+  messageType: 'info' | 'error';
+  content: string;
+} {
+  const connection = ideClient.getConnectionStatus();
+  switch (connection.status) {
+    case IDEConnectionStatus.Connected:
+      return {
+        messageType: 'info',
+        content: `🟢 Connected to ${ideClient.getDetectedIdeDisplayName()}`,
+      };
+    case IDEConnectionStatus.Connecting:
+      return {
+        messageType: 'info',
+        content: `🟡 Connecting...`,
+      };
+    default: {
+      let content = `🔴 Disconnected`;
+      if (connection?.details) {
+        content += `: ${connection.details}`;
+      }
+      return {
+        messageType: 'error',
+        content,
+      };
+    }
+  }
+}
 
 export const ideCommand = (config: Config | null): SlashCommand | null => {
   // Configの拡張メソッド許容のためany型キャスト（型安全にできない設計）
@@ -49,39 +80,20 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     name: 'status',
     description: 'check status of IDE integration',
     kind: CommandKind.BUILT_IN,
-    action: (_context: CommandContext): SlashCommandActionReturn => {
-      const connection = configAny.getIdeClient().getConnectionStatus();
-      switch (connection?.status) {
-        case IDEConnectionStatus.Connected:
-          return {
-            type: 'message',
-            messageType: 'info',
-            content: `🟢 Connected`,
-          } as const;
-        case IDEConnectionStatus.Connecting:
-          return {
-            type: 'message',
-            messageType: 'info',
-            content: `🟡 Connecting...`,
-          } as const;
-        default: {
-          let content = `🔴 Disconnected`;
-          if (connection?.details) {
-            content += `: ${connection.details}`;
-          }
-          return {
-            type: 'message',
-            messageType: 'error',
-            content,
-          } as const;
-        }
-      }
+    action: (): SlashCommandActionReturn => {
+      const ideClient = configAny.getIdeClient();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      return {
+        type: 'message',
+        messageType,
+        content,
+      } as const;
     },
   };
 
   const installCommand: SlashCommand = {
     name: 'install',
-    description: `install required IDE companion ${getIdeDisplayName(currentIDE)} extension `,
+    description: `install required IDE companion for ${configAny.getIdeClient().getDetectedIdeDisplayName()}`,
     kind: CommandKind.BUILT_IN,
     action: async (context) => {
       const installer = getIdeInstaller(currentIDE);
@@ -89,7 +101,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         context.ui.addItem(
           {
             type: 'error',
-            text: 'No installer available for your configured IDE.',
+            text: `No installer is available for ${configAny.getIdeClient().getDetectedIdeDisplayName()}. Please install the IDE companion manually from its marketplace.`,
           },
           Date.now(),
         );
@@ -98,11 +110,15 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
       context.ui.addItem(
         {
           type: 'info',
-          text: `Installing IDE companion extension...`,
+          text: `Installing IDE companion...`,
         },
         Date.now(),
       );
       const result = await installer.install();
+      if (result.success && config) {
+        config.setIdeMode(true);
+        context.services.settings.setValue(SettingScope.User, 'ideMode', true);
+      }
       context.ui.addItem(
         {
           type: result.success ? 'info' : 'error',
@@ -119,8 +135,20 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', true);
+      if (config) {
+        await config.setIdeModeAndSyncConnection(true);
+      }
       configAny.setIdeMode?.(true);
       configAny.setIdeClientConnected?.();
+      const ideClient = configAny.getIdeClient();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      context.ui.addItem(
+        {
+          type: messageType,
+          text: content,
+        },
+        Date.now(),
+      );
     },
   };
 
@@ -130,8 +158,20 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', false);
+      if (config) {
+        await config.setIdeModeAndSyncConnection(false);
+      }
       configAny.setIdeMode?.(false);
       configAny.setIdeClientDisconnected?.();
+      const ideClient = configAny.getIdeClient();
+      const { messageType, content } = getIdeStatusMessage(ideClient);
+      context.ui.addItem(
+        {
+          type: messageType,
+          text: content,
+        },
+        Date.now(),
+      );
     },
   };
 
@@ -143,11 +183,12 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
       kind: CommandKind.BUILT_IN,
       action: async (context) => {
         // VSIXファイルの探索とインストール処理
-        const bundleDir = path.dirname(fileURLToPath(import.meta.url));
+        const bundleDir = require.main?.filename 
+          ? path.dirname(path.dirname(require.main.filename))
+          : process.cwd();
         let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
         if (vsixFiles.length === 0) {
           const devPath = path.join(
-            bundleDir,
             '..', '..', '..', '..', '..',
             VSCODE_COMPANION_EXTENSION_FOLDER,
             '*.vsix',

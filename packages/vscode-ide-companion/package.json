@@ -45,6 +45,11 @@
     "onStartupFinished"
   ],
   "contributes": {
+    "languages": [
+      {
+        "id": "gemini-diff-editable"
+      }
+    ],
     "commands": [
       {
         "command": "cursor.subagent.codeReview",

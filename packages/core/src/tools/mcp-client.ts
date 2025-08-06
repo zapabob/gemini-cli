@@ -371,8 +371,9 @@ export async function connectAndDiscover(
 ): Promise<void> {
   updateMCPServerStatus(mcpServerName, MCPServerStatus.CONNECTING);
 
+  let mcpClient: Client | undefined;
   try {
-    const mcpClient = await connectToMcpServer(
+    mcpClient = await connectToMcpServer(
       mcpServerName,
       mcpServerConfig,
       debugMode,
@@ -411,6 +412,9 @@ export async function connectAndDiscover(
       throw error;
     }
   } catch (error) {
+    if (mcpClient) {
+      mcpClient.close();
+    }
     console.error(
       `Error connecting to MCP server '${mcpServerName}': ${getErrorMessage(
         error,
@@ -441,7 +445,8 @@ export async function discoverTools(
     const tool = await mcpCallableTool.tool();
 
     if (!Array.isArray(tool.functionDeclarations)) {
-      throw new Error(`Server did not return valid function declarations.`);
+      // This is a valid case for a prompt-only server
+      return [];
     }
 
     const discoveredTools: DiscoveredMCPTool[] = [];
@@ -472,7 +477,17 @@ export async function discoverTools(
     }
     return discoveredTools;
   } catch (error) {
-    throw new Error(`Error discovering tools: ${error}`);
+    if (
+      error instanceof Error &&
+      !error.message?.includes('Method not found')
+    ) {
+      console.error(
+        `Error discovering tools from ${mcpServerName}: ${getErrorMessage(
+          error,
+        )}`,
+      );
+    }
+    return [];
   }
 }
 
@@ -487,8 +502,11 @@ export async function discoverPrompts(
   mcpServerName: string,
   mcpClient: Client,
   promptRegistry: PromptRegistry,
-): Promise<void> {
+): Promise<Prompt[]> {
   try {
+    // Only request prompts if the server supports them.
+    if (mcpClient.getServerCapabilities()?.prompts == null) return [];
+
     const response = await mcpClient.request(
       { method: 'prompts/list', params: {} },
       ListPromptsResultSchema,
@@ -502,6 +520,7 @@ export async function discoverPrompts(
           invokeMcpPrompt(mcpServerName, mcpClient, prompt.name, params),
       });
     }
+    return response.prompts;
   } catch (error) {
     // It's okay if this fails, not all servers will have prompts.
     // Don't log an error if the method is not found, which is a common case.
@@ -515,6 +534,7 @@ export async function discoverPrompts(
         )}`,
       );
     }
+    return [];
   }
 }
 
