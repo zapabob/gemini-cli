@@ -29,7 +29,12 @@ With the Gemini CLI you can:
 - **🆕 Natural Language CLI**: Intuitive command interface with natural language processing
 - **🆕 Advanced Error Handling**: Comprehensive error classification and recovery systems
 
-## 🆕 Latest Features (v0.7.0)
+## 🆕 Latest Features (v0.7.0) - Upstream Integration Complete
+
+**🆕 Upstream Integration**: Successfully integrated latest upstream updates while preserving unique features
+**🆕 Enhanced IDE Integration**: Improved VSCode companion with latest upstream features
+**🆕 Advanced Configuration**: Unified configuration system with upstream compatibility
+**🆕 Strategic Merge**: Preserved custom features while adopting latest improvements
 
 ### Global Installation System
 One-command installation and management with advanced features:

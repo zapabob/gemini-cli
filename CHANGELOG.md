@@ -5,7 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2025-08-01
+## [0.7.0] - 2025-08-06
+
+### Added
+- **🆕 Upstream Integration**: Successfully integrated latest upstream updates while preserving unique features
+  - Strategic merge of upstream/main with custom enhancements
+  - Preserved VSCode companion functionality with latest improvements
+  - Unified configuration system with upstream compatibility
+  - Enhanced IDE integration with latest upstream features
+  - Maintained custom version management (0.7.0) while adopting upstream improvements
+- **🆕 Enhanced IDE Integration**: Improved VSCode companion with latest upstream features
+  - Latest getIdeStatusMessage functionality integration
+  - Improved IDE connection management
+  - Enhanced configuration parameters
+  - Better error handling and recovery systems
+- **🆕 Advanced Configuration**: Unified configuration system with upstream compatibility
+  - loadMemoryFromIncludeDirectories feature integration
+  - Enhanced ConfigParameters interface
+  - Improved IDE client management
+  - Better telemetry and logging integration
+- **🆕 Strategic Merge**: Preserved custom features while adopting latest improvements
+  - Maintained custom VSCode VSIX installation functionality
+  - Preserved unique IDE integration methods
+  - Kept custom configuration system
+  - Retained custom version management approach
 
 ### Added
 - **グローバルインストールシステム**: ワンコマンドインストールと管理機能
