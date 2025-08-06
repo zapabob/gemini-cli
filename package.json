@@ -78,6 +78,7 @@
     "@types/mime-types": "^3.0.1",
     "@types/minimatch": "^5.1.2",
     "@types/mock-fs": "^4.13.4",
+    "@types/picomatch": "^4.0.2",
     "@types/shell-quote": "^1.7.5",
     "@vitest/coverage-v8": "^3.1.1",
     "concurrently": "^9.2.0",
@@ -104,6 +105,7 @@
   "dependencies": {
     "@vscode/vsce": "^3.6.0",
     "fast-uri": "^3.0.6",
+    "fdir": "^6.4.6",
     "marked": "^16.1.1",
     "xml2js": "^0.6.2"
   }

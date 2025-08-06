@@ -223,8 +223,8 @@ JSON形式で回答してください。
 `;
 
     try {
-      const response = await this.geminiClient.generateText({ prompt });
-      const selection = JSON.parse(response.text);
+      const response = await this.geminiClient.generateText(prompt);
+      const selection = JSON.parse(response);
       
       const selectedSubagents = availableSubagents.filter(s => 
         selection.selectedSubagents.includes(s.id)
@@ -270,20 +270,12 @@ JSON形式で回答してください。
           context
         }));
         
-        const results: SubagentResult[] = [];
-        for (const task of parallelTasks) {
-          const subagent = selection.selectedSubagents.find(s => s.id === task.subagentId);
-          if (subagent) {
-            const result = await this.executor.executeTask(subagent, {
-              id: task.subagentId,
-              task: task.task,
-              context: task.context,
-              priority: 'medium'
-            });
-            results.push(result);
-          }
-        }
-        return results;
+        return await this.executor.executeParallel(selection.selectedSubagents, {
+          task: parallelTasks,
+          coordinationPlan: selection.coordinationPlan,
+          timeout: this.config.timeout,
+          onProgress: this.handleProgress.bind(this)
+        });
       }
       
       // 順次実行
@@ -291,13 +283,13 @@ JSON形式で回答してください。
         for (const [subagentId, subtask] of selection.taskBreakdown) {
           const subagent = selection.selectedSubagents.find(s => s.id === subagentId);
           if (subagent) {
-            const result = await this.executor.executeTask(subagent, {
-              id: subagentId,
+            const result = await this.executor.executeSequential([subagent], {
               task: subtask,
               context,
-              priority: 'medium'
+              timeout: this.config.timeout,
+              onProgress: this.handleProgress.bind(this)
             });
-            results.push(result);
+            results.push(...result);
           }
         }
         return results;
@@ -338,33 +330,25 @@ JSON形式で回答してください。
         context
       }));
       
-      const results: SubagentResult[] = [];
-      for (const task of parallelTasks) {
-        const subagent = selection.selectedSubagents.find(s => s.id === task.subagentId);
-        if (subagent) {
-          const result = await this.executor.executeTask(subagent, {
-            id: task.subagentId,
-            task: task.task,
-            context: task.context,
-            priority: 'medium'
-          });
-          results.push(result);
-        }
-      }
-      return results;
+      return await this.executor.executeParallel(selection.selectedSubagents, {
+        tasks: parallelTasks,
+        coordinationPlan: selection.coordinationPlan,
+        timeout: this.config.timeout,
+        onProgress: this.handleProgress.bind(this)
+      });
     }
     
     if (strategy === 'sequential') {
       for (const [subagentId, subtask] of selection.taskBreakdown) {
         const subagent = selection.selectedSubagents.find(s => s.id === subagentId);
         if (subagent) {
-          const result = await this.executor.executeTask(subagent, {
-            id: subagentId,
+          const result = await this.executor.executeSequential([subagent], {
             task: subtask,
             context,
-            priority: 'medium'
+            timeout: this.config.timeout,
+            onProgress: this.handleProgress.bind(this)
           });
-          results.push(result);
+          results.push(...result);
         }
       }
       return results;
@@ -396,19 +380,12 @@ JSON形式で回答してください。
         return { subagentId, task: subtask || originalTask, context };
       });
       
-      const groupResults: SubagentResult[] = [];
-      for (const task of groupTasks) {
-        const subagent = groupSubagents.find(s => s.id === task.subagentId);
-        if (subagent) {
-          const result = await this.executor.executeTask(subagent, {
-            id: task.subagentId,
-            task: task.task,
-            context: task.context,
-            priority: 'medium'
-          });
-          groupResults.push(result);
-        }
-      }
+      const groupResults = await this.executor.executeParallel(groupSubagents, {
+        tasks: groupTasks,
+        coordinationPlan: selection.coordinationPlan,
+        timeout: this.config.timeout,
+        onProgress: this.handleProgress.bind(this)
+      });
       
       results.push(...groupResults);
     }
@@ -441,7 +418,7 @@ JSON形式で回答してください。
 
     try {
       const response = await this.geminiClient.generateText({ prompt });
-      const strategy = response.text.trim().toLowerCase();
+      const strategy = response.trim().toLowerCase();
       
       if (['parallel', 'sequential', 'hybrid'].includes(strategy)) {
         return strategy as 'parallel' | 'sequential' | 'hybrid';
@@ -480,13 +457,16 @@ JSON形式で回答してください。
 `;
 
     try {
-      const response = await this.geminiClient.generateText({ prompt });
+      const integratedContent = await this.geminiClient.generateContent(prompt);
       
       return {
-        finalResult: response.text,
-        qualityScore: 0.8,
-        confidenceLevel: 0.7,
-        recommendations: []
+        content: integratedContent,
+        metadata: {
+          originalTask,
+          subagentCount: results.length,
+          analysis: analysis,
+          integrationMethod: 'AI_autonomous'
+        }
       };
     } catch (error) {
       console.error(`❌ AI結果統合エラー: ${error}`);
@@ -502,17 +482,19 @@ JSON形式で回答してください。
     executionTime: number,
     subagentsUsed: number
   ): CollaborationMetrics {
-    const successCount = results.filter(r => r.status === 'success').length;
+    const successCount = results.filter(r => r.success).length;
     const totalCount = results.length;
     const successRate = totalCount > 0 ? (successCount / totalCount) * 100 : 0;
     
     return {
-      totalSteps: totalCount,
-      successfulSteps: successCount,
-      totalTokensUsed: results.reduce((total, r) => total + (r.tokensUsed || 0), 0),
-      averageResponseTime: executionTime / totalCount,
-      subagentsUsed: subagentsUsed,
-      errorRate: totalCount > 0 ? ((totalCount - successCount) / totalCount) * 100 : 0
+      totalSubagents: subagentsUsed,
+      successfulSubagents: successCount,
+      failedSubagents: totalCount - successCount,
+      successRate,
+      averageExecutionTime: executionTime / totalCount,
+      totalExecutionTime: executionTime,
+      coordinationEfficiency: this.calculateCoordinationEfficiency(results),
+      resourceUtilization: this.calculateResourceUtilization(results, executionTime)
     };
   }
 
@@ -522,13 +504,13 @@ JSON形式で回答してください。
   private calculateCoordinationEfficiency(results: SubagentResult[]): number {
     if (results.length === 0) return 0;
     
-    const successfulResults = results.filter(r => r.status === 'success');
-          const coordinationScore = successfulResults.reduce((score, result) => {
-        // 結果の品質と協調度を評価
-        const qualityScore = result.qualityScore || 0.5;
-        const confidenceScore = result.confidenceLevel || 0.5;
-        return score + (qualityScore + confidenceScore) / 2;
-      }, 0);
+    const successfulResults = results.filter(r => r.success);
+    const coordinationScore = successfulResults.reduce((score, result) => {
+      // 結果の品質と協調度を評価
+      const qualityScore = result.quality || 0.5;
+      const coordinationScore = result.coordination || 0.5;
+      return score + (qualityScore + coordinationScore) / 2;
+    }, 0);
     
     return coordinationScore / results.length;
   }
@@ -556,113 +538,57 @@ JSON形式で回答してください。
       {
         id: 'code_reviewer',
         name: 'コードレビュアー',
-        description: 'コードレビュー専門家',
         specialty: 'code_review' as SubagentSpecialty,
-        prompt: 'あなたはコードレビュー専門家です。コードの品質、セキュリティ、パフォーマンスを評価してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'コードレビュー専門家',
         isActive: true
       },
       {
         id: 'debugger',
         name: 'デバッガー',
-        description: 'デバッグ専門家',
         specialty: 'debugging' as SubagentSpecialty,
-        prompt: 'あなたはデバッグ専門家です。エラーの原因を特定し、解決策を提案してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'デバッグ専門家',
         isActive: true
       },
       {
         id: 'data_analyst',
         name: 'データアナリスト',
-        description: 'データ分析専門家',
         specialty: 'data_analysis' as SubagentSpecialty,
-        prompt: 'あなたはデータ分析専門家です。データの可視化と統計解析を行ってください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'データ分析専門家',
         isActive: true
       },
       {
         id: 'security_auditor',
         name: 'セキュリティ監査官',
-        description: 'セキュリティ監査専門家',
         specialty: 'security_audit' as SubagentSpecialty,
-        prompt: 'あなたはセキュリティ監査専門家です。セキュリティ脆弱性を特定し、対策を提案してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'セキュリティ監査専門家',
         isActive: true
       },
       {
         id: 'performance_optimizer',
         name: 'パフォーマンス最適化者',
-        description: 'パフォーマンス最適化専門家',
         specialty: 'performance_optimization' as SubagentSpecialty,
-        prompt: 'あなたはパフォーマンス最適化専門家です。コードの最適化とパフォーマンス向上を提案してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'パフォーマンス最適化専門家',
         isActive: true
       },
       {
         id: 'documentation_writer',
         name: 'ドキュメント作成者',
-        description: 'ドキュメント作成専門家',
         specialty: 'documentation' as SubagentSpecialty,
-        prompt: 'あなたはドキュメント作成専門家です。技術文書とユーザーガイドを作成してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'ドキュメント作成専門家',
         isActive: true
       },
       {
         id: 'tester',
         name: 'テスター',
-        description: 'テスト専門家',
         specialty: 'testing' as SubagentSpecialty,
-        prompt: 'あなたはテスト専門家です。テスト戦略と品質保証を提案してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'テスト専門家',
         isActive: true
       },
       {
         id: 'architect',
         name: 'アーキテクト',
-        description: 'アーキテクチャ設計専門家',
         specialty: 'architecture_design' as SubagentSpecialty,
-        prompt: 'あなたはアーキテクチャ設計専門家です。スケーラブルで保守性の高いシステム設計を提案してください。',
-        maxTokens: 4000,
-        temperature: 0.7,
-        status: 'idle',
-        createdAt: new Date().toISOString(),
-        taskHistory: [],
-        customTools: [],
+        description: 'アーキテクチャ設計専門家',
         isActive: true
       }
     ];
@@ -754,13 +680,13 @@ JSON形式で回答してください。
    */
   private convertToTaskAnalysis(analysis: AIAutonomousTaskAnalysis): TaskAnalysis {
     return {
-      originalTask: analysis.originalTask,
-      requiredSpecialties: analysis.requiredSpecialties,
       complexity: analysis.complexity,
-      estimatedTime: analysis.estimatedTime,
-      requiredSteps: analysis.subtasks.length,
-      riskFactors: [analysis.riskLevel],
-      successCriteria: ['タスク完了', '品質保証', '時間内完了']
+      requiredSpecialties: analysis.requiredSpecialties,
+      estimatedSubagents: analysis.estimatedSubagents,
+      parallelizable: analysis.parallelizable,
+      dependencies: analysis.dependencies,
+      riskLevel: analysis.riskLevel,
+      estimatedTime: analysis.estimatedTime
     };
   }
 } 
