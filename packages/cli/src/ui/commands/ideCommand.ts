@@ -144,11 +144,12 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
       kind: CommandKind.BUILT_IN,
       action: async (context) => {
         // VSIXファイルの探索とインストール処理
-        const bundleDir = path.dirname(fileURLToPath(new URL(import.meta.url)));
+        const bundleDir = require.main?.filename 
+          ? path.dirname(path.dirname(require.main.filename))
+          : process.cwd();
         let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
         if (vsixFiles.length === 0) {
           const devPath = path.join(
-            bundleDir,
             '..', '..', '..', '..', '..',
             VSCODE_COMPANION_EXTENSION_FOLDER,
             '*.vsix',

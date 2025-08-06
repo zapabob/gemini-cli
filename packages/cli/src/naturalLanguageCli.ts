@@ -20,7 +20,7 @@ export async function main() {
 }
 
 // CLIが直接実行された場合の処理
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   main().catch((error) => {
     console.error('❌ 予期しないエラー:', error);
     process.exit(1);
