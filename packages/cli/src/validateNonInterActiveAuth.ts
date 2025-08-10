@@ -28,11 +28,13 @@ export async function validateNonInteractiveAuth(
 ) {
   const effectiveAuthType =
     configuredAuthType ||
-    (process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true'
-      ? AuthType.USE_VERTEX_AI
-      : process.env.GEMINI_API_KEY
-        ? AuthType.USE_GEMINI
-        : undefined);
+    (process.env.GOOGLE_GENAI_USE_GCA === 'true'
+      ? AuthType.LOGIN_WITH_GOOGLE
+      : process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true'
+        ? AuthType.USE_VERTEX_AI
+        : process.env.GEMINI_API_KEY
+          ? AuthType.USE_GEMINI
+          : undefined);
 
   if (!effectiveAuthType) {
     console.error(

@@ -1,45 +1,31 @@
 {
-  "name": "@google/gemini-cli-vscode-ide-companion",
+  "name": "gemini-cli-vscode-ide-companion",
   "displayName": "Gemini CLI Companion",
-  "description": "Enable Gemini CLI with direct access to your VS Code workspace with Cursor integration",
-  "version": "0.3.0",
+  "description": "Enable Gemini CLI with direct access to your VS Code workspace.",
+  "version": "0.0.1",
   "publisher": "google",
   "icon": "assets/icon.png",
-  "main": "./dist/extension.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/google/gemini-cli.git"
-  },
-  "scripts": {
-    "build": "npm run compile",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src",
-    "watch": "node esbuild.js --watch",
-    "package": "@vscode/vsce package",
-    "publish": "@vscode/vsce publish"
+    "url": "https://github.com/google-gemini/gemini-cli.git",
+    "directory": "packages/vscode-ide-companion"
   },
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.99.0"
   },
+  "license": "LICENSE",
+  "preview": true,
   "categories": [
-    "Other"
+    "AI"
   ],
   "keywords": [
+    "gemini-cli",
+    "gemini cli",
     "gemini",
-    "ai",
-    "cursor",
-    "subagents",
-    "parallel-execution",
-    "code-review",
-    "debugging",
-    "optimization",
-    "security",
-    "ai-orchestration",
-    "ai-driven-development",
-    "intelligent-code-generation",
-    "predictive-analysis",
-    "context-aware-suggestions"
+    "gemini code",
+    "cli",
+    "ide integration",
+    "ide companion"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -52,304 +38,94 @@
     ],
     "commands": [
       {
-        "command": "cursor.subagent.codeReview",
-        "title": "サブエージェント: コードレビュー",
-        "category": "Cursor Subagents"
+        "command": "gemini.diff.accept",
+        "title": "Gemini CLI: Accept Diff",
+        "icon": "$(check)"
       },
       {
-        "command": "cursor.subagent.debug",
-        "title": "サブエージェント: デバッグ",
-        "category": "Cursor Subagents"
+        "command": "gemini.diff.cancel",
+        "title": "Gemini CLI: Close Diff Editor",
+        "icon": "$(close)"
       },
       {
-        "command": "cursor.subagent.optimize",
-        "title": "サブエージェント: 最適化",
-        "category": "Cursor Subagents"
+        "command": "gemini-cli.runGeminiCLI",
+        "title": "Gemini CLI: Run"
       },
       {
-        "command": "cursor.subagent.security",
-        "title": "サブエージェント: セキュリティ監査",
-        "category": "Cursor Subagents"
-      },
-      {
-        "command": "cursor.subagent.parallel",
-        "title": "サブエージェント: 並列実行",
-        "category": "Cursor Subagents"
-      },
-      {
-        "command": "cursor.subagent.status",
-        "title": "サブエージェント: 状態確認",
-        "category": "Cursor Subagents"
-      },
-      {
-        "command": "cursor.ai.drivenDevelopment",
-        "title": "AIドリブン開発",
-        "category": "Cursor AI Orchestration"
-      },
-      {
-        "command": "cursor.ai.intelligentGeneration",
-        "title": "インテリジェントコード生成",
-        "category": "Cursor AI Orchestration"
-      },
-      {
-        "command": "cursor.ai.predictiveAnalysis",
-        "title": "予測分析",
-        "category": "Cursor AI Orchestration"
-      },
-      {
-        "command": "cursor.ai.contextAwareSuggestions",
-        "title": "コンテキスト認識提案",
-        "category": "Cursor AI Orchestration"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "cursor.subagent.codeReview",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.subagent.debug",
-        "key": "ctrl+shift+d",
-        "mac": "cmd+shift+d",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.subagent.optimize",
-        "key": "ctrl+shift+o",
-        "mac": "cmd+shift+o",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.subagent.security",
-        "key": "ctrl+shift+s",
-        "mac": "cmd+shift+s",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.subagent.parallel",
-        "key": "ctrl+shift+p",
-        "mac": "cmd+shift+p",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.subagent.status",
-        "key": "ctrl+shift+t",
-        "mac": "cmd+shift+t"
-      },
-      {
-        "command": "cursor.ai.drivenDevelopment",
-        "key": "ctrl+shift+a",
-        "mac": "cmd+shift+a",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.ai.intelligentGeneration",
-        "key": "ctrl+shift+i",
-        "mac": "cmd+shift+i",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.ai.predictiveAnalysis",
-        "key": "ctrl+shift+y",
-        "mac": "cmd+shift+y",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "cursor.ai.contextAwareSuggestions",
-        "key": "ctrl+shift+c",
-        "mac": "cmd+shift+c",
-        "when": "editorTextFocus"
+        "command": "gemini-cli.showNotices",
+        "title": "Gemini CLI: View Third-Party Notices"
       }
     ],
     "menus": {
-      "editor/context": [
-        {
-          "command": "cursor.subagent.codeReview",
-          "group": "cursor-subagents",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.subagent.debug",
-          "group": "cursor-subagents",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.subagent.optimize",
-          "group": "cursor-subagents",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.subagent.security",
-          "group": "cursor-subagents",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.subagent.parallel",
-          "group": "cursor-subagents",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.ai.drivenDevelopment",
-          "group": "cursor-ai-orchestration",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.ai.intelligentGeneration",
-          "group": "cursor-ai-orchestration",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.ai.predictiveAnalysis",
-          "group": "cursor-ai-orchestration",
-          "when": "editorTextFocus"
-        },
-        {
-          "command": "cursor.ai.contextAwareSuggestions",
-          "group": "cursor-ai-orchestration",
-          "when": "editorTextFocus"
-        }
-      ],
       "commandPalette": [
         {
-          "command": "cursor.subagent.codeReview"
+          "command": "gemini.diff.accept",
+          "when": "gemini.diff.isVisible"
         },
         {
-          "command": "cursor.subagent.debug"
+          "command": "gemini.diff.cancel",
+          "when": "gemini.diff.isVisible"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "gemini.diff.accept",
+          "when": "gemini.diff.isVisible",
+          "group": "navigation"
         },
         {
-          "command": "cursor.subagent.optimize"
-        },
-        {
-          "command": "cursor.subagent.security"
-        },
-        {
-          "command": "cursor.subagent.parallel"
-        },
-        {
-          "command": "cursor.subagent.status"
-        },
-        {
-          "command": "cursor.ai.drivenDevelopment"
-        },
-        {
-          "command": "cursor.ai.intelligentGeneration"
-        },
-        {
-          "command": "cursor.ai.predictiveAnalysis"
-        },
-        {
-          "command": "cursor.ai.contextAwareSuggestions"
+          "command": "gemini.diff.cancel",
+          "when": "gemini.diff.isVisible",
+          "group": "navigation"
         }
       ]
     },
-    "configuration": {
-      "title": "Cursor Subagents",
-      "properties": {
-        "cursorSubagents.enableRealTimeSync": {
-          "type": "boolean",
-          "default": true,
-          "description": "リアルタイム同期を有効にする"
-        },
-        "cursorSubagents.enableAutoCodeReview": {
-          "type": "boolean",
-          "default": true,
-          "description": "自動コードレビューを有効にする"
-        },
-        "cursorSubagents.enableParallelExecution": {
-          "type": "boolean",
-          "default": true,
-          "description": "並列実行を有効にする"
-        },
-        "cursorSubagents.maxConcurrentTasks": {
-          "type": "number",
-          "default": 5,
-          "minimum": 1,
-          "maximum": 10,
-          "description": "最大並列タスク数"
-        },
-        "cursorSubagents.syncInterval": {
-          "type": "number",
-          "default": 5000,
-          "minimum": 1000,
-          "maximum": 30000,
-          "description": "同期間隔（ミリ秒）"
-        },
-        "cursorSubagents.autoSaveInterval": {
-          "type": "number",
-          "default": 300000,
-          "minimum": 60000,
-          "maximum": 1800000,
-          "description": "自動保存間隔（ミリ秒）"
-        },
-        "cursorAI.enableAutonomousDevelopment": {
-          "type": "boolean",
-          "default": true,
-          "description": "AIドリブン開発を有効にする"
-        },
-        "cursorAI.enableIntelligentCodeGeneration": {
-          "type": "boolean",
-          "default": true,
-          "description": "インテリジェントコード生成を有効にする"
-        },
-        "cursorAI.enablePredictiveAnalysis": {
-          "type": "boolean",
-          "default": true,
-          "description": "予測分析を有効にする"
-        },
-        "cursorAI.enableAdaptiveLearning": {
-          "type": "boolean",
-          "default": true,
-          "description": "適応学習を有効にする"
-        },
-        "cursorAI.enableContextAwareSuggestions": {
-          "type": "boolean",
-          "default": true,
-          "description": "コンテキスト認識提案を有効にする"
-        },
-        "cursorAI.maxConcurrentOrchestrations": {
-          "type": "number",
-          "default": 3,
-          "minimum": 1,
-          "maximum": 5,
-          "description": "最大並列オーケストレーション数"
-        },
-        "cursorAI.orchestrationTimeout": {
-          "type": "number",
-          "default": 60000,
-          "minimum": 30000,
-          "maximum": 300000,
-          "description": "オーケストレーションタイムアウト（ミリ秒）"
-        },
-        "cursorAI.learningRate": {
-          "type": "number",
-          "default": 0.1,
-          "minimum": 0.01,
-          "maximum": 1,
-          "description": "学習率"
-        },
-        "cursorAI.confidenceThreshold": {
-          "type": "number",
-          "default": 0.8,
-          "minimum": 0.5,
-          "maximum": 1,
-          "description": "信頼度閾値"
-        }
+    "keybindings": [
+      {
+        "command": "gemini.diff.accept",
+        "key": "ctrl+s",
+        "when": "gemini.diff.isVisible"
+      },
+      {
+        "command": "gemini.diff.accept",
+        "key": "cmd+s",
+        "when": "gemini.diff.isVisible"
       }
-    }
+    ]
   },
-  "dependencies": {
-    "@google/gemini-cli-core": "file:../core"
+  "main": "./dist/extension.cjs",
+  "type": "module",
+  "scripts": {
+    "vscode:prepublish": "npm run generate:notices && npm run check-types && npm run lint && node esbuild.js --production",
+    "build": "npm run compile",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "vsce package --no-dependencies",
+    "generate:notices": "node ./scripts/generate-notices.js",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
-    "typescript": "^5.3.3",
-    "@vscode/vsce": "^3.6.0"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "esbuild": "^0.25.3",
+    "eslint": "^9.25.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
-  "license": "Apache-2.0"
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "zod": "^3.25.76"
+  }
 }

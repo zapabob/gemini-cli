@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { glob } from 'glob';
-import child_process from 'child_process';
 import {
   Config,
   DetectedIde,
@@ -15,7 +11,10 @@ import {
   getIdeDisplayName,
   getIdeInstaller,
   IdeClient,
+  type File,
+  ideContext,
 } from '@google/gemini-cli-core';
+import path from 'node:path';
 import {
   CommandContext,
   SlashCommand,
@@ -23,10 +22,6 @@ import {
   CommandKind,
 } from './types.js';
 import { SettingScope } from '../../config/settings.js';
-
-// VSCode専用の定数（独自拡張用）
-const VSCODE_COMMAND = 'code';
-const VSCODE_COMPANION_EXTENSION_FOLDER = 'vscode-ide-companion';
 
 function getIdeStatusMessage(ideClient: IdeClient): {
   messageType: 'info' | 'error';
@@ -57,15 +52,86 @@ function getIdeStatusMessage(ideClient: IdeClient): {
   }
 }
 
+function formatFileList(openFiles: File[]): string {
+  const basenameCounts = new Map<string, number>();
+  for (const file of openFiles) {
+    const basename = path.basename(file.path);
+    basenameCounts.set(basename, (basenameCounts.get(basename) || 0) + 1);
+  }
+
+  const fileList = openFiles
+    .map((file: File) => {
+      const basename = path.basename(file.path);
+      const isDuplicate = (basenameCounts.get(basename) || 0) > 1;
+      const parentDir = path.basename(path.dirname(file.path));
+      const displayName = isDuplicate
+        ? `${basename} (/${parentDir})`
+        : basename;
+
+      return `  - ${displayName}${file.isActive ? ' (active)' : ''}`;
+    })
+    .join('\n');
+
+  return `\n\nOpen files:\n${fileList}`;
+}
+
+async function getIdeStatusMessageWithFiles(ideClient: IdeClient): Promise<{
+  messageType: 'info' | 'error';
+  content: string;
+}> {
+  const connection = ideClient.getConnectionStatus();
+  switch (connection.status) {
+    case IDEConnectionStatus.Connected: {
+      let content = `🟢 Connected to ${ideClient.getDetectedIdeDisplayName()}`;
+      const context = ideContext.getIdeContext();
+      const openFiles = context?.workspaceState?.openFiles;
+      if (openFiles && openFiles.length > 0) {
+        content += formatFileList(openFiles);
+      }
+      return {
+        messageType: 'info',
+        content,
+      };
+    }
+    case IDEConnectionStatus.Connecting:
+      return {
+        messageType: 'info',
+        content: `🟡 Connecting...`,
+      };
+    default: {
+      let content = `🔴 Disconnected`;
+      if (connection?.details) {
+        content += `: ${connection.details}`;
+      }
+      return {
+        messageType: 'error',
+        content,
+      };
+    }
+  }
+}
+
 export const ideCommand = (config: Config | null): SlashCommand | null => {
-  // Configの拡張メソッド許容のためany型キャスト（型安全にできない設計）
-  const configAny = config as any;
-  if (!configAny?.getIdeModeFeature?.()) {
+  if (!config || !config.getIdeModeFeature()) {
     return null;
   }
-  const currentIDE = configAny.getIdeClient?.().getCurrentIde?.();
-  if (!currentIDE) {
-    return null;
+  const ideClient = config.getIdeClient();
+  const currentIDE = ideClient.getCurrentIde();
+  if (!currentIDE || !ideClient.getDetectedIdeDisplayName()) {
+    return {
+      name: 'ide',
+      description: 'manage IDE integration',
+      kind: CommandKind.BUILT_IN,
+      action: (): SlashCommandActionReturn =>
+        ({
+          type: 'message',
+          messageType: 'error',
+          content: `IDE integration is not supported in your current environment. To use this feature, run Gemini CLI in one of these supported IDEs: ${Object.values(
+            DetectedIde,
+          ).map((ide) => getIdeDisplayName(ide))}
+            .join(', ')}`,
+        }) as const,
+    };
   }
 
   const ideSlashCommand: SlashCommand = {
@@ -75,14 +141,13 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     subCommands: [],
   };
 
-  // 公式の汎用サブコマンド
   const statusCommand: SlashCommand = {
     name: 'status',
     description: 'check status of IDE integration',
     kind: CommandKind.BUILT_IN,
-    action: (): SlashCommandActionReturn => {
-      const ideClient = configAny.getIdeClient();
-      const { messageType, content } = getIdeStatusMessage(ideClient);
+    action: async (): Promise<SlashCommandActionReturn> => {
+      const { messageType, content } =
+        await getIdeStatusMessageWithFiles(ideClient);
       return {
         type: 'message',
         messageType,
@@ -93,7 +158,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
 
   const installCommand: SlashCommand = {
     name: 'install',
-    description: `install required IDE companion for ${configAny.getIdeClient().getDetectedIdeDisplayName()}`,
+    description: `install required IDE companion for ${ideClient.getDetectedIdeDisplayName()}`,
     kind: CommandKind.BUILT_IN,
     action: async (context) => {
       const installer = getIdeInstaller(currentIDE);
@@ -101,12 +166,13 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         context.ui.addItem(
           {
             type: 'error',
-            text: `No installer is available for ${configAny.getIdeClient().getDetectedIdeDisplayName()}. Please install the IDE companion manually from its marketplace.`,
+            text: `No installer is available for ${ideClient.getDetectedIdeDisplayName()}. Please install the IDE companion manually from its marketplace.`,
           },
           Date.now(),
         );
         return;
       }
+
       context.ui.addItem(
         {
           type: 'info',
@@ -114,8 +180,9 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
         },
         Date.now(),
       );
+
       const result = await installer.install();
-      if (result.success && config) {
+      if (result.success) {
         config.setIdeMode(true);
         context.services.settings.setValue(SettingScope.User, 'ideMode', true);
       }
@@ -135,12 +202,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', true);
-      if (config) {
-        await config.setIdeModeAndSyncConnection(true);
-      }
-      configAny.setIdeMode?.(true);
-      configAny.setIdeClientConnected?.();
-      const ideClient = configAny.getIdeClient();
+      await config.setIdeModeAndSyncConnection(true);
       const { messageType, content } = getIdeStatusMessage(ideClient);
       context.ui.addItem(
         {
@@ -158,12 +220,7 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     kind: CommandKind.BUILT_IN,
     action: async (context: CommandContext) => {
       context.services.settings.setValue(SettingScope.User, 'ideMode', false);
-      if (config) {
-        await config.setIdeModeAndSyncConnection(false);
-      }
-      configAny.setIdeMode?.(false);
-      configAny.setIdeClientDisconnected?.();
-      const ideClient = configAny.getIdeClient();
+      await config.setIdeModeAndSyncConnection(false);
       const { messageType, content } = getIdeStatusMessage(ideClient);
       context.ui.addItem(
         {
@@ -175,78 +232,19 @@ export const ideCommand = (config: Config | null): SlashCommand | null => {
     },
   };
 
-  // VSCode専用の独自サブコマンド（VSIXインストール）
-  if (getIdeDisplayName(currentIDE) === 'VS Code') {
-    const vsixInstallCommand: SlashCommand = {
-      name: 'install-vsix',
-      description: 'install required VS Code companion extension (local VSIX)',
-      kind: CommandKind.BUILT_IN,
-      action: async (context) => {
-        // VSIXファイルの探索とインストール処理
-        const bundleDir = require.main?.filename 
-          ? path.dirname(path.dirname(require.main.filename))
-          : process.cwd();
-        let vsixFiles = glob.sync(path.join(bundleDir, '*.vsix'));
-        if (vsixFiles.length === 0) {
-          const devPath = path.join(
-            '..', '..', '..', '..', '..',
-            VSCODE_COMPANION_EXTENSION_FOLDER,
-            '*.vsix',
-          );
-          vsixFiles = glob.sync(devPath);
-        }
-        if (vsixFiles.length === 0) {
-          context.ui.addItem(
-            {
-              type: 'error',
-              text: 'Could not find the required VS Code companion extension. Please file a bug via /bug.',
-            },
-            Date.now(),
-          );
-          return;
-        }
-        const vsixPath = vsixFiles[0];
-        const command = `${VSCODE_COMMAND} --install-extension ${vsixPath} --force`;
-        context.ui.addItem(
-          {
-            type: 'info',
-            text: `Installing VS Code companion extension...`,
-          },
-          Date.now(),
-        );
-        try {
-          child_process.execSync(command, { stdio: 'pipe' });
-          context.ui.addItem(
-            {
-              type: 'info',
-              text: 'VS Code companion extension installed successfully. Restart gemini-cli in a fresh terminal window.',
-            },
-            Date.now(),
-          );
-        } catch (_error) {
-          context.ui.addItem(
-            {
-              type: 'error',
-              text: `Failed to install VS Code companion extension.`,
-            },
-            Date.now(),
-          );
-        }
-      },
-    };
-    if (ideSlashCommand.subCommands) {
-      ideSlashCommand.subCommands.push(vsixInstallCommand);
-    }
-  }
-
-  // サブコマンドの組み立て（IDE有効/無効で切り替え）
-  const ideModeEnabled = configAny.getIdeMode?.();
-  if (ideSlashCommand.subCommands) {
-    if (ideModeEnabled) {
-      ideSlashCommand.subCommands.push(disableCommand, statusCommand, installCommand);
-    } else {
-      ideSlashCommand.subCommands.push(enableCommand, statusCommand, installCommand);
-    }
+  const ideModeEnabled = config.getIdeMode();
+  if (ideModeEnabled) {
+    ideSlashCommand.subCommands = [
+      disableCommand,
+      statusCommand,
+      installCommand,
+    ];
+  } else {
+    ideSlashCommand.subCommands = [
+      enableCommand,
+      statusCommand,
+      installCommand,
+    ];
   }
 
   return ideSlashCommand;

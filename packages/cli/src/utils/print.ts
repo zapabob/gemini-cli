@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Chalk } from 'chalk';
-
-const chalk = new Chalk();
+import chalk from 'chalk';
 
 export const print = {
   info: (message: string) => console.log(chalk.blue(message)),

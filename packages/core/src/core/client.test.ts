@@ -72,7 +72,7 @@ vi.mock('../telemetry/index.js', () => ({
   logApiResponse: vi.fn(),
   logApiError: vi.fn(),
 }));
-vi.mock('../services/ideContext.js');
+vi.mock('../ide/ideContext.js');
 
 describe('findIndexAfterFraction', () => {
   const history: Content[] = [
@@ -206,6 +206,7 @@ describe('Gemini Client (client.ts)', () => {
       }),
       getGeminiClient: vi.fn(),
       setFallbackMode: vi.fn(),
+      getChatCompression: vi.fn().mockReturnValue(undefined),
     };
     const MockedConfig = vi.mocked(Config, true);
     MockedConfig.mockImplementation(
@@ -531,14 +532,19 @@ describe('Gemini Client (client.ts)', () => {
       expect(newChat).toBe(initialChat);
     });
 
-    it('should trigger summarization if token count is at threshold', async () => {
+    it('should trigger summarization if token count is at threshold with contextPercentageThreshold setting', async () => {
       const MOCKED_TOKEN_LIMIT = 1000;
+      const MOCKED_CONTEXT_PERCENTAGE_THRESHOLD = 0.5;
       vi.mocked(tokenLimit).mockReturnValue(MOCKED_TOKEN_LIMIT);
+      vi.spyOn(client['config'], 'getChatCompression').mockReturnValue({
+        contextPercentageThreshold: MOCKED_CONTEXT_PERCENTAGE_THRESHOLD,
+      });
       mockGetHistory.mockReturnValue([
         { role: 'user', parts: [{ text: '...history...' }] },
       ]);
 
-      const originalTokenCount = 1000 * 0.7;
+      const originalTokenCount =
+        MOCKED_TOKEN_LIMIT * MOCKED_CONTEXT_PERCENTAGE_THRESHOLD;
       const newTokenCount = 100;
 
       mockCountTokens
@@ -663,7 +669,7 @@ describe('Gemini Client (client.ts)', () => {
   describe('sendMessageStream', () => {
     it('should include IDE context when ideModeFeature is enabled', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {
@@ -738,7 +744,7 @@ Here are some other files the user has open, with the most recent at the top:
 
     it('should not add context if ideModeFeature is enabled but no open files', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [],
         },
@@ -785,7 +791,7 @@ Here are some other files the user has open, with the most recent at the top:
 
     it('should add context if ideModeFeature is enabled and there is one active file', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {
@@ -849,7 +855,7 @@ This is the selected text in the file:
 
     it('should add context if ideModeFeature is enabled and there are open files but no active file', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {
