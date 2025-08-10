@@ -8,12 +8,11 @@ import { describe, it, expect, vi, beforeEach, afterEach as _afterEach, Mock as 
 
 // Use a type alias for SpyInstance as it's not directly exported
 type _SpyInstance = ReturnType<typeof vi.spyOn>;
-import { reportError } from './errorReporting.js';
 import * as fsPromises from 'node:fs/promises';
 import * as os from 'node:os';
 import path from 'path';
 
-// Mock dependencies
+// Mock dependencies (must be declared before importing module under test)
 vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>();
   return {
@@ -28,6 +27,9 @@ vi.mock('node:os', async (importOriginal) => {
     tmpdir: vi.fn(),
   };
 });
+
+// Now import the module under test so it uses the mocked modules
+import { reportError } from './errorReporting.js';
 
 const mockFs = vi.mocked(fsPromises);
 const mockOs = vi.mocked(os);
