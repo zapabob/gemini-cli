@@ -72,7 +72,7 @@ vi.mock('../telemetry/index.js', () => ({
   logApiResponse: vi.fn(),
   logApiError: vi.fn(),
 }));
-vi.mock('../services/ideContext.js');
+vi.mock('../ide/ideContext.js');
 
 describe('findIndexAfterFraction', () => {
   const history: Content[] = [
@@ -669,7 +669,7 @@ describe('Gemini Client (client.ts)', () => {
   describe('sendMessageStream', () => {
     it('should include IDE context when ideModeFeature is enabled', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {
@@ -744,7 +744,7 @@ Here are some other files the user has open, with the most recent at the top:
 
     it('should not add context if ideModeFeature is enabled but no open files', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [],
         },
@@ -791,7 +791,7 @@ Here are some other files the user has open, with the most recent at the top:
 
     it('should add context if ideModeFeature is enabled and there is one active file', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {
@@ -855,7 +855,7 @@ This is the selected text in the file:
 
     it('should add context if ideModeFeature is enabled and there are open files but no active file', async () => {
       // Arrange
-      vi.mocked(ideContext.getIdeContext).mockReturnValue({
+      vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
         workspaceState: {
           openFiles: [
             {

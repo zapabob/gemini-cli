@@ -1,6 +1,6 @@
 # DeepResearch Report: custom research
 
-**Date**: 2025-08-10 10:03:57  
+**Date**: 2025-08-10 10:23:21  
 **Research Topic**: custom research  
 **Research Method**: focused deep research with multi-level analysis  
 **Language**: English and Japanese (英語・日本語)
@@ -12,7 +12,7 @@
 - **Strategy Used**: focused
 - **Depth Achieved**: 3/5 levels
 - **Sources Analyzed**: 15/15
-- **Time Taken**: 2ms
+- **Time Taken**: 0ms
 - **Topics Explored**: 0
 
 ## Key Topics
