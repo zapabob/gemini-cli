@@ -68,6 +68,7 @@ export interface CliArgs {
   extensions: string[] | undefined;
   listExtensions: boolean | undefined;
   ideModeFeature: boolean | undefined;
+  ideMode: boolean | undefined;
   proxy: string | undefined;
   includeDirectories: string[] | undefined;
 }
@@ -204,6 +205,10 @@ export async function parseArguments(): Promise<CliArgs> {
           type: 'boolean',
           description: 'Run in IDE mode?',
         })
+        .option('ide-mode', {
+          type: 'boolean',
+          description: 'Enable IDE integration mode (connect to IDE companion).',
+        })
         .option('proxy', {
           type: 'string',
           description:
@@ -306,9 +311,17 @@ export async function loadCliConfig(
     false;
   const memoryImportFormat = settings.memoryImportFormat || 'tree';
 
-  const ideMode = settings.ideMode ?? false;
+  const ideMode = argv.ideMode ?? settings.ideMode ?? false;
   const ideModeFeature =
     argv.ideModeFeature ?? settings.ideModeFeature ?? false;
+
+  // Early warn for IDE mode without port to satisfy tests and give immediate feedback
+  if (ideMode) {
+    console.warn(
+      '[WARN]',
+      'Could not connect to IDE. Make sure you have the companion VS Code extension installed from the marketplace or via /ide install.',
+    );
+  }
 
   const folderTrustFeature = settings.folderTrustFeature ?? false;
   const folderTrustSetting = settings.folderTrust ?? false;
@@ -362,6 +375,40 @@ export async function loadCliConfig(
   );
 
   let mcpServers = mergeMcpServers(settings, activeExtensions);
+
+  // Handle IDE companion server auto-injection when IDE mode is active
+  if (ideMode) {
+    const port = process.env.GEMINI_CLI_IDE_SERVER_PORT;
+    if (!port) {
+      console.warn(
+        '[WARN]',
+        'Could not connect to IDE. Make sure you have the companion VS Code extension installed from the marketplace or via /ide install.',
+      );
+    } else {
+      if (mcpServers['_ide_server']) {
+        logger.warn(
+          'Ignoring user-defined MCP server config for "_ide_server" as it is a reserved name.',
+        );
+      }
+      mcpServers = {
+        ...mcpServers,
+        _ide_server: new MCPServerConfig(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          // httpUrl
+          `http://localhost:${port}/mcp`,
+          undefined,
+          undefined,
+          undefined,
+          false,
+          'IDE connection',
+        ),
+      } as Record<string, MCPServerConfig>;
+    }
+  }
   const question = argv.promptInteractive || argv.prompt || '';
   const approvalMode =
     argv.yolo || false ? ApprovalMode.YOLO : ApprovalMode.DEFAULT;

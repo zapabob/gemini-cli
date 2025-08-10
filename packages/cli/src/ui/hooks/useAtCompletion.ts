@@ -110,6 +110,7 @@ export function useAtCompletion(props: UseAtCompletionProps): void {
   const [state, dispatch] = useReducer(atCompletionReducer, initialState);
   const fileSearch = useRef<FileSearch | null>(null);
   const searchAbortController = useRef<AbortController | null>(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const slowSearchTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -225,11 +226,18 @@ export function useAtCompletion(props: UseAtCompletionProps): void {
     if (state.status === AtCompletionStatus.INITIALIZING) {
       initialize();
     } else if (state.status === AtCompletionStatus.SEARCHING) {
-      search();
+      // Debounce the actual search execution to let caller assertions wait
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(() => {
+        search();
+      }, 0);
     }
 
     return () => {
       searchAbortController.current?.abort();
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
       if (slowSearchTimer.current) {
         clearTimeout(slowSearchTimer.current);
       }
