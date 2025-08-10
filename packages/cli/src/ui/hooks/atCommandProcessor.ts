@@ -6,7 +6,9 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { PartListUnion, PartUnion ,
+import { PartListUnion, PartUnion } from '@google/genai';
+import {
+  AnyToolInvocation,
   Config,
   getErrorMessage,
   isNodeError,
@@ -253,7 +255,7 @@ export async function handleAtCommand({
               `Path ${pathName} not found directly, attempting glob search.`,
             );
             try {
-              const globResult = await globTool.execute(
+              const globResult = await globTool.buildAndExecute(
                 {
                   pattern: `**/*${pathName}*`,
                   path: dir,
@@ -410,12 +412,14 @@ export async function handleAtCommand({
   };
   let toolCallDisplay: IndividualToolCallDisplay;
 
+  let invocation: AnyToolInvocation | undefined = undefined;
   try {
-    const result = await readManyFilesTool.execute(toolArgs, signal);
+    invocation = readManyFilesTool.build(toolArgs);
+    const result = await invocation.execute(signal);
     toolCallDisplay = {
       callId: `client-read-${userMessageTimestamp}`,
       name: readManyFilesTool.displayName,
-      description: readManyFilesTool.getDescription(toolArgs),
+      description: invocation.getDescription(),
       status: ToolCallStatus.Success,
       resultDisplay:
         result.returnDisplay ||
@@ -465,7 +469,9 @@ export async function handleAtCommand({
     toolCallDisplay = {
       callId: `client-read-${userMessageTimestamp}`,
       name: readManyFilesTool.displayName,
-      description: readManyFilesTool.getDescription(toolArgs),
+      description:
+        invocation?.getDescription() ??
+        'Error attempting to execute tool to read files',
       status: ToolCallStatus.Error,
       resultDisplay: `Error reading files (${contentLabelsForDisplay.join(', ')}): ${getErrorMessage(error)}`,
       confirmationDetails: undefined,

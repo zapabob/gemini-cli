@@ -5,15 +5,13 @@
  */
 
 import * as vscode from 'vscode';
+import { IdeContextNotificationSchema } from '@google/gemini-cli-core';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import { randomUUID } from 'node:crypto';
-import {
-  isInitializeRequest,
-  type JSONRPCNotification,
-} from '@modelcontextprotocol/sdk/types.js';
-import { Server as HTTPServer } from 'node:http';
+import { type Server as HTTPServer } from 'node:http';
 import { z } from 'zod';
 import { DiffManager } from './diff-manager.js';
 import { OpenFilesManager } from './open-files-manager.js';
@@ -28,11 +26,12 @@ function sendIdeContextUpdateNotification(
 ) {
   const ideContext = openFilesManager.state;
 
-  const notification: JSONRPCNotification = {
+  const notification = IdeContextNotificationSchema.parse({
     jsonrpc: '2.0',
     method: 'ide/contextUpdate',
     params: ideContext,
-  };
+  });
+
   log(
     `Sending IDE context update notification: ${JSON.stringify(
       notification,
@@ -76,7 +75,7 @@ export class IDEServer {
     });
     context.subscriptions.push(onDidChangeSubscription);
     const onDidChangeDiffSubscription = this.diffManager.onDidChange(
-      (notification: JSONRPCNotification) => {
+      (notification) => {
         for (const transport of Object.values(transports)) {
           transport.send(notification);
         }
@@ -232,32 +231,53 @@ const createMcpServer = (diffManager: DiffManager) => {
     { capabilities: { logging: {} } },
   );
   server.registerTool(
-    'getOpenFiles',
+    'openDiff',
     {
       description:
-        '(IDE Tool) Get the path of the file currently active in VS Code.',
-      inputSchema: {},
+        '(IDE Tool) Open a diff view to create or modify a file. Returns a notification once the diff has been accepted or rejcted.',
+      inputSchema: z.object({
+        filePath: z.string(),
+        // TODO(chrstn): determine if this should be required or not.
+        newContent: z.string().optional(),
+      }).shape,
     },
-    async () => {
-      const editor = vscode.window.activeTextEditor;
-      const filePath =
-        editor && editor.document.uri.scheme === 'file'
-          ? editor.document.uri.fsPath
-          : '';
-      if (filePath) {
-        return {
-          content: [{ type: 'text', text: `Active file: ${filePath}` }],
-        };
-      } else {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'No file is currently active in the editor.',
-            },
-          ],
-        };
-      }
+    async ({
+      filePath,
+      newContent,
+    }: {
+      filePath: string;
+      newContent?: string;
+    }) => {
+      await diffManager.showDiff(filePath, newContent ?? '');
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Showing diff for ${filePath}`,
+          },
+        ],
+      };
+    },
+  );
+  server.registerTool(
+    'closeDiff',
+    {
+      description: '(IDE Tool) Close an open diff view for a specific file.',
+      inputSchema: z.object({
+        filePath: z.string(),
+      }).shape,
+    },
+    async ({ filePath }: { filePath: string }) => {
+      const content = await diffManager.closeDiff(filePath);
+      const response = { content: content ?? undefined };
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(response),
+          },
+        ],
+      };
     },
   );
   return server;

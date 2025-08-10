@@ -18,30 +18,14 @@ import { type CommandContext } from './types.js';
 import { type Config, DetectedIde } from '@google/gemini-cli-core';
 import * as core from '@google/gemini-cli-core';
 
-import {
-  MCPDiscoveryState as _MCPDiscoveryState,
-  MCPServerStatus as _MCPServerStatus,
-} from '@google/gemini-cli-core';
-
 vi.mock('child_process');
 vi.mock('glob');
-vi.mock('@google/gemini-cli-core', async (importOriginal) => {
-  const original =
-    await importOriginal<typeof import('@google/gemini-cli-core')>();
-  return {
-    ...original,
-    getMCPServerStatus: vi.fn(),
-    getMCPDiscoveryState: vi.fn(),
-  };
-});
-
-
+vi.mock('@google/gemini-cli-core');
 
 describe('ideCommand', () => {
   let mockContext: CommandContext;
   let mockConfig: Config;
   let platformSpy: MockInstance;
-
 
   beforeEach(() => {
     mockContext = {
@@ -109,13 +93,14 @@ describe('ideCommand', () => {
       } as unknown as ReturnType<Config['getIdeClient']>);
     });
 
-    it('should show connected status', () => {
+    it('should show connected status', async () => {
       mockGetConnectionStatus.mockReturnValue({
         status: core.IDEConnectionStatus.Connected,
       });
       const command = ideCommand(mockConfig);
-      const result = command!.subCommands!.find((c) => c.name === 'status')!
-        .action!(mockContext, '');
+      const result = await command!.subCommands!.find(
+        (c) => c.name === 'status',
+      )!.action!(mockContext, '');
       expect(mockGetConnectionStatus).toHaveBeenCalled();
       expect(result).toEqual({
         type: 'message',
@@ -124,13 +109,14 @@ describe('ideCommand', () => {
       });
     });
 
-    it('should show connecting status', () => {
+    it('should show connecting status', async () => {
       mockGetConnectionStatus.mockReturnValue({
         status: core.IDEConnectionStatus.Connecting,
       });
       const command = ideCommand(mockConfig);
-      const result = command!.subCommands!.find((c) => c.name === 'status')!
-        .action!(mockContext, '');
+      const result = await command!.subCommands!.find(
+        (c) => c.name === 'status',
+      )!.action!(mockContext, '');
       expect(mockGetConnectionStatus).toHaveBeenCalled();
       expect(result).toEqual({
         type: 'message',
@@ -138,13 +124,14 @@ describe('ideCommand', () => {
         content: `🟡 Connecting...`,
       });
     });
-    it('should show disconnected status', () => {
+    it('should show disconnected status', async () => {
       mockGetConnectionStatus.mockReturnValue({
         status: core.IDEConnectionStatus.Disconnected,
       });
       const command = ideCommand(mockConfig);
-      const result = command!.subCommands!.find((c) => c.name === 'status')!
-        .action!(mockContext, '');
+      const result = await command!.subCommands!.find(
+        (c) => c.name === 'status',
+      )!.action!(mockContext, '');
       expect(mockGetConnectionStatus).toHaveBeenCalled();
       expect(result).toEqual({
         type: 'message',
@@ -152,20 +139,22 @@ describe('ideCommand', () => {
         content: `🔴 Disconnected`,
       });
     });
-    it('should show disconnected status with details', () => {
+
+    it('should show disconnected status with details', async () => {
       const details = 'Something went wrong';
       mockGetConnectionStatus.mockReturnValue({
         status: core.IDEConnectionStatus.Disconnected,
         details,
       });
       const command = ideCommand(mockConfig);
-      const result = command!.subCommands!.find((c) => c.name === 'status')!
-        .action!(mockContext, '');
+      const result = await command!.subCommands!.find(
+        (c) => c.name === 'status',
+      )!.action!(mockContext, '');
       expect(mockGetConnectionStatus).toHaveBeenCalled();
       expect(result).toEqual({
         type: 'message',
         messageType: 'error',
-        content: '🔴 Disconnected',
+        content: `🔴 Disconnected: ${details}`,
       });
     });
   });
