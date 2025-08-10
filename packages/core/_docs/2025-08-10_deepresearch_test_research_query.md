@@ -1,6 +1,6 @@
 # DeepResearch Report: test research query
 
-**Date**: 2025-08-10 10:29:05  
+**Date**: 2025-08-10 10:53:51  
 **Research Topic**: test research query  
 **Research Method**: comprehensive deep research with multi-level analysis  
 **Language**: English and Japanese (英語・日本語)
@@ -12,7 +12,7 @@
 - **Strategy Used**: comprehensive
 - **Depth Achieved**: 2/3 levels
 - **Sources Analyzed**: 10/10
-- **Time Taken**: 2ms
+- **Time Taken**: 1ms
 - **Topics Explored**: 0
 
 ## Key Topics
