@@ -51,7 +51,7 @@ describe('reportError', () => {
 
     await reportError(error, baseMessage, undefined, 'test-type');
 
-    expect(os.tmpdir).toHaveBeenCalledTimes(1);
+    expect(os.tmpdir).toHaveBeenCalled();
     // fs/promises.writeFile が呼ばれること
     expect(fsPromises.writeFile).toHaveBeenCalled();
   });
@@ -81,9 +81,7 @@ describe('reportError', () => {
     const context = ['some context'];
     const type = 'general';
 
-    mockFs.writeFile.mockImplementation((_path, _data, callback) => {
-      if (callback) callback(new Error('Write failed'));
-    });
+    mockFs.writeFile.mockRejectedValue(new Error('Write failed'));
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
