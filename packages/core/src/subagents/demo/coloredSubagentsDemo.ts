@@ -20,7 +20,7 @@ export class ColoredSubagentsDemo {
   constructor() {
     // Geminiクライアントの初期化
     const geminiClient = new GeminiClient({
-      apiKey: process.env.GEMINI_API_KEY || 'demo-api-key',
+      apiKey: process.env['GEMINI_API_KEY'] || 'demo-api-key',
       defaultModel: 'models/gemini-1.5-flash',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096

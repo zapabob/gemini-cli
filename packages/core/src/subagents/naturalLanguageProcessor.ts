@@ -284,14 +284,15 @@ ${context ? `コンテキスト: ${context}` : ''}
    */
   private async executeResearch(query: string, taskId: string): Promise<string | undefined> {
     try {
-      const result = await this.deepResearchTool.execute({
+      const invocation = this.deepResearchTool.build({
         query,
         max_depth: 3,
         max_sources: 10,
         strategy: 'comprehensive',
         include_academic: true,
         recent_years: 5
-      }, new AbortController().signal);
+      });
+      const result = await invocation.execute(new AbortController().signal);
 
       if (result.llmContent) {
         // リサーチ結果を_docsに保存

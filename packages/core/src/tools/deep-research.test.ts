@@ -76,7 +76,8 @@ describe('DeepResearchTool', () => {
         max_sources: 5,
       };
 
-      const result = await deepResearchTool.shouldConfirmExecute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      const result = await invocation.shouldConfirmExecute(new AbortController().signal);
       expect(result).toBe(false);
     });
 
@@ -87,7 +88,8 @@ describe('DeepResearchTool', () => {
         max_sources: 20,
       };
 
-      const result = await deepResearchTool.shouldConfirmExecute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      const result = await invocation.shouldConfirmExecute(new AbortController().signal);
       expect(result).toBeTruthy();
       if (result && result.type === 'info') {
         expect(result.title).toBe('Deep Research Confirmation');
@@ -116,7 +118,8 @@ describe('DeepResearchTool', () => {
         }],
       });
 
-      const result = await deepResearchTool.execute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      const result = await invocation.execute(new AbortController().signal);
 
       expect(result.llmContent).toContain('Research results');
       expect(result.returnDisplay).toContain('Deep Research Results');
@@ -132,7 +135,8 @@ describe('DeepResearchTool', () => {
       // Mock error response
       mockGeminiClient.generateContent.mockRejectedValue(new Error('API Error'));
 
-      const result = await deepResearchTool.execute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      const result = await invocation.execute(new AbortController().signal);
 
       expect(result.llmContent).toContain('Error during deep research');
       expect(result.returnDisplay).toContain('Deep Research Error');
@@ -163,7 +167,8 @@ describe('DeepResearchTool', () => {
         }],
       });
 
-      const result = await deepResearchTool.execute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      const result = await invocation.execute(new AbortController().signal);
 
       expect(result.metadata?.strategy_used).toBe('focused');
       expect(result.metadata?.research_depth).toBe(3);
@@ -219,7 +224,8 @@ describe('DeepResearchTool', () => {
         }],
       });
 
-      await deepResearchTool.execute(params, new AbortController().signal);
+      const invocation = deepResearchTool.build(params);
+      await invocation.execute(new AbortController().signal);
 
       // Verify that generateContent was called with appropriate parameters
       expect(mockGeminiClient.generateContent).toHaveBeenCalled();

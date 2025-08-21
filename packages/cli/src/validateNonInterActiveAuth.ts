@@ -8,19 +8,6 @@ import { AuthType, Config } from '@google/gemini-cli-core';
 import { USER_SETTINGS_PATH } from './config/settings.js';
 import { validateAuthMethod } from './config/auth.js';
 
-function getAuthTypeFromEnv(): AuthType | undefined {
-  if (process.env['GOOGLE_GENAI_USE_GCA'] === 'true') {
-    return AuthType.LOGIN_WITH_GOOGLE;
-  }
-  if (process.env['GOOGLE_GENAI_USE_VERTEXAI'] === 'true') {
-    return AuthType.USE_VERTEX_AI;
-  }
-  if (process.env['GEMINI_API_KEY']) {
-    return AuthType.USE_GEMINI;
-  }
-  return undefined;
-}
-
 export async function validateNonInteractiveAuth(
   configuredAuthType: AuthType | undefined,
   useExternalAuth: boolean | undefined,
@@ -28,11 +15,11 @@ export async function validateNonInteractiveAuth(
 ) {
   const effectiveAuthType =
     configuredAuthType ||
-    (process.env.GOOGLE_GENAI_USE_GCA === 'true'
+    (process.env['GOOGLE_GENAI_USE_GCA'] === 'true'
       ? AuthType.LOGIN_WITH_GOOGLE
-      : process.env.GOOGLE_GENAI_USE_VERTEXAI === 'true'
+      : process.env['GOOGLE_GENAI_USE_VERTEXAI'] === 'true'
         ? AuthType.USE_VERTEX_AI
-        : process.env.GEMINI_API_KEY
+        : process.env['GEMINI_API_KEY']
           ? AuthType.USE_GEMINI
           : undefined);
 

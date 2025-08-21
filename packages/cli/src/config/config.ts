@@ -336,7 +336,7 @@ export async function loadCliConfig(
 
   const ideMode = argv.ideMode ?? settings.ideMode ?? false;
   const ideModeFeature =
-    argv.ideModeFeature ?? settings.ideModeFeature ?? false;
+    argv.ideModeFeature ?? (settings as any).ideModeFeature ?? false;
 
   // Early warn for IDE mode without port to satisfy tests and give immediate feedback
   if (ideMode) {
@@ -402,7 +402,7 @@ export async function loadCliConfig(
 
   // Handle IDE companion server auto-injection when IDE mode is active
   if (ideMode) {
-    const port = process.env.GEMINI_CLI_IDE_SERVER_PORT;
+    const port = process.env['GEMINI_CLI_IDE_SERVER_PORT'];
     if (!port) {
       console.warn(
         '[WARN]',
@@ -589,6 +589,7 @@ export async function loadCliConfig(
     noBrowser: !!process.env['NO_BROWSER'],
     summarizeToolOutput: settings.summarizeToolOutput,
     ideMode,
+    ideModeFeature,
     chatCompression: settings.chatCompression,
     folderTrustFeature,
     folderTrust,

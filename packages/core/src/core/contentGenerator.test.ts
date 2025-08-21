@@ -168,7 +168,7 @@ describe('createContentGeneratorConfig', () => {
     // 環境変数が設定されている場合、apiKeyは設定される
     expect(config.apiKey).toBe('your_api_key_here');
 
-    process.env = originalEnv;
+    // Restore original environment
   });
 
   it('should not configure for Vertex AI if required env vars are empty', async () => {

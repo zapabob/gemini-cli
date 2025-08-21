@@ -58,7 +58,7 @@ export class SubagentExecutor {
 
   constructor(options: SubagentExecutorOptions = {}) {
     this.geminiClient = options.geminiClient || new GeminiClient({
-      apiKey: process.env.GEMINI_API_KEY || 'mock-api-key',
+      apiKey: process.env['GEMINI_API_KEY'] || 'mock-api-key',
       defaultModel: 'models/gemini-1.5-flash',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096

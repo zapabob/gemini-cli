@@ -45,7 +45,7 @@ export class LoadBalancerService {
   private config: LoadBalancerConfig;
   private currentIndex: number = 0;
   private healthCheckInterval: NodeJS.Timeout | null = null;
-  private clientIpMap: Map<string, number> = new Map();
+  // private clientIpMap: Map<string, number> = new Map();
 
   constructor(config: LoadBalancerConfig) {
     this.config = config;

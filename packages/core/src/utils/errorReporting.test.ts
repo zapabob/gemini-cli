@@ -7,10 +7,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach as _afterEach, Mock as _Mock } from 'vitest';
 
 // Use a type alias for SpyInstance as it's not directly exported
-type _SpyInstance = ReturnType<typeof vi.spyOn>;
+// type _SpyInstance = ReturnType<typeof vi.spyOn>;
 import * as fsPromises from 'node:fs/promises';
 import * as os from 'node:os';
-import path from 'path';
+// import path from 'path';
 
 // Mock dependencies (must be declared before importing module under test)
 vi.mock('node:fs/promises', async (importOriginal) => {

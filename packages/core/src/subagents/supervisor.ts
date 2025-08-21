@@ -80,8 +80,8 @@ export class SupervisorAgent {
   constructor(config: SupervisorConfig) {
     this.config = config;
     this.geminiClient = new GeminiClient({
-      apiKey: process.env.GEMINI_API_KEY || 'mock-api-key',
-      defaultModel: 'models/gemini-1.5-flash',
+      apiKey: process.env['GEMINI_API_KEY'] || 'mock-api-key',
+      defaultModel: 'models/gemini-2.5-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096
     });

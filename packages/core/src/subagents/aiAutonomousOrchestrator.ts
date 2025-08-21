@@ -5,7 +5,7 @@
  */
 
 import { Subagent, SubagentSpecialty } from '../config/subagents.js';
-import { SubagentExecutor, SubagentTask, SubagentResult } from './executor.js';
+import { SubagentExecutor, SubagentResult } from './executor.js';
 import { GeminiClient } from './geminiClient.js';
 import { 
   CollaborativeTaskOptions, 
@@ -72,8 +72,8 @@ export class AIAutonomousOrchestrator {
   private config: AIAutonomousOrchestratorConfig;
   private executor: SubagentExecutor;
   private geminiClient: GeminiClient;
-  private activeSessions: Map<string, unknown> = new Map();
-  private checkpointData: Map<string, unknown> = new Map();
+  // private activeSessions: Map<string, unknown> = new Map();
+  // private checkpointData: Map<string, unknown> = new Map();
   private taskHistory: Map<string, AIAutonomousTaskAnalysis> = new Map();
 
   constructor(config: AIAutonomousOrchestratorConfig) {
@@ -504,7 +504,7 @@ JSON形式で回答してください。
   ): CollaborationMetrics {
     const successCount = results.filter(r => r.status === 'success').length;
     const totalCount = results.length;
-    const successRate = totalCount > 0 ? (successCount / totalCount) * 100 : 0;
+    // const successRate = totalCount > 0 ? (successCount / totalCount) * 100 : 0;
     
     return {
       totalSteps: totalCount,

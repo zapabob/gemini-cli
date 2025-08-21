@@ -82,7 +82,7 @@ export class CursorIntegrationManager {
     
     // Geminiクライアントの初期化
     this.geminiClient = new GeminiClient({
-      apiKey: process.env.GEMINI_API_KEY || 'mock-api-key',
+      apiKey: process.env['GEMINI_API_KEY'] || 'mock-api-key',
       defaultModel: 'models/gemini-2.5-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096

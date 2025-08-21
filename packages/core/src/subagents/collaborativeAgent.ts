@@ -245,7 +245,7 @@ ${context ? `**コンテキスト**: ${context}` : ''}
     const history = subagent.taskHistory || [];
     if (history.length === 0) return 0.5; // デフォルト値
     
-    const successCount = history.filter((h: unknown) => (h as Record<string, unknown>).status === 'success').length;
+    const successCount = history.filter((h: unknown) => (h as Record<string, unknown>)['status'] === 'success').length;
     return successCount / history.length;
   }
 

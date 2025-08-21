@@ -307,8 +307,8 @@ describe('oauth2', () => {
     // 公式のGCP環境変数テストも残す
     describe('with GCP environment variables', () => {
       it('should use GOOGLE_CLOUD_ACCESS_TOKEN when GOOGLE_GENAI_USE_GCA is true', async () => {
-        process.env.GOOGLE_GENAI_USE_GCA = 'true';
-        process.env.GOOGLE_CLOUD_ACCESS_TOKEN = 'gcp-access-token';
+        process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
+        process.env['GOOGLE_CLOUD_ACCESS_TOKEN'] = 'gcp-access-token';
 
       expect(Compute).toHaveBeenCalledWith({});
       expect(mockGetAccessToken).toHaveBeenCalled();
@@ -426,22 +426,6 @@ describe('oauth2', () => {
 
       // Mock the UserInfo API response for fetchAndCacheUserInfo
       (global.fetch as Mock).mockResolvedValue({
-        ok: true,
-        json: vi
->>>>>>> upstream/main
-          .fn()
-          .mockResolvedValue({ token: 'gcp-access-token' });
-        const mockOAuth2Client = {
-          setCredentials: mockSetCredentials,
-          getAccessToken: mockGetAccessToken,
-          on: vi.fn(),
-        } as unknown as OAuth2Client;
-        (OAuth2Client as unknown as Mock).mockImplementation(
-          () => mockOAuth2Client,
-        );
-
-        // Mock the UserInfo API response for fetchAndCacheUserInfo
-        (global.fetch as Mock).mockResolvedValue({
           ok: true,
           json: vi
             .fn()

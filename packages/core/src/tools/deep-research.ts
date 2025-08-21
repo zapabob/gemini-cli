@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BaseTool, Icon, ToolResult, ToolCallConfirmationDetails } from './tools.js';
-import { SchemaValidator } from '../utils/schemaValidator.js';
+import { BaseDeclarativeTool, ToolResult, ToolCallConfirmationDetails, Kind, ToolInvocation, ToolLocation } from './tools.js';
+// import { SchemaValidator } from '../utils/schemaValidator.js';
 import { getErrorMessage } from '../utils/errors.js';
 import { Config } from '../config/config.js';
 import { recordFileOperationMetric, FileOperation } from '../telemetry/metrics.js';
@@ -100,7 +100,7 @@ export interface DeepResearchToolResult extends ToolResult {
  * DeepResearchTool provides advanced research capabilities with multi-level analysis,
  * source validation, and comprehensive topic exploration.
  */
-export class DeepResearchTool extends BaseTool<
+export class DeepResearchTool extends BaseDeclarativeTool<
   DeepResearchToolParams,
   DeepResearchToolResult
 > {
@@ -109,7 +109,7 @@ export class DeepResearchTool extends BaseTool<
       'deep_research',
       'Deep Research',
       'Perform comprehensive research with multi-level analysis, source validation, and topic exploration',
-      Icon.Globe,
+      Kind.Search,
       {
         type: Type.OBJECT,
         properties: {
@@ -150,45 +150,45 @@ export class DeepResearchTool extends BaseTool<
         },
         required: ['query'],
       },
+      true, // isOutputMarkdown
+      true  // canUpdateOutput
     );
   }
 
-  /**
-   * Validates the parameters for the DeepResearchTool.
-   */
-  validateToolParams(params: DeepResearchToolParams): string | null {
-    const errors = SchemaValidator.validate(this.schema.parameters, params);
-    if (errors) {
-      return errors;
-    }
+  protected createInvocation(params: DeepResearchToolParams): ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
+    return new DeepResearchToolInvocation(params, this.config);
+  }
+}
 
-    if (!params.query || params.query.trim() === '') {
-      return "The 'query' parameter cannot be empty.";
-    }
-    return null;
+class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
+  constructor(
+    readonly params: DeepResearchToolParams,
+    private readonly config: Config
+  ) {}
+
+  getDescription(): string {
+    return `Perform deep research on: "${this.params.query}"`;
   }
 
-  /**
-   * Determines if this tool requires user confirmation before execution.
-   */
-  async shouldConfirmExecute(
-    params: DeepResearchToolParams,
-    _abortSignal: AbortSignal,
-  ): Promise<ToolCallConfirmationDetails | false> {
+  toolLocations(): ToolLocation[] {
+    return [];
+  }
+
+  async shouldConfirmExecute(abortSignal: AbortSignal): Promise<ToolCallConfirmationDetails | false> {
     // Deep research can be resource-intensive, so we ask for confirmation
     // if the query is complex or involves many sources
-    const isComplex = params.query.length > 200 || 
-                     (params.max_sources && params.max_sources > 15) ||
-                     (params.max_depth && params.max_depth > 5);
+    const isComplex = this.params.query.length > 200 || 
+                     (this.params.max_sources && this.params.max_sources > 15) ||
+                     (this.params.max_depth && this.params.max_depth > 5);
 
     if (isComplex) {
       return {
         type: 'info',
         title: 'Deep Research Confirmation',
         prompt: `This deep research query is complex and may take significant time and resources. 
-                 Query: "${params.query.substring(0, 100)}..."
-                 Max sources: ${params.max_sources || 10}
-                 Max depth: ${params.max_depth || 3}
+                 Query: "${this.params.query.substring(0, 100)}..."
+                 Max sources: ${this.params.max_sources || 10}
+                 Max depth: ${this.params.max_depth || 3}
                  
                  Do you want to proceed with this comprehensive research?`,
         onConfirm: async (_outcome) => {
@@ -204,14 +204,14 @@ export class DeepResearchTool extends BaseTool<
    * Executes the deep research functionality.
    */
   async execute(
-    params: DeepResearchToolParams,
     signal: AbortSignal,
+    updateOutput?: (output: string) => void,
   ): Promise<DeepResearchToolResult> {
-    const validationError = this.validateToolParams(params);
-    if (validationError) {
+    // Validate parameters
+    if (!this.params.query || this.params.query.trim() === '') {
       return {
-        llmContent: `Error: Invalid parameters for ${this.displayName}. Reason: ${validationError}`,
-        returnDisplay: `## Parameter Error\n\n${validationError}`,
+        llmContent: `Error: Invalid parameters. The 'query' parameter cannot be empty.`,
+        returnDisplay: `## Parameter Error\n\nThe 'query' parameter cannot be empty.`,
       };
     }
 
@@ -225,7 +225,7 @@ export class DeepResearchTool extends BaseTool<
       recent_years = 5,
       focus_domains = [],
       exclude_types = [],
-    } = params;
+    } = this.params;
 
     try {
       // Record telemetry
@@ -364,7 +364,7 @@ export class DeepResearchTool extends BaseTool<
     depth: number;
     topics: string[];
   }> {
-    const { max_depth, max_sources, strategy } = options;
+    const { max_depth, max_sources } = options;
     let currentAnalysis = '';
     let sourcesCount = 0;
     const topics: string[] = [];
@@ -463,7 +463,7 @@ export class DeepResearchTool extends BaseTool<
       // Generate filename with timestamp
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-      const timeStr = now.toISOString().split('T')[1].split('.')[0].replace(/:/g, '-'); // HH-MM-SS format
+      // const timeStr = now.toISOString().split('T')[1].split('.')[0].replace(/:/g, '-'); // HH-MM-SS format
       
       // Create a safe filename from the query
       const safeQuery = query

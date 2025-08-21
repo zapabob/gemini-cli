@@ -21,13 +21,6 @@ export class NaturalLanguageCommand {
   }
 
   /**
-   * コマンドの設定
-   */
-  private setupCommand(): void {
-    // yargsの設定はrunメソッドで行う
-  }
-
-  /**
    * コマンド実行
    */
   private async execute(prompt: string, options: any): Promise<void> {
@@ -75,7 +68,7 @@ export class NaturalLanguageCommand {
    */
   private async initializeConfig(options: any): Promise<MainAgentInterfaceConfig> {
     // Gemini APIキーの取得
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env['GEMINI_API_KEY'];
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY環境変数が設定されていません');
     }
@@ -276,6 +269,6 @@ ${result.error ? `## エラー\n${result.error}` : ''}
       })
       .argv;
 
-    await this.execute(argv.prompt as string, argv);
+    await this.execute((argv as any).prompt as string, argv);
   }
 } 

@@ -27,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
   activateCursorExtension(context);
 
   // 公式のワークスペースパス更新も反映
-  updateWorkspacePath(context);
+  await ideServer.updateWorkspacePath();
   const diffContentProvider = new DiffContentProvider();
   const diffManager = new DiffManager(log, diffContentProvider);
 

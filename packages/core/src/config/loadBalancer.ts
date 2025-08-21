@@ -67,7 +67,7 @@ function generateEndpointId(): string {
  * 設定ファイルのパスを取得
  */
 function getConfigFilePath(): string {
-  const configDir = process.env.GEMINI_CLI_CONFIG_DIR || join(process.cwd(), '.gemini');
+  const configDir = process.env['GEMINI_CLI_CONFIG_DIR'] || join(process.cwd(), '.gemini');
   return join(configDir, CONFIG_FILE);
 }
 

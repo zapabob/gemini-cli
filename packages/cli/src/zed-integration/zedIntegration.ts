@@ -22,6 +22,12 @@ import {
   getErrorStatus,
   MCPServerConfig,
   DiscoveredMCPTool,
+  Content,
+  FunctionCall,
+  Part,
+  PartListUnion,
+} from '@google/gemini-cli-core';
+
 import * as acp from './acp.js';
 import { AcpFileSystemService } from './fileSystemService.js';
 import { Readable, Writable } from 'node:stream';

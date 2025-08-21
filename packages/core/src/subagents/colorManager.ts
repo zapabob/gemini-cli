@@ -182,7 +182,7 @@ export class ColorManager {
     specialty?: SubagentSpecialty,
     type: ColoredMessage['type'] = 'agent_speech'
   ): ColoredMessage {
-    let color = MESSAGE_COLORS.info;
+    let color = MESSAGE_COLORS['info'];
 
     if (type === 'agent_speech' && agentId) {
       color = this.getAgentColor(agentId, specialty);

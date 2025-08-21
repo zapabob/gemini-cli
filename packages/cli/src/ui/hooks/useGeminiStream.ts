@@ -276,7 +276,7 @@ export const useGeminiStream = (
         await logger?.logMessage(MessageSenderType.USER, trimmedQuery);
 
         // 自然言語サブエージェント並列起動をチェック（非対話/検証時は抑制）
-        const allowNLProcessor = process.env.CI !== 'true' && process.env.NODE_ENV !== 'test';
+        const allowNLProcessor = process.env['CI'] !== 'true' && process.env['NODE_ENV'] !== 'test';
         const subagentResult = allowNLProcessor
           ? await naturalLanguageProcessor.processNaturalLanguagePrompt(trimmedQuery)
           : { shouldExecute: false };

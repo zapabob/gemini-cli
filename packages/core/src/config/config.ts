@@ -195,6 +195,7 @@ export interface ConfigParameters {
   folderTrustFeature?: boolean;
   folderTrust?: boolean;
   ideMode?: boolean;
+  ideModeFeature?: boolean;
   ideClient?: IdeClient;
   loadMemoryFromIncludeDirectories?: boolean;
   chatCompression?: ChatCompressionSettings;
@@ -332,7 +333,7 @@ export class Config {
     this.folderTrust = params.folderTrust ?? false;
     this.ideMode = params.ideMode ?? false;
     this.ideClient = params.ideClient ?? IdeClient.getInstance();
-    if (this.ideMode && this.ideModeFeature) {
+    if (this.ideMode && (this as any).ideModeFeature) {
       this.ideClient.connect();
       logIdeConnection(this, new IdeConnectionEvent(IdeConnectionType.START));
     }
