@@ -21032,17 +21032,445 @@ ocs: add DeepResearch/高度リサーチ status summary (_docs)"
  1 file changed, 27 insertions(+)
  create mode 100644 _docs/2025-08-10_deepresearch_status.md
 PS C:\Users\downl\Desktop\gemini-cli-main>
+PS C:\Users\downl\Desktop\gemini-cli-main>
 ```
 
 ---
 
+- **DeepResearch**: もう使える。多段階調査→要約→レポート生成までAPIフロー実装済み。MCP連携あり（`mcp-servers/deepresearch-mcp/`）。CLI全体テストも通過済み。
 
+- **高度リサーチ（Advanced Research Protocol）**: 並列/順次/ハイブリッド探索、証拠トラッキング、構造化出力をサポート。今後は動的ロードバランシング最適化、分野別テンプレ最適化、リトライ戦略強化を進める。
+
+- **ログ**: `_docs/2025-08-10_deepresearch_status.md` に要約を追記済み。
 
 ---
 
 _**User**_
 
 @https://github.com/zapabob/gemini-cli のmainにコミットして
+
+---
+
+_**Assistant**_
+
+<think><details><summary>Thought Process</summary>**Checking commit status**
+
+I need to push commits to the remote repository at github.com/zapabob/gemini-cli. I have to be careful because the local workspace might not have the correct git remotes set up. I see the branch is named "chore/integrate-upstream-2025-08-07," but it started on the main branch. I suspect a previous command may have created a new branch automatically. Now, I need to ensure I'm pushing to the correct branch and consider adding the appropriate remote, probably "origin."
+**Setting remote and pushing changes**
+
+I need to check the remotes by running `git remote -v`, then set the proper remote. I must ensure authentication is in place because pushing to GitHub may require credentials. I can suggest commands to run and utilize my ability to execute terminal commands, but if the credentials are missing, the push will fail. Since the user asked about committing to the main, I'll consider merging my branch "chore/integrate-upstream-2025-08-07" into main, resolving any conflicts before pushing.
+**Defining the workflow steps**
+
+I have a clear workflow to follow: first, I'll check the remotes with `git remote -v`, then set or add the 'origin' URL if it doesn’t exist. I’ll fetch from origin, switch to the main branch, merge my branch "chore/integrate-upstream-2025-08-07" into it, and finally push to origin’s main. I need to be careful about existing remotes, then save the implementation log as specified. Before running tool calls, I should provide a status update in Japanese: "今からリモートを確認し、mainへマージしてpushする."  After that, I can run the commands in parallel.
+**Running terminal commands carefully**
+
+I realize that I can run `functions.run_terminal_cmd` to execute commands, but running in parallel could be tricky due to dependencies on output. So, I’ll stick to running these commands sequentially for now. I'll start with checking the remotes, then the current branch, followed by fetching from the origin. I also need to switch to the main branch, manage any necessary merges, and prepare to push changes. However, I'll need the user's GitHub credentials, just in case there’s a prompt for authentication. I'm ready to proceed!</details></think>
+
+---
+
+今からリモート設定とブランチ状況を確認して、`main` にマージしてから `https://github.com/zapabob/gemini-cli` の `main` へ push するで。失敗したらメッセージ出すから、その場合はトークン設定だけ頼むわ。
+
+---
+
+```bash
+git remote -v
+```
+
+```
+PS C:\Users\downl\Desktop\gemini-cli-main> git remote -v
+origin  https://github.com/zapabob/gemini-cli.git (fetch)
+PS C:\Users\downl\Desktop\gemini-cli-main>
+PS C:\Users\downl\Desktop\gemini-cli-main> 
+PS C:\Users\downl\Desktop\gemini-cli-main>
+```
+
+---
+
+<think><details><summary>Thought Process</summary>**Planning git operations**
+
+I need to push to the origin main branch. I should check the current branch since the git status showed we were on main earlier, but we might have switched to "chore/integrate-upstream-2025-08-07" due to commits. Running `git remote -v` confirms that the origin is correct for the GitHub repo. I see I need to fetch origin, check the branch, switch to main if needed, and merge before pushing. Let's stay organized and execute these steps!
+**Executing git commands**
+
+After the merge, I'll push to the origin main branch. The user has mentioned creating a _docs log with a specific naming format and wants commands in Japanese, but I need to run them non-interactively. I should run commands in a single line, noting that Windows PowerShell uses ';' instead of '&'. 
+
+I’ll skip unnecessary commands, check out the main branch, and then proceed with `git pull --rebase origin main` or `git fetch` followed by `git merge`. This way, I’m keeping everything organized and efficient!
+**Executing git operations with documentation**
+
+I'll execute the commands: `git fetch origin; git checkout main; git pull --rebase origin main; git merge --no-ff chore/integrate-upstream-2025-08-07; git push origin main`. If the branch name changes, I’ll still proceed since I saw the commit message indicates the branch exists. 
+
+I need to create a `_docs` log file for the push, following user rules, naming it `_docs/2025-08-10_remote_main_push.md` to match the previous format. After pushing, I’ll commit this doc before the final push to keep everything organized.
+**Executing git commands and documentation**
+
+I’ll perform the following steps: First, I’ll use `apply_patch` to create the `_docs/2025-08-10_remote_main_push.md` file with the appropriate content. Then, I’ll add and commit the doc. After that, I’ll execute the git commands to fetch from origin, check out the main branch, pull with rebase, merge the topic branch, and push to origin main.
+
+I need to keep an eye out for possible conflicts, though since it’s an internal document, conflicts are unlikely. I’ll execute these commands in a single terminal call and provide a summary afterward!</details></think>
+
+---
+
+リモートを確認したので、作業ログを `_docs/2025-08-10_remote_main_push.md` に追加してコミット→`main` へマージして `origin/main` にプッシュするで。実行するわ。
+
+---
+
+
+
+---
+
+
+
+---
+
+```bash
+git add _docs/2025-08-10_remote_main_push.md; git commit -m "docs: add remote main push plan/log (_docs)"
+```
+
+```
+PS C:\Users\downl\Desktop\gemini-cli-main> git add _docs/2025-08-10_remote_main_push.md; git commit -m "docs
+: add remote main push plan/log            git add _docs/2025-08-10_remote_main_push.md; git commit -m "docs
+: add remote main push plan/log (_docs)"
+[chore/integrate-upstream-2025-08-07 3a9c6899] docs: add remote main push plan/log (_docs)
+ 5 files changed, 14985 insertions(+), 5 deletions(-)
+ create mode 100644 _docs/2025-08-10_remote_main_push.md
+PS C:\Users\downl\Desktop\gemini-cli-main>
+```
+
+---
+
+```bash
+git checkout main; git pull --ff-only origin main; git merge --no-ff chore/integrate-upstream-2025-08-07 -m "merge(chore): integrate upstream fixes and docs"; git push origin main
+```
+
+```
+
+From https://github.com/zapabob/gemini-cli
+ * branch              main       -> FETCH_HEAD
+Already up to date.
+Merge made by the 'ort' strategy.
+ .../workflows/gemini-automated-issue-triage.yml    |    20 +-
+ .../workflows/gemini-scheduled-issue-triage.yml    |     2 +-
+ .github/workflows/release.yml                      |     4 +-
+ .../2025-08-06_12-42Z-continue-the-discussion.md   |  2403 +++
+ ...203\253\343\201\256\345\256\237\350\241\214.md" |  4002 ++++
+ .../2025-08-07_08-56Z-continue-the-discussion.md   | 21054 +++++++++++++++++++
+ .vscode/extensions.json                            |     3 +
+ .vscode/settings.json                              |    15 +-
+ _docs/2025-08-10_deepresearch_status.md            |    27 +
+ _docs/2025-08-10_global_installation_log.md        |    11 +
+ _docs/2025-08-10_merge_auto_build_log.md           |    15 +
+ _docs/2025-08-10_remote_main_push.md               |    12 +
+ ...025-08-10_upstream_merge_and_custom_features.md |    22 +
+ docs/cli/configuration.md                          |    12 +
+ docs/telemetry.md                                  |    19 +-
+ docs/tools/mcp-server.md                           |   111 +
+ eslint.config.js                                   |     2 +
+ integration-tests/mcp_server_cyclic_schema.test.js |   199 +
+ integration-tests/test-helper.js                   |     9 +-
+ node_modules/.package-lock.json                    |  3282 +--
+ package-lock.json                                  |  3281 +--
+ package.json                                       |    36 +-
+ packages/cli/package.json                          |    13 +-
+ packages/cli/src/acp/acpPeer.ts                    |   149 +-
+ packages/cli/src/commands/mcp.test.ts              |    55 +
+ packages/cli/src/commands/mcp.ts                   |    27 +
+ packages/cli/src/commands/mcp/add.test.ts          |    92 +
+ packages/cli/src/commands/mcp/add.ts               |   211 +
+ packages/cli/src/commands/mcp/list.test.ts         |   154 +
+ packages/cli/src/commands/mcp/list.ts              |   139 +
+ packages/cli/src/commands/mcp/remove.test.ts       |    73 +
+ packages/cli/src/commands/mcp/remove.ts            |    60 +
+ packages/cli/src/config/config.test.ts             |   266 +-
+ packages/cli/src/config/config.ts                  |   512 +-
+ packages/cli/src/config/keyBindings.test.ts        |    62 +
+ packages/cli/src/config/keyBindings.ts             |   179 +
+ packages/cli/src/config/settings.test.ts           |   174 +
+ packages/cli/src/config/settings.ts                |   103 +-
+ packages/cli/src/config/settingsSchema.test.ts     |   253 +
+ packages/cli/src/config/settingsSchema.ts          |   516 +
+ packages/cli/src/gemini.tsx                        |    76 +-
+ packages/cli/src/nonInteractiveCli.ts              |     1 -
+ packages/cli/src/services/BuiltinCommandLoader.ts  |    13 +-
+ packages/cli/src/ui/App.test.tsx                   |    65 +-
+ packages/cli/src/ui/App.tsx                        |   255 +-
+ packages/cli/src/ui/IdeIntegrationNudge.tsx        |    70 +
+ .../cli/src/ui/__snapshots__/App.test.tsx.snap     |    17 +-
+ packages/cli/src/ui/commands/chatCommand.test.ts   |    50 +-
+ packages/cli/src/ui/commands/chatCommand.ts        |    26 +-
+ packages/cli/src/ui/commands/helpCommand.test.ts   |    12 +-
+ packages/cli/src/ui/commands/ideCommand.test.ts    |    49 +-
+ packages/cli/src/ui/commands/ideCommand.ts         |   208 +-
+ .../cli/src/ui/commands/settingsCommand.test.ts    |    36 +
+ packages/cli/src/ui/commands/settingsCommand.ts    |    17 +
+ .../cli/src/ui/commands/setupGithubCommand.test.ts |    66 +-
+ packages/cli/src/ui/commands/setupGithubCommand.ts |   112 +-
+ packages/cli/src/ui/commands/types.ts              |    22 +-
+ packages/cli/src/ui/components/AsciiArt.ts         |    11 +
+ packages/cli/src/ui/components/AuthInProgress.tsx  |     7 +-
+ .../ui/components/ContextSummaryDisplay.test.tsx   |    85 +
+ .../src/ui/components/ContextSummaryDisplay.tsx    |    54 +-
+ .../cli/src/ui/components/ContextUsageDisplay.tsx  |    25 +
+ .../src/ui/components/FolderTrustDialog.test.tsx   |    29 +
+ .../cli/src/ui/components/FolderTrustDialog.tsx    |    70 +
+ packages/cli/src/ui/components/Footer.test.tsx     |   106 +
+ packages/cli/src/ui/components/Footer.tsx          |    87 +-
+ packages/cli/src/ui/components/Header.test.tsx     |    44 +
+ packages/cli/src/ui/components/Header.tsx          |    22 +-
+ .../src/ui/components/IDEContextDetailDisplay.tsx  |    51 -
+ .../cli/src/ui/components/InputPrompt.test.tsx     |   100 +
+ packages/cli/src/ui/components/InputPrompt.tsx     |   147 +-
+ .../src/ui/components/LoadingIndicator.test.tsx    |    70 +
+ .../cli/src/ui/components/LoadingIndicator.tsx     |    57 +-
+ .../cli/src/ui/components/SettingsDialog.test.tsx  |   831 +
+ packages/cli/src/ui/components/SettingsDialog.tsx  |   465 +
+ .../cli/src/ui/components/SuggestionsDisplay.tsx   |     2 +-
+ packages/cli/src/ui/components/ThemeDialog.tsx     |    30 +-
+ .../IDEContextDetailDisplay.test.tsx.snap          |    24 +
+ .../messages/ToolConfirmationMessage.tsx           |    39 +-
+ packages/cli/src/ui/contexts/SettingsContext.tsx   |    20 +
+ packages/cli/src/ui/hooks/atCommandProcessor.ts    |    16 +-
+ .../cli/src/ui/hooks/slashCommandProcessor.test.ts |    43 +
+ packages/cli/src/ui/hooks/slashCommandProcessor.ts |    50 +-
+ packages/cli/src/ui/hooks/useAtCompletion.test.ts  |     8 +-
+ packages/cli/src/ui/hooks/useAtCompletion.ts       |    12 +-
+ .../src/ui/hooks/useCompletion.integration.test.ts |    47 +-
+ packages/cli/src/ui/hooks/useFolderTrust.test.ts   |    78 +
+ packages/cli/src/ui/hooks/useFolderTrust.ts        |    31 +
+ packages/cli/src/ui/hooks/useGeminiStream.test.tsx |   122 +-
+ packages/cli/src/ui/hooks/useGeminiStream.ts       |    21 +-
+ packages/cli/src/ui/hooks/usePhraseCycler.ts       |     1 +
+ packages/cli/src/ui/hooks/useReactToolScheduler.ts |    35 +-
+ packages/cli/src/ui/hooks/useSettingsCommand.ts    |    25 +
+ packages/cli/src/ui/hooks/useToolScheduler.test.ts |   184 +-
+ packages/cli/src/ui/keyMatchers.test.ts            |   337 +
+ packages/cli/src/ui/keyMatchers.ts                 |   105 +
+ packages/cli/src/ui/semantic-colors.ts             |    26 +
+ packages/cli/src/ui/themes/ansi-light.ts           |     2 +
+ packages/cli/src/ui/themes/ansi.ts                 |     2 +
+ packages/cli/src/ui/themes/atom-one-dark.ts        |     2 +
+ packages/cli/src/ui/themes/ayu-light.ts            |     2 +
+ packages/cli/src/ui/themes/ayu.ts                  |     2 +
+ packages/cli/src/ui/themes/default-light.ts        |     2 +
+ packages/cli/src/ui/themes/default.ts              |     2 +
+ packages/cli/src/ui/themes/dracula.ts              |     2 +
+ packages/cli/src/ui/themes/github-dark.ts          |     2 +
+ packages/cli/src/ui/themes/github-light.ts         |     2 +
+ packages/cli/src/ui/themes/googlecode.ts           |     2 +
+ packages/cli/src/ui/themes/no-color.ts             |    32 +
+ packages/cli/src/ui/themes/semantic-tokens.ts      |   127 +
+ packages/cli/src/ui/themes/shades-of-purple.ts     |     2 +
+ packages/cli/src/ui/themes/theme-manager.test.ts   |     9 -
+ packages/cli/src/ui/themes/theme-manager.ts        |     9 +
+ packages/cli/src/ui/themes/theme.test.ts           |    50 -
+ packages/cli/src/ui/themes/theme.ts                |   261 +-
+ packages/cli/src/ui/themes/xcode.ts                |     2 +
+ packages/cli/src/ui/types.ts                       |     2 +-
+ packages/cli/src/ui/utils/CodeColorizer.tsx        |    25 +-
+ packages/cli/src/ui/utils/ConsolePatcher.ts        |     5 +-
+ packages/cli/src/ui/utils/MarkdownDisplay.test.tsx |    96 +-
+ packages/cli/src/ui/utils/MarkdownDisplay.tsx      |     6 +
+ .../__snapshots__/MarkdownDisplay.test.tsx.snap    |     4 +
+ packages/cli/src/ui/utils/commandUtils.test.ts     |    39 +
+ packages/cli/src/ui/utils/commandUtils.ts          |    26 +-
+ packages/cli/src/ui/utils/isNarrowWidth.ts         |     9 +
+ packages/cli/src/utils/cleanup.test.ts             |    68 +
+ packages/cli/src/utils/cleanup.ts                  |     8 +-
+ packages/cli/src/utils/dialogScopeUtils.ts         |    64 +
+ packages/cli/src/utils/gitUtils.test.ts            |   149 +
+ packages/cli/src/utils/gitUtils.ts                 |   100 +-
+ packages/cli/src/utils/print.ts                    |     4 +-
+ packages/cli/src/utils/sandbox.ts                  |  1078 +-
+ packages/cli/src/utils/settingsUtils.test.ts       |   797 +
+ packages/cli/src/utils/settingsUtils.ts            |   473 +
+ packages/cli/src/validateNonInterActiveAuth.ts     |    12 +-
+ .../_docs/2025-08-10_deepresearch_ai_research.md   |    62 +
+ .../2025-08-10_deepresearch_custom_research.md     |    68 +
+ .../2025-08-10_deepresearch_test_research_query.md |    62 +
+ packages/core/package.json                         |    14 +-
+ packages/core/src/code_assist/converter.test.ts    |    55 +
+ packages/core/src/code_assist/converter.ts         |     2 +-
+ packages/core/src/code_assist/oauth2.test.ts       |    19 +-
+ packages/core/src/code_assist/oauth2.ts            |     2 +-
+ packages/core/src/code_assist/server.test.ts       |     6 +-
+ packages/core/src/config/config.test.ts            |    12 +
+ packages/core/src/config/config.ts                 |    42 +-
+ packages/core/src/core/client.test.ts              |    20 +-
+ packages/core/src/core/client.ts                   |   128 +-
+ packages/core/src/core/contentGenerator.test.ts    |    17 +-
+ packages/core/src/core/contentGenerator.ts         |    16 +-
+ packages/core/src/core/coreToolScheduler.test.ts   |   277 +-
+ packages/core/src/core/coreToolScheduler.ts        |   371 +-
+ packages/core/src/core/geminiChat.ts               |   201 +-
+ packages/core/src/core/logger.test.ts              |    46 +
+ packages/core/src/core/logger.ts                   |    23 +
+ packages/core/src/core/loggingContentGenerator.ts  |   174 +
+ .../src/core/nonInteractiveToolExecutor.test.ts    |    81 +-
+ .../core/src/core/nonInteractiveToolExecutor.ts    |    24 +-
+ packages/core/src/core/subagent.test.ts            |   814 +
+ packages/core/src/core/subagent.ts                 |   681 +
+ packages/core/src/core/turn.test.ts                |     6 +-
+ packages/core/src/core/turn.ts                     |     1 +
+ packages/core/src/ide/ide-client.ts                |   173 +-
+ packages/core/src/ide/ideContext.ts                |    59 +
+ .../core/src/services/loopDetectionService.test.ts |   194 +
+ packages/core/src/services/loopDetectionService.ts |    18 +-
+ .../src/services/shellExecutionService.test.ts     |    10 +
+ .../core/src/services/shellExecutionService.ts     |    45 +-
+ .../clearcut-logger/clearcut-logger.test.ts        |   263 +
+ .../telemetry/clearcut-logger/clearcut-logger.ts   |   323 +-
+ .../clearcut-logger/event-metadata-key.ts          |    12 +
+ .../core/src/telemetry/loggers.test.circular.ts    |    10 +-
+ packages/core/src/telemetry/loggers.test.ts        |     9 +-
+ packages/core/src/telemetry/metrics.test.ts        |    82 +
+ packages/core/src/telemetry/metrics.ts             |    10 +-
+ packages/core/src/telemetry/tool-call-decision.ts  |    32 +
+ packages/core/src/telemetry/types.ts               |    48 +-
+ packages/core/src/telemetry/uiTelemetry.test.ts    |    22 +-
+ packages/core/src/telemetry/uiTelemetry.ts         |    12 +-
+ packages/core/src/test-utils/tools.ts              |    63 +
+ packages/core/src/tools/diffOptions.test.ts        |   129 +
+ packages/core/src/tools/diffOptions.ts             |    53 +
+ packages/core/src/tools/edit.test.ts               |   218 +-
+ packages/core/src/tools/edit.ts                    |   347 +-
+ packages/core/src/tools/glob.test.ts               |    34 +-
+ packages/core/src/tools/glob.ts                    |   233 +-
+ packages/core/src/tools/grep.test.ts               |    71 +-
+ packages/core/src/tools/grep.ts                    |   266 +-
+ packages/core/src/tools/mcp-client.test.ts         |   393 +-
+ packages/core/src/tools/mcp-client.ts              |    94 +
+ packages/core/src/tools/memoryTool.ts              |     5 +-
+ packages/core/src/tools/modifiable-tool.test.ts    |    12 +-
+ packages/core/src/tools/modifiable-tool.ts         |    18 +-
+ packages/core/src/tools/read-file.test.ts          |   511 +-
+ packages/core/src/tools/read-file.ts               |   197 +-
+ packages/core/src/tools/read-many-files.test.ts    |    50 +-
+ packages/core/src/tools/read-many-files.ts         |    12 +-
+ packages/core/src/tools/shell.test.ts              |    37 +
+ packages/core/src/tools/shell.ts                   |     7 +-
+ packages/core/src/tools/tool-error.ts              |     4 +
+ packages/core/src/tools/tool-registry.test.ts      |    26 +-
+ packages/core/src/tools/tool-registry.ts           |    33 +-
+ packages/core/src/tools/tools.ts                   |   294 +-
+ packages/core/src/tools/write-file.test.ts         |   164 +-
+ packages/core/src/tools/write-file.ts              |   113 +-
+ packages/core/src/utils/bfsFileSearch.test.ts      |   103 +-
+ packages/core/src/utils/environmentContext.test.ts |   206 +
+ packages/core/src/utils/environmentContext.ts      |   109 +
+ packages/core/src/utils/errorReporting.test.ts     |   116 +-
+ packages/core/src/utils/fileUtils.test.ts          |    11 +-
+ packages/core/src/utils/fileUtils.ts               |    21 +-
+ .../core/src/utils/filesearch/fileSearch.test.ts   |    24 +
+ packages/core/src/utils/filesearch/fileSearch.ts   |    34 +-
+ packages/core/src/utils/memoryDiscovery.ts         |     5 +-
+ packages/core/src/utils/nextSpeakerChecker.test.ts |     4 +-
+ packages/core/src/utils/nextSpeakerChecker.ts      |     4 +-
+ packages/core/tsconfig.json                        |     2 +-
+ packages/test-utils/package.json                   |     2 +-
+ packages/test-utils/tsconfig.json                  |     2 +-
+ packages/vscode-ide-companion/README.md            |     6 +-
+ packages/vscode-ide-companion/package.json         |   384 +-
+ packages/vscode-ide-companion/src/diff-manager.ts  |   105 +-
+ .../vscode-ide-companion/src/extension.test.ts     |   106 +
+ packages/vscode-ide-companion/src/extension.ts     |    26 +-
+ packages/vscode-ide-companion/src/ide-server.ts    |    84 +-
+ scripts/MergeAndBuild.ps1                          |   110 +
+ scripts/integrate_upstream.ps1                     |    71 +
+ tash pop --index                                   |     1 +
+ ...ac15120191e078f363167c10fe9271it fetch upstream |   324 +
+ tsconfig.json                                      |     2 +-
+ 230 files changed, 46342 insertions(+), 9120 deletions(-)
+ create mode 100644 .specstory/history/2025-08-06_12-42Z-continue-the-discussion.md
+ create mode 100644 ".specstory/history/2025-08-06_13-04Z-\343\202\260\343\203\255\343\203\274\343\203\220\3
+43\203\253\343\202\244\343\203\263\343\202\271\343\203\210\343\203\274\343\203\253\343\201\256\345\256\237\3
+50\241\214.md"
+
+ create mode 100644 .specstory/history/2025-08-07_08-56Z-continue-the-discussion.md
+ create mode 100644 .vscode/extensions.json
+ create mode 100644 _docs/2025-08-10_deepresearch_status.md
+ create mode 100644 _docs/2025-08-10_global_installation_log.md
+ create mode 100644 _docs/2025-08-10_merge_auto_build_log.md
+ create mode 100644 _docs/2025-08-10_remote_main_push.md
+ create mode 100644 _docs/2025-08-10_upstream_merge_and_custom_features.md
+ create mode 100644 integration-tests/mcp_server_cyclic_schema.test.js
+ create mode 100644 packages/cli/src/commands/mcp.test.ts
+ create mode 100644 packages/cli/src/commands/mcp.ts
+ create mode 100644 packages/cli/src/commands/mcp/add.test.ts
+ create mode 100644 packages/cli/src/commands/mcp/add.ts
+ create mode 100644 packages/cli/src/commands/mcp/list.test.ts
+ create mode 100644 packages/cli/src/commands/mcp/list.ts
+ create mode 100644 packages/cli/src/commands/mcp/remove.test.ts
+ create mode 100644 packages/cli/src/commands/mcp/remove.ts
+ create mode 100644 packages/cli/src/config/keyBindings.test.ts
+ create mode 100644 packages/cli/src/config/keyBindings.ts
+ create mode 100644 packages/cli/src/config/settingsSchema.test.ts
+ create mode 100644 packages/cli/src/config/settingsSchema.ts
+ create mode 100644 packages/cli/src/ui/IdeIntegrationNudge.tsx
+ create mode 100644 packages/cli/src/ui/commands/settingsCommand.test.ts
+ create mode 100644 packages/cli/src/ui/commands/settingsCommand.ts
+ create mode 100644 packages/cli/src/ui/components/ContextSummaryDisplay.test.tsx
+ create mode 100644 packages/cli/src/ui/components/ContextUsageDisplay.tsx
+ create mode 100644 packages/cli/src/ui/components/FolderTrustDialog.test.tsx
+ create mode 100644 packages/cli/src/ui/components/FolderTrustDialog.tsx
+ create mode 100644 packages/cli/src/ui/components/Footer.test.tsx
+ create mode 100644 packages/cli/src/ui/components/Header.test.tsx
+ delete mode 100644 packages/cli/src/ui/components/IDEContextDetailDisplay.tsx
+ create mode 100644 packages/cli/src/ui/components/SettingsDialog.test.tsx
+ create mode 100644 packages/cli/src/ui/components/SettingsDialog.tsx
+ create mode 100644 packages/cli/src/ui/components/__snapshots__/IDEContextDetailDisplay.test.tsx.snap
+
+ create mode 100644 packages/cli/src/ui/contexts/SettingsContext.tsx
+ create mode 100644 packages/cli/src/ui/hooks/useFolderTrust.test.ts
+ create mode 100644 packages/cli/src/ui/hooks/useFolderTrust.ts
+ create mode 100644 packages/cli/src/ui/hooks/useSettingsCommand.ts
+ create mode 100644 packages/cli/src/ui/keyMatchers.test.ts
+ create mode 100644 packages/cli/src/ui/keyMatchers.ts
+ create mode 100644 packages/cli/src/ui/semantic-colors.ts
+ create mode 100644 packages/cli/src/ui/themes/semantic-tokens.ts
+ create mode 100644 packages/cli/src/ui/utils/isNarrowWidth.ts
+ create mode 100644 packages/cli/src/utils/cleanup.test.ts
+ create mode 100644 packages/cli/src/utils/dialogScopeUtils.ts
+ create mode 100644 packages/cli/src/utils/gitUtils.test.ts
+ create mode 100644 packages/cli/src/utils/settingsUtils.test.ts
+ create mode 100644 packages/cli/src/utils/settingsUtils.ts
+ create mode 100644 packages/core/_docs/2025-08-10_deepresearch_ai_research.md
+ create mode 100644 packages/core/_docs/2025-08-10_deepresearch_custom_research.md
+ create mode 100644 packages/core/_docs/2025-08-10_deepresearch_test_research_query.md
+ create mode 100644 packages/core/src/core/loggingContentGenerator.ts
+ create mode 100644 packages/core/src/core/subagent.test.ts
+ create mode 100644 packages/core/src/core/subagent.ts
+ create mode 100644 packages/core/src/telemetry/clearcut-logger/clearcut-logger.test.ts
+ create mode 100644 packages/core/src/telemetry/tool-call-decision.ts
+ create mode 100644 packages/core/src/test-utils/tools.ts
+ create mode 100644 packages/core/src/tools/diffOptions.test.ts
+ create mode 100644 packages/core/src/utils/environmentContext.test.ts
+ create mode 100644 packages/core/src/utils/environmentContext.ts
+ create mode 100644 packages/vscode-ide-companion/src/extension.test.ts
+ create mode 100644 scripts/MergeAndBuild.ps1
+ create mode 100644 scripts/integrate_upstream.ps1
+ create mode 100644 tash pop --index
+ create mode 100644 tream 3ac15120191e078f363167c10fe9271it fetch upstream
+Enumerating objects: 292, done.
+Counting objects: 100% (288/288), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (181/181), done.
+Writing objects: 100% (184/184), 251.21 KiB | 2.26 MiB/s, done.
+Total 184 (delta 142), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (142/142), completed with 54 local objects.
+To https://github.com/zapabob/gemini-cli.git
+   3ac15120..c143f477  main -> main
+```
+
+---
+
+- **push 完了**: `origin` → `main` に反映済み。  
+  - 実行: `git pull --ff-only origin main` → `git merge chore/integrate-upstream-2025-08-07` → `git push origin main`
+- **リモート**: `https://github.com/zapabob/gemini-cli.git`
+- **ログ**: `_docs/2025-08-10_remote_main_push.md` 追加済み
+
+なにか他に流したいブランチあれば指定してや。
+
+---
+
+_**User**_
+
+@https://github.com/google-gemini/gemini-cli 独自機能を尊重しつつ公式リボジトリと統合して　高度リサーチを自然言語でできるようにして
 
 ---
 
