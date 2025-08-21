@@ -49,8 +49,12 @@ Gemini CLIは、開発者の生産性を最大化し、AIを活用した開発�
   - キャッシュ機能の強化
   - 並列処理の改善
 
+<<<<<<< HEAD
 ### 🔮 v0.9.0 (2025-Q4) - **計画中**
 **テーマ: エンタープライズ機能とセキュリティ強化**
+=======
+Our roadmap is managed directly through GitHub Issues. See our entry point Roadmap Issue [here](https://github.com/google-gemini/gemini-cli/issues/4191). This approach allows for transparency and gives you a direct way to learn more or get involved with any specific initiative. All our roadmap items will be tagged as Type:`Feature` and Label:`maintainer` for features we are actively working on, or Type:`Task` and Label:`maintainer` for a more detailed list of tasks.
+>>>>>>> upstream/main
 
 #### 予定機能
 - **エンタープライズ機能**
@@ -59,11 +63,17 @@ Gemini CLIは、開発者の生産性を最大化し、AIを活用した開発�
   - 監査ログとコンプライアンス
   - 統合開発環境（IDE）連携
 
+<<<<<<< HEAD
 - **セキュリティ強化**
   - エンドツーエンド暗号化
   - 多要素認証（MFA）
   - セキュリティスキャン
   - 脆弱性管理
+=======
+- **Target Quarter:** `Milestone` denotes the anticipated delivery timeline.
+- **Feature Area:** Labels such as `area/model` or `area/tooling` categorize the work.
+- **Issue Type:** _Workstream_ => _Epics_ => _Features_ => _Tasks|Bugs_
+>>>>>>> upstream/main
 
 - **分析とレポート**
   - 使用状況分析
@@ -81,11 +91,25 @@ Gemini CLIは、開発者の生産性を最大化し、AIを活用した開発�
   - グローバル展開対応
   - カスタマイズ可能なワークフロー
 
+<<<<<<< HEAD
 - **AI機能の完成**
   - 完全な自然言語理解
   - 予測分析と推奨機能
   - 自動化の高度化
   - 継続学習システム
+=======
+- **Authentication:** Secure user access via API keys, Gemini Code Assist login, etc.
+- **Model:** Support new Gemini models, multi-modality, local execution, and performance tuning.
+- **User Experience:** Improve the CLI's usability, performance, interactive features, and documentation.
+- **Tooling:** Built-in tools and the MCP ecosystem.
+- **Core:** Core functionality of the CLI
+- **Extensibility:** Bringing Gemini CLI to other surfaces e.g. GitHub.
+- **Contribution:** Improve the contribution process via test automation and CI/CD pipeline enhancements.
+- **Platform:** Manage installation, OS support, and the underlying CLI framework.
+- **Quality:** Focus on testing, reliability, performance, and overall product quality.
+- **Background Agents:** Enable long-running, autonomous tasks and proactive assistance.
+- **Security and Privacy:** For all things related to security and privacy
+>>>>>>> upstream/main
 
 - **エコシステムの構築**
   - プラグインシステム

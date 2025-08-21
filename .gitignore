@@ -37,11 +37,17 @@ packages/*/coverage/
 
 # Generated files
 packages/cli/src/generated/
+packages/core/src/generated/
 .integration-tests/
 packages/vscode-ide-companion/*.vsix
 
+<<<<<<< HEAD
 # Project specific ignores
 doc/
 _doc/
 specstory/
 kiro/
+=======
+# GHA credentials
+gha-creds-*.json
+>>>>>>> upstream/main

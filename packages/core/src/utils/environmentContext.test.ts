@@ -89,7 +89,7 @@ describe('getEnvironmentContext', () => {
       }),
       getFileService: vi.fn(),
       getFullContext: vi.fn().mockReturnValue(false),
-      getToolRegistry: vi.fn().mockResolvedValue(mockToolRegistry),
+      getToolRegistry: vi.fn().mockReturnValue(mockToolRegistry),
     };
 
     vi.mocked(getFolderStructure).mockResolvedValue('Mock Folder Structure');
@@ -106,8 +106,8 @@ describe('getEnvironmentContext', () => {
     expect(parts.length).toBe(1);
     const context = parts[0].text;
 
-    // ローカライズされた日付表現に依存せず、固定文言だけ検証
-    expect(context).toContain("Today's date is ");
+    expect(context).toContain("Today's date is");
+    expect(context).toContain("(formatted according to the user's locale)");
     expect(context).toContain(`My operating system is: ${process.platform}`);
     expect(context).toContain(
       "I'm currently working in the directory: /test/dir",
