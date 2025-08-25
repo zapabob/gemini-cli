@@ -55,7 +55,10 @@ describe('DeepResearchTool', () => {
       };
 
       const result = deepResearchTool.validateToolParams(params);
-      expect(result).toContain('cannot be empty');
+      expect(result).toBeTruthy();
+      if (result) {
+        expect(result).toContain('cannot be empty');
+      }
     });
 
     it('should reject whitespace-only query', () => {
@@ -64,7 +67,10 @@ describe('DeepResearchTool', () => {
       };
 
       const result = deepResearchTool.validateToolParams(params);
-      expect(result).toContain('cannot be empty');
+      expect(result).toBeTruthy();
+      if (result) {
+        expect(result).toContain('cannot be empty');
+      }
     });
   });
 

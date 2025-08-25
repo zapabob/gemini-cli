@@ -111,40 +111,40 @@ export class DeepResearchTool extends BaseDeclarativeTool<
       'Perform comprehensive research with multi-level analysis, source validation, and topic exploration',
       Kind.Search,
       {
-        type: Type.OBJECT,
+        type: 'object',
         properties: {
           query: {
-            type: Type.STRING,
+            type: 'string',
             description: 'The research query to investigate deeply.',
           },
           max_depth: {
-            type: Type.NUMBER,
+            type: 'number',
             description: 'Maximum depth of research (default: 3).',
           },
           max_sources: {
-            type: Type.NUMBER,
+            type: 'number',
             description: 'Maximum number of sources to analyze (default: 10).',
           },
           strategy: {
-            type: Type.STRING,
+            type: 'string',
             description: 'Research strategy: comprehensive, focused, or exploratory.',
           },
           include_academic: {
-            type: Type.BOOLEAN,
+            type: 'boolean',
             description: 'Include academic sources in research.',
           },
           recent_years: {
-            type: Type.NUMBER,
+            type: 'number',
             description: 'Include recent sources (within specified years).',
           },
           focus_domains: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: 'array',
+            items: { type: 'string' },
             description: 'Specific domains to focus on.',
           },
           exclude_types: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING },
+            type: 'array',
+            items: { type: 'string' },
             description: 'Exclude certain types of sources.',
           },
         },

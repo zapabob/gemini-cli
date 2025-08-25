@@ -103,13 +103,23 @@ describe('WorkspaceContext with real filesystem', () => {
       const realDir = path.join(tempDir, 'real');
       fs.mkdirSync(realDir, { recursive: true });
       const symlinkDir = path.join(tempDir, 'symlink-to-real');
-      fs.symlinkSync(realDir, symlinkDir, 'dir');
-      const workspaceContext = new WorkspaceContext(cwd);
-      workspaceContext.addDirectory(symlinkDir);
+      
+      try {
+        fs.symlinkSync(realDir, symlinkDir, 'dir');
+        const workspaceContext = new WorkspaceContext(cwd);
+        workspaceContext.addDirectory(symlinkDir);
 
-      const directories = workspaceContext.getDirectories();
+        const directories = workspaceContext.getDirectories();
 
-      expect(directories).toEqual([cwd, realDir]);
+        expect(directories).toEqual([cwd, realDir]);
+      } catch (error) {
+        // Skip test on Windows if symlink creation fails due to permissions
+        if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+          console.log('Skipping symlink test on Windows due to permission restrictions');
+          return;
+        }
+        throw error;
+      }
     });
   });
 
@@ -183,7 +193,16 @@ describe('WorkspaceContext with real filesystem', () => {
           fs.mkdirSync(realDir, { recursive: true });
 
           symlinkDir = path.join(cwd, 'symlink-file');
-          fs.symlinkSync(realDir, symlinkDir, 'dir');
+          try {
+            fs.symlinkSync(realDir, symlinkDir, 'dir');
+          } catch (error) {
+            // Skip test on Windows if symlink creation fails due to permissions
+            if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+              console.log('Skipping symlink test on Windows due to permission restrictions');
+              return;
+            }
+            throw error;
+          }
         });
 
         it('should accept dir paths', () => {
@@ -217,11 +236,26 @@ describe('WorkspaceContext with real filesystem', () => {
           fs.mkdirSync(realDir, { recursive: true });
 
           symlinkDir = path.join(cwd, 'symlink-file');
-          fs.symlinkSync(realDir, symlinkDir, 'dir');
+          try {
+            fs.symlinkSync(realDir, symlinkDir, 'dir');
+          } catch (error) {
+            // Skip test on Windows if symlink creation fails due to permissions
+            if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+              console.log('Skipping symlink test on Windows due to permission restrictions');
+              return;
+            }
+            throw error;
+          }
         });
 
         it('should reject dir paths', () => {
           const workspaceContext = new WorkspaceContext(cwd);
+
+          // Skip test if symlink creation failed
+          if (!fs.existsSync(symlinkDir)) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
 
           expect(workspaceContext.isPathWithinWorkspace(symlinkDir)).toBe(
             false,
@@ -229,6 +263,12 @@ describe('WorkspaceContext with real filesystem', () => {
         });
 
         it('should reject non-existent paths', () => {
+          // Skip test if symlink creation failed
+          if (!fs.existsSync(symlinkDir)) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+
           const filePath = path.join(symlinkDir, 'does-not-exist.txt');
 
           const workspaceContext = new WorkspaceContext(cwd);
@@ -237,6 +277,12 @@ describe('WorkspaceContext with real filesystem', () => {
         });
 
         it('should reject non-existent deep paths', () => {
+          // Skip test if symlink creation failed
+          if (!fs.existsSync(symlinkDir)) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+
           const filePath = path.join(symlinkDir, 'deep', 'does-not-exist.txt');
 
           const workspaceContext = new WorkspaceContext(cwd);
@@ -245,6 +291,12 @@ describe('WorkspaceContext with real filesystem', () => {
         });
 
         it('should reject partially non-existent deep paths', () => {
+          // Skip test if symlink creation failed
+          if (!fs.existsSync(symlinkDir)) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+
           const deepDir = path.join(symlinkDir, 'deep');
           fs.mkdirSync(deepDir, { recursive: true });
           const filePath = path.join(deepDir, 'does-not-exist.txt');
@@ -260,7 +312,16 @@ describe('WorkspaceContext with real filesystem', () => {
         fs.writeFileSync(realFile, 'content');
 
         const symlinkFile = path.join(cwd, 'symlink-to-real-file');
-        fs.symlinkSync(realFile, symlinkFile, 'file');
+        try {
+          fs.symlinkSync(realFile, symlinkFile, 'file');
+        } catch (error) {
+          // Skip test on Windows if symlink creation fails due to permissions
+          if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+          throw error;
+        }
 
         const workspaceContext = new WorkspaceContext(cwd);
 
@@ -271,7 +332,16 @@ describe('WorkspaceContext with real filesystem', () => {
         const realFile = path.join(tempDir, 'real-file.txt');
 
         const symlinkFile = path.join(cwd, 'symlink-to-real-file');
-        fs.symlinkSync(realFile, symlinkFile, 'file');
+        try {
+          fs.symlinkSync(realFile, symlinkFile, 'file');
+        } catch (error) {
+          // Skip test on Windows if symlink creation fails due to permissions
+          if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+          throw error;
+        }
 
         const workspaceContext = new WorkspaceContext(cwd);
 
@@ -283,8 +353,17 @@ describe('WorkspaceContext with real filesystem', () => {
         const linkA = path.join(cwd, 'link-a');
         const linkB = path.join(cwd, 'link-b');
         // Create a circular dependency: linkA -> linkB -> linkA
-        fs.symlinkSync(linkB, linkA, 'dir');
-        fs.symlinkSync(linkA, linkB, 'dir');
+        try {
+          fs.symlinkSync(linkB, linkA, 'dir');
+          fs.symlinkSync(linkA, linkB, 'dir');
+        } catch (error) {
+          // Skip test on Windows if symlink creation fails due to permissions
+          if (process.platform === 'win32' && error instanceof Error && error.message.includes('EPERM')) {
+            console.log('Skipping symlink test on Windows due to permission restrictions');
+            return;
+          }
+          throw error;
+        }
 
         // fs.realpathSync should throw ELOOP, and isPathWithinWorkspace should
         // handle it gracefully and return false.

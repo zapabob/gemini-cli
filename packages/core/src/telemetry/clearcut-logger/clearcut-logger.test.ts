@@ -319,10 +319,16 @@ describe('ClearcutLogger', () => {
       'logs the current surface as $expectedValue, preempting vscode detection',
       ({ env, expectedValue }) => {
         const { logger } = setup({});
+        // Clear all environment variables first to avoid conflicts
+        vi.unstubAllEnvs();
         for (const [key, value] of Object.entries(env)) {
           vi.stubEnv(key, value);
         }
         vi.stubEnv('TERM_PROGRAM', 'vscode');
+        // Clear CURSOR_TRACE_ID if not testing for Cursor
+        if (expectedValue !== 'cursor') {
+          vi.stubEnv('CURSOR_TRACE_ID', '');
+        }
         const event = logger?.createLogEvent(EventNames.API_ERROR, []);
         expect(event?.event_metadata[0][3]).toEqual({
           gemini_cli_key: EventMetadataKey.GEMINI_CLI_SURFACE,

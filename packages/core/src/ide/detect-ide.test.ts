@@ -54,7 +54,13 @@ describe('detectIde', () => {
       expected: DetectedIde.FirebaseStudio,
     },
   ])('detects the IDE for $expected', ({ env, expected }) => {
+    // Clear all environment variables first to avoid conflicts
+    vi.unstubAllEnvs();
     vi.stubEnv('TERM_PROGRAM', 'vscode');
+    // Clear CURSOR_TRACE_ID if not testing for Cursor
+    if (expected !== DetectedIde.Cursor) {
+      vi.stubEnv('CURSOR_TRACE_ID', '');
+    }
     for (const [key, value] of Object.entries(env)) {
       vi.stubEnv(key, value);
     }

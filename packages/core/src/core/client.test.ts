@@ -1412,7 +1412,7 @@ ${JSON.stringify(
           };
 
           // Setup current context
-          vi.mocked(ideContext.getIdeContext).mockReturnValue({
+          vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
             workspaceState: {
               openFiles: [
                 { ...currentActiveFile, isActive: true, timestamp: Date.now() },
@@ -1474,7 +1474,7 @@ ${JSON.stringify(
         };
 
         // Setup current context (same as previous)
-        vi.mocked(ideContext.getIdeContext).mockReturnValue({
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
           workspaceState: {
             openFiles: [
               { ...activeFile, isActive: true, timestamp: Date.now() },
@@ -1546,7 +1546,7 @@ ${JSON.stringify(
         client['contentGenerator'] = mockGenerator as ContentGenerator;
 
         vi.spyOn(client['config'], 'getIdeMode').mockReturnValue(true);
-        vi.mocked(ideContext.getIdeContext).mockReturnValue({
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue({
           workspaceState: {
             openFiles: [{ path: '/path/to/file.ts', timestamp: Date.now() }],
           },
@@ -1643,7 +1643,7 @@ ${JSON.stringify(
             openFiles: [{ path: '/path/to/fileA.ts', timestamp: Date.now() }],
           },
         };
-        vi.mocked(ideContext.getIdeContext).mockReturnValue(initialIdeContext);
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue(initialIdeContext);
 
         // Act: Send the tool response
         let stream = client.sendMessageStream(
@@ -1702,7 +1702,7 @@ ${JSON.stringify(
             openFiles: [{ path: '/path/to/fileB.ts', timestamp: Date.now() }],
           },
         };
-        vi.mocked(ideContext.getIdeContext).mockReturnValue(newIdeContext);
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue(newIdeContext);
 
         // Act: Send a new, regular user message
         stream = client.sendMessageStream(
@@ -1743,7 +1743,7 @@ ${JSON.stringify(
             ],
           },
         };
-        vi.mocked(ideContext.getIdeContext).mockReturnValue(contextA);
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue(contextA);
 
         // Act: Send a regular message to establish the initial context
         let stream = client.sendMessageStream(
@@ -1786,7 +1786,7 @@ ${JSON.stringify(
             ],
           },
         };
-        vi.mocked(ideContext.getIdeContext).mockReturnValue(contextB);
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue(contextB);
 
         // Act: Send the tool response
         stream = client.sendMessageStream(
@@ -1841,7 +1841,7 @@ ${JSON.stringify(
             ],
           },
         };
-        vi.mocked(ideContext.getIdeContext).mockReturnValue(contextC);
+        vi.spyOn(ideContext, 'getIdeContext').mockReturnValue(contextC);
 
         // Act: Send a new, regular user message
         stream = client.sendMessageStream(

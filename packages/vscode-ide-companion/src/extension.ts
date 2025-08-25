@@ -26,10 +26,18 @@ export async function activate(context: vscode.ExtensionContext) {
   // Cursor拡張機能をアクティベート
   activateCursorExtension(context);
 
-  // 公式のワークスペースパス更新も反映
-  await ideServer.updateWorkspacePath();
   const diffContentProvider = new DiffContentProvider();
   const diffManager = new DiffManager(log, diffContentProvider);
+
+  ideServer = new IDEServer(log, diffManager);
+  try {
+    await ideServer.start(context);
+    // 公式のワークスペースパス更新も反映
+    await ideServer.updateWorkspacePath();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    log(`Failed to start IDE server: ${message}`);
+  }
 
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) => {
@@ -61,13 +69,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
   );
 
-  ideServer = new IDEServer(log, diffManager);
-  try {
-    await ideServer.start(context);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    log(`Failed to start IDE server: ${message}`);
-  }
+
 
   if (!context.globalState.get(INFO_MESSAGE_SHOWN_KEY)) {
     void vscode.window.showInformationMessage(

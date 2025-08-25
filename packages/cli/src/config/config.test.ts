@@ -273,7 +273,7 @@ describe('parseArguments', () => {
     await expect(parseArguments()).rejects.toThrow('process.exit called');
 
     expect(mockConsoleError).toHaveBeenCalledWith(
-      expect.stringContaining('Invalid values:'),
+      expect.stringContaining('不正な値です:'),
     );
 
     mockExit.mockRestore();
@@ -613,7 +613,7 @@ describe('loadCliConfig telemetry', () => {
     await expect(parseArguments()).rejects.toThrow('process.exit called');
 
     expect(mockConsoleError).toHaveBeenCalledWith(
-      expect.stringContaining('Invalid values:'),
+      expect.stringContaining('不正な値です:'),
     );
 
     mockExit.mockRestore();

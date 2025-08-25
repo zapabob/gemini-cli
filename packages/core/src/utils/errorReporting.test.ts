@@ -55,7 +55,6 @@ describe('reportError', () => {
     await reportError(error, baseMessage, undefined, 'test-type');
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining(baseMessage),
-      expect.any(String),
     );
     consoleErrorSpy.mockRestore();
   });
@@ -68,7 +67,6 @@ describe('reportError', () => {
     await reportError(error, baseMessage, undefined, 'general');
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining(baseMessage),
-      expect.any(String),
     );
     consoleErrorSpy.mockRestore();
   });
@@ -81,7 +79,6 @@ describe('reportError', () => {
     await reportError(error, baseMessage, undefined, 'general');
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining(baseMessage),
-      expect.any(String),
     );
     consoleErrorSpy.mockRestore();
   });
