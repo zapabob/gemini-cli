@@ -103,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
   try {
     await ideServer.start(context);
     // 公式のワークスペースパス更新も反映
-    await ideServer.updateWorkspacePath();
+    // await ideServer.updateWorkspacePath(); // メソッドが存在しないためコメントアウト
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     log(`Failed to start IDE server: ${message}`);

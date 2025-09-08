@@ -101,7 +101,6 @@ export class NaturalLanguageCommand {
       },
       checkpointing: false,
       noBrowser: true,
-      ideModeFeature: false,
       ideMode: false,
       maxSessionTurns: 100,
       listExtensions: false,

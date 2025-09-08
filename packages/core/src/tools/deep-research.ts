@@ -384,6 +384,7 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
           [{ role: 'user', parts: [{ text: levelPrompt }] }],
           { tools: [{ googleSearch: {} }] },
           signal,
+          'gemini-2.0-flash-exp',
         );
 
         const responseText = getResponseText(response);
