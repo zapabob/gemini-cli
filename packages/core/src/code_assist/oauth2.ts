@@ -79,9 +79,11 @@ async function initOauthClient(
     process.env['GOOGLE_GENAI_USE_GCA'] &&
     process.env['GOOGLE_CLOUD_ACCESS_TOKEN']
   ) {
-    client.setCredentials({
-      access_token: process.env['GOOGLE_CLOUD_ACCESS_TOKEN'],
-    });
+    if (typeof client.setCredentials === 'function') {
+      client.setCredentials({
+        access_token: process.env['GOOGLE_CLOUD_ACCESS_TOKEN'],
+      });
+    }
     await fetchAndCacheUserInfo(client);
     return client;
   }

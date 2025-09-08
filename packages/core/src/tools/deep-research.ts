@@ -158,6 +158,13 @@ export class DeepResearchTool extends BaseDeclarativeTool<
   protected createInvocation(params: DeepResearchToolParams): ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
     return new DeepResearchToolInvocation(params, this.config);
   }
+
+  validateToolParams(params: DeepResearchToolParams): string | null {
+    if (!params.query || params.query.trim() === '') {
+      return 'Query cannot be empty';
+    }
+    return null;
+  }
 }
 
 class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {

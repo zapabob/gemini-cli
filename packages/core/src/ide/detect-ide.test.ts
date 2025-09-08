@@ -56,14 +56,17 @@ describe('detectIde', () => {
   ])('detects the IDE for $expected', ({ env, expected }) => {
     // Clear all environment variables first to avoid conflicts
     vi.unstubAllEnvs();
-    vi.stubEnv('TERM_PROGRAM', 'vscode');
-    // Clear CURSOR_TRACE_ID if not testing for Cursor
-    if (expected !== DetectedIde.Cursor) {
-      vi.stubEnv('CURSOR_TRACE_ID', '');
-    }
+    
+    // Set environment variables in the correct order
     for (const [key, value] of Object.entries(env)) {
       vi.stubEnv(key, value);
     }
+    
+    // Set default vscode environment only if not testing for other IDEs
+    if (expected === DetectedIde.VSCode) {
+      vi.stubEnv('TERM_PROGRAM', 'vscode');
+    }
+    
     expect(detectIde({ pid: 1234, command: 'vscode' })).toBe(expected);
   });
 

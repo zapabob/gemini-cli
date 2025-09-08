@@ -70,10 +70,11 @@ describe('McpClientManager', () => {
       '',
       {} as ToolRegistry,
       {} as PromptRegistry,
-      false,
+      false, // folder is not trusted
       {} as WorkspaceContext,
     );
     await manager.discoverAllMcpTools();
+    // When folder is not trusted, MCP tools should not be discovered
     expect(mockedMcpClient.connect).not.toHaveBeenCalled();
     expect(mockedMcpClient.discover).not.toHaveBeenCalled();
   });
