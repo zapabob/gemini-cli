@@ -1,6 +1,6 @@
 # DeepResearch Report: AI research
 
-**Date**: 2025-09-08 10:46:18  
+**Date**: 2025-09-08 10:58:12  
 **Research Topic**: AI research  
 **Research Method**: comprehensive deep research with multi-level analysis  
 **Language**: English and Japanese (英語・日本語)
@@ -12,7 +12,7 @@
 - **Strategy Used**: comprehensive
 - **Depth Achieved**: 2/3 levels
 - **Sources Analyzed**: 10/10
-- **Time Taken**: 1ms
+- **Time Taken**: 0ms
 - **Topics Explored**: 0
 
 ## Key Topics
