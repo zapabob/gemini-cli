@@ -64,11 +64,11 @@ describe('detectIde', () => {
     for (const [key, value] of Object.entries(env)) {
       vi.stubEnv(key, value);
     }
-    expect(detectIde()).toBe(expected);
+    expect(detectIde({ pid: 1234, command: 'vscode' })).toBe(expected);
   });
 
   it('returns undefined for non-vscode', () => {
     vi.stubEnv('TERM_PROGRAM', 'definitely-not-vscode');
-    expect(detectIde()).toBeUndefined();
+    expect(detectIde({ pid: 1234, command: 'not-vscode' })).toBeUndefined();
   });
 });

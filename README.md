@@ -10,7 +10,14 @@ Gemini CLI is an open-source AI agent that brings the power of Gemini directly i
 
 ## 🚀 Why Gemini CLI?
 
-<<<<<<< HEAD
+### Core Features
+- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
+- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
+- **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
+- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
+- **💻 Terminal-first**: Designed for developers who live in the command line
+
+### Advanced Capabilities
 - Query and edit large codebases in and beyond Gemini's 1M token context window.
 - Generate new apps from PDFs or sketches, using Gemini's multimodal capabilities.
 - Automate operational tasks, like querying pull requests or handling complex rebases.
@@ -19,6 +26,8 @@ Gemini CLI is an open-source AI agent that brings the power of Gemini directly i
   Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
 - Ground your queries with the [Google Search](https://ai.google.dev/gemini-api/docs/grounding)
   tool, built into Gemini.
+
+### 🆕 Enhanced Features (Custom Extensions)
 - **🆕 Load Balancing**: Distribute requests across multiple Gemini API endpoints for improved reliability and performance
 - **🆕 Sub-Agents**: Create specialized AI agents for different tasks and coordinate them seamlessly
 - **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
@@ -275,21 +284,36 @@ jobs:
       - name: Analyze Code
         run: gemini analyze --output-format markdown
 ```
-=======
-- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
-- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
-- **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
-- **💻 Terminal-first**: Designed for developers who live in the command line
-- **🛡️ Open source**: Apache 2.0 licensed
->>>>>>> upstream/main
 
 ## 📦 Installation
 
-<<<<<<< HEAD
-You have multiple options to install Gemini CLI.
+### Quick Install
 
-### With Node (Recommended)
+#### Run instantly with npx
+
+```bash
+# Using npx (no installation required)
+npx @google/gemini-cli
+```
+
+#### Install globally with npm
+
+```bash
+npm install -g @google/gemini-cli
+```
+
+#### Install globally with Homebrew (macOS/Linux)
+
+```bash
+brew install gemini-cli
+```
+
+#### System Requirements
+
+- Node.js version 20 or higher
+- macOS, Linux, or Windows
+
+### From Source (Advanced)
 
 1. **Prerequisites:** Ensure you have [Node.js version 20](https://nodejs.org/en/download) or higher installed.
 2. **Install from source:**
@@ -321,13 +345,8 @@ You have multiple options to install Gemini CLI.
 
 ### With Homebrew
 
-<<<<<<< HEAD
-1. **Prerequisites:** Ensure you have Homebrew installed.
-2. **Install the CLI:**
-=======
 1. **Prerequisites:** Ensure you have [Homebrew](https://brew.sh/) installed.
 2. **Install the CLI:** Execute the following command in your terminal:
->>>>>>> upstream/main
 
    ```bash
    brew install gemini-cli
@@ -403,24 +422,6 @@ You can start a project from a new directory:
 cd new-project/
 gemini
 > Write me a Gemini Discord bot that answers questions using a FAQ.md file I will provide
-=======
-### Quick Install
-
-#### Run instantly with npx
-
-```bash
-# Using npx (no installation required)
-npx https://github.com/google-gemini/gemini-cli
->>>>>>> upstream/main
-```
-
-#### Install globally with npm
-
-```bash
-<<<<<<< HEAD
-=======
-npm install -g @google/gemini-cli
-```
 
 #### Install globally with Homebrew (macOS/Linux)
 
@@ -595,14 +596,12 @@ gemini
 #### Analyze existing code
 
 ```bash
->>>>>>> upstream/main
 git clone https://github.com/google-gemini/gemini-cli
 cd gemini-cli
 gemini
 > Give me a summary of all of the changes that went in yesterday
 ```
 
-<<<<<<< HEAD
 ### Natural Language Examples (NEW)
 
 Use the natural language CLI for more intuitive interactions:
@@ -618,7 +617,16 @@ gemini-natural
 > テストカバレッジを向上させるには？
 ```
 
-### Next steps
+## 📚 Documentation
+
+### Getting Started
+
+- [**Quickstart Guide**](./docs/cli/index.md) - Get up and running quickly
+- [**Authentication Setup**](./docs/cli/authentication.md) - Detailed auth configuration
+- [**Configuration Guide**](./docs/cli/configuration.md) - Settings and customization
+- [**Keyboard Shortcuts**](./docs/keyboard-shortcuts.md) - Productivity tips
+
+### Next Steps
 
 - Learn how to [contribute to or build from the source](CONTRIBUTING.md).
 - Explore the available **[CLI Commands](docs/cli/commands.md)**.
@@ -626,21 +634,8 @@ gemini-natural
 - For more comprehensive documentation, see the [full documentation](docs/).
 - Take a look at some [popular tasks](#popular-tasks) for more inspiration.
 - Check out our **[Official Roadmap](ROADMAP.md)**
-=======
-## 📚 Documentation
 
-### Getting Started
->>>>>>> upstream/main
-
-- [**Quickstart Guide**](./docs/cli/index.md) - Get up and running quickly
-- [**Authentication Setup**](./docs/cli/authentication.md) - Detailed auth configuration
-- [**Configuration Guide**](./docs/cli/configuration.md) - Settings and customization
-- [**Keyboard Shortcuts**](./docs/keyboard-shortcuts.md) - Productivity tips
-
-<<<<<<< HEAD
-Head over to the [troubleshooting guide](docs/cli/troubleshooting.md) if you're having issues.
-
-For advanced error handling and system diagnostics:
+### Advanced Error Handling and System Diagnostics
 
 ```bash
 # Analyze current errors
@@ -652,9 +647,8 @@ npm run error:system-info
 # Check for updates
 npm run update:check
 ```
-=======
+
 ### Core Features
->>>>>>> upstream/main
 
 - [**Commands Reference**](./docs/cli/commands.md) - All slash commands (`/help`, `/chat`, `/mcp`, etc.)
 - [**Checkpointing**](./docs/checkpointing.md) - Save and resume conversations
@@ -697,15 +691,6 @@ npm run update:check
 
 Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with custom tools:
 
-<<<<<<< HEAD
-```
-> Describe the main pieces of this system's architecture.
-```
-
-```
-> What security mechanisms are in place?
-```
-=======
 ```text
 > @github List my open pull requests
 > @slack Send a summary of today's commits to #dev channel
@@ -713,7 +698,6 @@ Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with cus
 ```
 
 See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup instructions.
->>>>>>> upstream/main
 
 ## 🤝 Contributing
 
@@ -730,54 +714,6 @@ Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11/)
 
 ## 📖 Resources
 
-<<<<<<< HEAD
-```text
-> Which tools, libraries, and dependencies are used in this project?
-```
-
-### Work with your existing code
-
-```
-> Implement a first draft for GitHub issue #123.
-```
-
-```
-> Help me migrate this codebase to the latest version of Java. Start with a plan.
-```
-
-### Automate your workflows
-
-Use MCP servers to integrate your local system tools with your enterprise collaboration suite.
-
-```
-> Make me a slide deck showing the git history from the last 7 days, grouped by feature and team member.
-```
-
-```
-> Make a full-screen web app for a wall display to show our most interacted-with GitHub issues.
-```
-
-### Interact with your system
-
-```
-> Convert all the images in this directory to png, and rename them to use dates from the exif data.
-```
-
-```
-> Organize my PDF invoices by month of expenditure.
-```
-
-### Uninstall
-
-Head over to the [Uninstall guide](docs/cli/uninstall.md) for uninstallation instructions.
-
-For global installation users:
-
-```bash
-# Clean uninstall with all cleanup
-npm run uninstall:global
-```
-=======
 - **[Official Roadmap](./ROADMAP.md)** - See what's coming next
 - **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package registry
 - **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** - Report bugs or request features
@@ -786,7 +722,6 @@ npm run uninstall:global
 ### Uninstall
 
 See the [Uninstall Guide](docs/Uninstall.md) for removal instructions.
->>>>>>> upstream/main
 
 ## 📄 Legal
 

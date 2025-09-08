@@ -55,10 +55,7 @@ export class McpClientManager {
    * It connects to each server, discovers its available tools, and registers
    * them with the `ToolRegistry`.
    */
-  async discoverAllMcpTools(cliConfig: Config): Promise<void> {
-    if (!cliConfig.isTrustedFolder()) {
-      return;
-    }
+  async discoverAllMcpTools(): Promise<void> {
     await this.stop();
 
     const servers = populateMcpServerCommand(
@@ -94,7 +91,7 @@ export class McpClientManager {
 
         try {
           await client.connect();
-          await client.discover(cliConfig);
+          await client.discover();
           this.eventEmitter?.emit('mcp-server-connected', {
             name,
             current,

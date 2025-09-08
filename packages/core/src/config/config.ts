@@ -63,6 +63,7 @@ export enum ApprovalMode {
 
 export interface AccessibilitySettings {
   disableLoadingPhrases?: boolean;
+  screenReader?: boolean;
 }
 
 export interface BugCommandSettings {
@@ -159,6 +160,7 @@ export interface ConfigParameters {
   question?: string;
   fullContext?: boolean;
   coreTools?: string[];
+  allowedTools?: string[];
   excludeTools?: string[];
   toolDiscoveryCommand?: string;
   toolCallCommand?: string;
@@ -176,6 +178,9 @@ export interface ConfigParameters {
     respectGitIgnore?: boolean;
     respectGeminiIgnore?: boolean;
     enableRecursiveFileSearch?: boolean;
+    globExcludes?: string[];
+    readManyFilesExcludes?: string[];
+    disableFuzzySearch?: boolean;
   };
   checkpointing?: boolean;
   proxy?: string;
@@ -203,6 +208,11 @@ export interface ConfigParameters {
   trustedFolder?: boolean;
   shouldUseNodePtyShell?: boolean;
   skipNextSpeakerCheck?: boolean;
+  useRipgrep?: boolean;
+  enablePromptCompletion?: boolean;
+  customExcludes?: string[];
+  eventEmitter?: any;
+  useSmartEdit?: boolean;
 }
 
 export class Config {
@@ -219,6 +229,7 @@ export class Config {
   private readonly question: string | undefined;
   private readonly fullContext: boolean;
   private readonly coreTools: string[] | undefined;
+  private readonly allowedTools: string[] | undefined;
   private readonly excludeTools: string[] | undefined;
   private readonly toolDiscoveryCommand: string | undefined;
   private readonly toolCallCommand: string | undefined;
@@ -236,6 +247,9 @@ export class Config {
     respectGitIgnore: boolean;
     respectGeminiIgnore: boolean;
     enableRecursiveFileSearch: boolean;
+    globExcludes: string[];
+    readManyFilesExcludes: string[];
+    disableFuzzySearch: boolean;
   };
   private fileDiscoveryService: FileDiscoveryService | null = null;
   private gitService: GitService | undefined = undefined;
@@ -272,6 +286,11 @@ export class Config {
   private readonly skipNextSpeakerCheck: boolean;
   private initialized: boolean = false;
   readonly storage: Storage;
+  private readonly useRipgrep: boolean;
+  private readonly enablePromptCompletion: boolean;
+  private readonly customExcludes: string[];
+  private readonly eventEmitter: any;
+  private readonly useSmartEdit: boolean;
 
   constructor(params: ConfigParameters) {
     this.sessionId = params.sessionId;
@@ -288,6 +307,7 @@ export class Config {
     this.question = params.question;
     this.fullContext = params.fullContext ?? false;
     this.coreTools = params.coreTools;
+    this.allowedTools = params.allowedTools;
     this.excludeTools = params.excludeTools;
     this.toolDiscoveryCommand = params.toolDiscoveryCommand;
     this.toolCallCommand = params.toolCallCommand;
@@ -313,6 +333,9 @@ export class Config {
       respectGeminiIgnore: params.fileFiltering?.respectGeminiIgnore ?? true,
       enableRecursiveFileSearch:
         params.fileFiltering?.enableRecursiveFileSearch ?? true,
+      globExcludes: params.fileFiltering?.globExcludes ?? [],
+      readManyFilesExcludes: params.fileFiltering?.readManyFilesExcludes ?? [],
+      disableFuzzySearch: params.fileFiltering?.disableFuzzySearch ?? false,
     };
     this.checkpointing = params.checkpointing ?? false;
     this.proxy = params.proxy;
@@ -332,7 +355,8 @@ export class Config {
     this.folderTrustFeature = params.folderTrustFeature ?? false;
     this.folderTrust = params.folderTrust ?? false;
     this.ideMode = params.ideMode ?? false;
-    this.ideClient = params.ideClient ?? IdeClient.getInstance();
+    // Initialize with a temporary value, will be properly set in initialize()
+    this.ideClient = params.ideClient ?? ({} as IdeClient);
     if (this.ideMode && (this as any).ideModeFeature) {
       this.ideClient.connect();
       logIdeConnection(this, new IdeConnectionEvent(IdeConnectionType.START));
@@ -345,6 +369,13 @@ export class Config {
     this.shouldUseNodePtyShell = params.shouldUseNodePtyShell ?? false;
     this.skipNextSpeakerCheck = params.skipNextSpeakerCheck ?? false;
     this.storage = new Storage(this.targetDir);
+    
+    // Initialize backward compatibility properties
+    this.useRipgrep = params.useRipgrep ?? false;
+    this.enablePromptCompletion = params.enablePromptCompletion ?? true;
+    this.customExcludes = params.customExcludes ?? [];
+    this.eventEmitter = params.eventEmitter;
+    this.useSmartEdit = params.useSmartEdit ?? false;
 
     if (params.contextFileName) {
       setGeminiMdFilename(params.contextFileName);
@@ -363,6 +394,12 @@ export class Config {
       throw Error('Config was already initialized');
     }
     this.initialized = true;
+    
+    // Initialize IDE client if not provided
+    if (!this.ideClient || Object.keys(this.ideClient).length === 0) {
+      this.ideClient = await IdeClient.getInstance();
+    }
+    
     // Initialize centralized FileDiscoveryService
     this.getFileService();
     if (this.getCheckpointingEnabled()) {
@@ -513,6 +550,10 @@ export class Config {
 
   getCoreTools(): string[] | undefined {
     return this.coreTools;
+  }
+
+  getAllowedTools(): string[] | undefined {
+    return this.allowedTools;
   }
 
   getExcludeTools(): string[] | undefined {
@@ -797,6 +838,73 @@ export class Config {
 
     await registry.discoverAllTools();
     return registry;
+  }
+
+  // Additional methods for backward compatibility with upstream changes
+  getUseRipgrep(): boolean {
+    // Return ripgrep usage preference
+    return this.useRipgrep ?? false;
+  }
+
+  getFileExclusions(): {
+    getGlobExcludes(): string[];
+    getReadManyFilesExcludes(): string[];
+    getCoreIgnorePatterns(): string[];
+    getDefaultExcludePatterns(): string[];
+    buildExcludePatterns(options?: { includeDefaults?: boolean; customPatterns?: string[]; runtimePatterns?: string[]; includeDynamicPatterns?: boolean; }): string[];
+  } {
+    return {
+      getGlobExcludes: () => this.fileFiltering.globExcludes || [],
+      getReadManyFilesExcludes: () => this.fileFiltering.readManyFilesExcludes || [],
+      getCoreIgnorePatterns: () => [
+        'node_modules/**',
+        '.git/**',
+        '**/.DS_Store',
+        '**/Thumbs.db',
+        '**/*.log',
+        '**/.env*',
+        '**/dist/**',
+        '**/build/**',
+        '**/.vscode/**',
+        '**/.idea/**',
+      ],
+      getDefaultExcludePatterns: () => [
+        ...this.fileFiltering.globExcludes || [],
+        '**/.git/**',
+        '**/node_modules/**',
+        '**/*.min.js',
+        '**/*.map',
+      ],
+      buildExcludePatterns: (options: { includeDefaults?: boolean; customPatterns?: string[]; runtimePatterns?: string[]; includeDynamicPatterns?: boolean; } = {}) => [
+        ...this.fileFiltering.globExcludes || [],
+        '**/.git/**',
+        '**/node_modules/**',
+        '**/*.min.js',
+        '**/*.map',
+        '**/.DS_Store',
+        '**/Thumbs.db',
+        ...(options.customPatterns || []),
+        ...(options.runtimePatterns || []),
+      ],
+    };
+  }
+
+
+
+  getScreenReader(): boolean {
+    return this.getAccessibility().screenReader ?? false;
+  }
+
+  getFileFilteringDisableFuzzySearch(): boolean {
+    return this.fileFiltering.disableFuzzySearch ?? false;
+  }
+
+  getEnablePromptCompletion(): boolean {
+    return this.enablePromptCompletion ?? true;
+  }
+
+  getCustomExcludes(): string[] {
+    return this.customExcludes || [];
   }
 }
 // Export model constants for use in CLI

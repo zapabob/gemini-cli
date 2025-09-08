@@ -11,6 +11,9 @@ import type {
 } from '@google/genai';
 import { getResponseText } from './partUtils.js';
 
+// Export getResponseText for external use
+export { getResponseText };
+
 export function getResponseTextFromParts(parts: Part[]): string | undefined {
   if (!parts) {
     return undefined;

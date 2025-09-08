@@ -14,8 +14,8 @@ import { mcpCommand } from '../commands/mcp.js';
 import type {
   TelemetryTarget,
   FileFilteringOptions,
-  MCPServerConfig,
 } from '@google/gemini-cli-core';
+import { MCPServerConfig } from '@google/gemini-cli-core';
 import { extensionsCommand } from '../commands/extensions.js';
 import {
   Config,
@@ -667,7 +667,7 @@ export async function loadCliConfig(
     summarizeToolOutput: settings.model?.summarizeToolOutput,
     ideMode,
     ideModeFeature,
-    chatCompression: settings.model?.chatCompression || settings.chatCompression,
+    chatCompression: settings.model?.chatCompression,
     folderTrustFeature,
     folderTrust,
     interactive,

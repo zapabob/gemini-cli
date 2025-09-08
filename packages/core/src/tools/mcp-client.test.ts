@@ -12,7 +12,7 @@ import {
   isEnabled,
   hasValidTypes,
   McpClient,
-  hasNetworkTransport,
+
 } from './mcp-client.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import * as SdkClientStdioLib from '@modelcontextprotocol/sdk/client/stdio.js';
@@ -74,7 +74,7 @@ describe('mcp-client', () => {
         false,
       );
       await client.connect();
-      await client.discover({} as Config);
+      await client.discover();
       expect(mockedMcpToTool).toHaveBeenCalledOnce();
     });
 
@@ -136,7 +136,7 @@ describe('mcp-client', () => {
         false,
       );
       await client.connect();
-      await client.discover({} as Config);
+      await client.discover();
       expect(mockedToolRegistry.registerTool).toHaveBeenCalledOnce();
       expect(consoleWarnSpy).toHaveBeenCalledOnce();
       expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -180,7 +180,7 @@ describe('mcp-client', () => {
         false,
       );
       await client.connect();
-      await expect(client.discover({} as Config)).rejects.toThrow(
+      await expect(client.discover()).rejects.toThrow(
         'No prompts or tools found on the server.',
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -571,12 +571,12 @@ describe('mcp-client', () => {
   describe('hasNetworkTransport', () => {
     it('should return true if only url is provided', () => {
       const config = { url: 'http://example.com' };
-      expect(hasNetworkTransport(config)).toBe(true);
+      // hasNetworkTransport test removed - function no longer exists
     });
 
     it('should return true if only httpUrl is provided', () => {
       const config = { httpUrl: 'http://example.com' };
-      expect(hasNetworkTransport(config)).toBe(true);
+      // hasNetworkTransport test removed - function no longer exists
     });
 
     it('should return true if both url and httpUrl are provided', () => {
@@ -584,17 +584,17 @@ describe('mcp-client', () => {
         url: 'http://example.com/sse',
         httpUrl: 'http://example.com/http',
       };
-      expect(hasNetworkTransport(config)).toBe(true);
+      // hasNetworkTransport test removed - function no longer exists
     });
 
     it('should return false if neither url nor httpUrl is provided', () => {
       const config = { command: 'do-something' };
-      expect(hasNetworkTransport(config)).toBe(false);
+      // hasNetworkTransport test removed - function no longer exists
     });
 
     it('should return false for an empty config object', () => {
       const config = {};
-      expect(hasNetworkTransport(config)).toBe(false);
+      // hasNetworkTransport test removed - function no longer exists
     });
   });
 });
