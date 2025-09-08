@@ -1,89 +1,3 @@
-<<<<<<< HEAD
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-env:
-  NODE_VERSION: '20'
-  NPM_VERSION: '10'
-
-jobs:
-  test:
-<<<<<<< HEAD
-    name: Test Suite
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18, 20]
-    
-=======
-    name: Test
-    runs-on: ${{ matrix.os }}
-    needs: lint
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [20.x, 22.x, 24.x]
->>>>>>> upstream/main
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run linting
-      run: npm run lint
-
-<<<<<<< HEAD
-    - name: Run tests
-      run: npm run test:ci
-=======
-      - name: Run tests and generate reports
-        run: npm run test:ci
-        env:
-          NO_COLOR: true
->>>>>>> upstream/main
-
-    - name: Build packages
-      run: npm run build
-
-<<<<<<< HEAD
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results-${{ matrix.os }}-${{ matrix.node-version }}
-        path: |
-          packages/*/coverage/
-          packages/*/test-results/
-          
-  integration-test:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: test
-    
-=======
-      - name: Upload Test Results Artifact (for forks)
-        if: always() && (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-=======
 name: 'Gemini CLI CI'
 
 on:
@@ -389,7 +303,6 @@ jobs:
         if: |-
           ${{ always() && (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository) }}
         uses: 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' # ratchet:actions/upload-artifact@v4
->>>>>>> upstream/main
         with:
           name: 'test-results-fork-${{ matrix.node-version }}-${{ matrix.os }}'
           path: 'packages/*/junit.xml'
@@ -415,33 +328,6 @@ jobs:
     strategy:
       matrix:
         # Reduce noise by only posting the comment once
-<<<<<<< HEAD
-        os: [ubuntu-latest]
-        node-version: [22.x]
->>>>>>> upstream/main
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-<<<<<<< HEAD
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run integration tests
-      run: npm run test:integration
-      
-  security:
-    name: Security Scan
-=======
-      - name: Download coverage reports artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-=======
         os:
           - 'ubuntu-latest'
         node-version:
@@ -452,7 +338,6 @@ jobs:
 
       - name: 'Download coverage reports artifact'
         uses: 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0' # ratchet:actions/download-artifact@v5
->>>>>>> upstream/main
         with:
           name: 'coverage-reports-${{ matrix.node-version }}-${{ matrix.os }}'
           path: 'coverage_artifact' # Download to a specific directory
@@ -469,110 +354,6 @@ jobs:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
 
   codeql:
-<<<<<<< HEAD
-    name: CodeQL
->>>>>>> upstream/main
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run security audit
-      run: npm audit --audit-level=moderate
-      
-    - name: Run Snyk security scan
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high
-
-  build:
-    name: Build and Package
-    runs-on: ubuntu-latest
-    needs: [test, integration-test, security]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build packages
-      run: npm run build
-      
-    - name: Create release package
-      run: npm run package
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          packages/*/dist/
-          packages/*/*.tgz
-          
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
-        
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
-        body: |
-          Automated release from CI/CD pipeline
-          
-          Changes in this release:
-          - Windows environment test fixes
-          - Custom command support integration
-          - Auto-update functionality
-          - Continuous integration improvements
-        draft: false
-        prerelease: false
-        
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./packages/cli/gemini-cli.tgz
-        asset_name: gemini-cli.tgz
-        asset_content_type: application/gzip
-=======
     name: 'CodeQL'
     runs-on: 'ubuntu-latest'
     permissions:
@@ -590,4 +371,25 @@ jobs:
 
       - name: 'Perform CodeQL Analysis'
         uses: 'github/codeql-action/analyze@df559355d593797519d70b90fc8edd5db049e7a2' # ratchet:github/codeql-action/analyze@v3
->>>>>>> upstream/main
+
+  # Check for changes in bundle size.
+  bundle_size:
+    name: 'Check Bundle Size'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read' # For checkout
+      pull-requests: 'write' # For commenting
+
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8' # ratchet:actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - uses: 'preactjs/compressed-size-action@946a292cd35bd1088e0d7eb92b69d1a8d5b5d76a'
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          pattern: './bundle/**/*.{js,sb}'
+          minimum-change-threshold: '1000'
+          compression: 'none'
+          clean-script: 'clean'

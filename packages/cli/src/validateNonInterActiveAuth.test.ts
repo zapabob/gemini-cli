@@ -5,10 +5,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { NonInteractiveConfig } from './validateNonInterActiveAuth.js';
 import { validateNonInteractiveAuth } from './validateNonInterActiveAuth.js';
 import { AuthType } from '@google/gemini-cli-core';
 import * as auth from './config/auth.js';
+import { type LoadedSettings } from './config/settings.js';
 
 describe('validateNonInterActiveAuth', () => {
   let originalEnvGeminiApiKey: string | undefined;
@@ -16,9 +16,8 @@ describe('validateNonInterActiveAuth', () => {
   let originalEnvGcp: string | undefined;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
   let processExitSpy: ReturnType<typeof vi.spyOn>;
-  let refreshAuthMock: jest.MockedFunction<
-    (authType: AuthType) => Promise<unknown>
-  >;
+  let refreshAuthMock: vi.Mock;
+  let mockSettings: LoadedSettings;
 
   beforeEach(() => {
 <<<<<<< HEAD
@@ -39,6 +38,25 @@ describe('validateNonInterActiveAuth', () => {
       throw new Error(`process.exit(${code}) called`);
     });
     refreshAuthMock = vi.fn().mockResolvedValue('refreshed');
+    mockSettings = {
+      system: { path: '', settings: {} },
+      systemDefaults: { path: '', settings: {} },
+      user: { path: '', settings: {} },
+      workspace: { path: '', settings: {} },
+      errors: [],
+      setValue: vi.fn(),
+      merged: {
+        security: {
+          auth: {
+            enforcedType: undefined,
+          },
+        },
+      },
+      isTrusted: true,
+      migratedInMemorScopes: new Set(),
+      forScope: vi.fn(),
+      computeMergedSettings: vi.fn(),
+    } as unknown as LoadedSettings;
   });
 
   afterEach(() => {
@@ -61,7 +79,7 @@ describe('validateNonInterActiveAuth', () => {
   });
 
   it('exits if no auth type is configured or env vars set', async () => {
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     try {
@@ -69,6 +87,7 @@ describe('validateNonInterActiveAuth', () => {
         undefined,
         undefined,
         nonInteractiveConfig,
+        mockSettings,
       );
       expect.fail('Should have exited');
     } catch (e) {
@@ -82,25 +101,27 @@ describe('validateNonInterActiveAuth', () => {
 
   it('uses LOGIN_WITH_GOOGLE if GOOGLE_GENAI_USE_GCA is set', async () => {
     process.env['GOOGLE_GENAI_USE_GCA'] = 'true';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.LOGIN_WITH_GOOGLE);
   });
   it('uses USE_GEMINI if GEMINI_API_KEY is set', async () => {
     process.env['GEMINI_API_KEY'] = 'fake-key';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
   });
@@ -109,13 +130,14 @@ describe('validateNonInterActiveAuth', () => {
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
     process.env['GOOGLE_CLOUD_LOCATION'] = 'us-central1';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
   });
@@ -123,13 +145,14 @@ describe('validateNonInterActiveAuth', () => {
   it('uses USE_VERTEX_AI if GOOGLE_GENAI_USE_VERTEXAI is true and GOOGLE_API_KEY is set', async () => {
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     process.env['GOOGLE_API_KEY'] = 'vertex-api-key';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
   });
@@ -140,13 +163,14 @@ describe('validateNonInterActiveAuth', () => {
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
     process.env['GOOGLE_CLOUD_LOCATION'] = 'us-central1';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.LOGIN_WITH_GOOGLE);
   });
@@ -156,13 +180,14 @@ describe('validateNonInterActiveAuth', () => {
     process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
     process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
     process.env['GOOGLE_CLOUD_LOCATION'] = 'us-central1';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_VERTEX_AI);
   });
@@ -172,13 +197,14 @@ describe('validateNonInterActiveAuth', () => {
     process.env['GEMINI_API_KEY'] = 'fake-key';
     process.env['GOOGLE_CLOUD_PROJECT'] = 'test-project';
     process.env['GOOGLE_CLOUD_LOCATION'] = 'us-central1';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       undefined,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
   });
@@ -186,13 +212,14 @@ describe('validateNonInterActiveAuth', () => {
   it('uses configuredAuthType if provided', async () => {
     // Set required env var for USE_GEMINI
     process.env['GEMINI_API_KEY'] = 'fake-key';
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     await validateNonInteractiveAuth(
       AuthType.USE_GEMINI,
       undefined,
       nonInteractiveConfig,
+      mockSettings,
     );
     expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
   });
@@ -200,7 +227,7 @@ describe('validateNonInterActiveAuth', () => {
   it('exits if validateAuthMethod returns error', async () => {
     // Mock validateAuthMethod to return error
     vi.spyOn(auth, 'validateAuthMethod').mockReturnValue('Auth error!');
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
     try {
@@ -208,6 +235,7 @@ describe('validateNonInterActiveAuth', () => {
         AuthType.USE_GEMINI,
         undefined,
         nonInteractiveConfig,
+        mockSettings,
       );
       expect.fail('Should have exited');
     } catch (e) {
@@ -222,7 +250,7 @@ describe('validateNonInterActiveAuth', () => {
     const validateAuthMethodSpy = vi
       .spyOn(auth, 'validateAuthMethod')
       .mockReturnValue('Auth error!');
-    const nonInteractiveConfig: NonInteractiveConfig = {
+    const nonInteractiveConfig = {
       refreshAuth: refreshAuthMock,
     };
 
@@ -232,6 +260,7 @@ describe('validateNonInterActiveAuth', () => {
       'invalid-auth-type' as AuthType,
       true, // useExternalAuth = true
       nonInteractiveConfig,
+      mockSettings,
     );
 
     expect(validateAuthMethodSpy).not.toHaveBeenCalled();
@@ -239,5 +268,45 @@ describe('validateNonInterActiveAuth', () => {
     expect(processExitSpy).not.toHaveBeenCalled();
     // We still expect refreshAuth to be called with the (invalid) type
     expect(refreshAuthMock).toHaveBeenCalledWith('invalid-auth-type');
+  });
+
+  it('uses enforcedAuthType if provided', async () => {
+    mockSettings.merged.security.auth.enforcedType = AuthType.USE_GEMINI;
+    mockSettings.merged.security.auth.selectedType = AuthType.USE_GEMINI;
+    // Set required env var for USE_GEMINI to ensure enforcedAuthType takes precedence
+    process.env['GEMINI_API_KEY'] = 'fake-key';
+    const nonInteractiveConfig = {
+      refreshAuth: refreshAuthMock,
+    };
+    await validateNonInteractiveAuth(
+      AuthType.USE_GEMINI,
+      undefined,
+      nonInteractiveConfig,
+      mockSettings,
+    );
+    expect(refreshAuthMock).toHaveBeenCalledWith(AuthType.USE_GEMINI);
+  });
+
+  it('exits if currentAuthType does not match enforcedAuthType', async () => {
+    mockSettings.merged.security.auth.enforcedType = AuthType.LOGIN_WITH_GOOGLE;
+    process.env['GOOGLE_GENAI_USE_VERTEXAI'] = 'true';
+    const nonInteractiveConfig = {
+      refreshAuth: refreshAuthMock,
+    };
+    try {
+      await validateNonInteractiveAuth(
+        AuthType.USE_GEMINI,
+        undefined,
+        nonInteractiveConfig,
+        mockSettings,
+      );
+      expect.fail('Should have exited');
+    } catch (e) {
+      expect((e as Error).message).toContain('process.exit(1) called');
+    }
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'The configured auth type is oauth-personal, but the current auth type is vertex-ai. Please re-authenticate with the correct type.',
+    );
+    expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 });
