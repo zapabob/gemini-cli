@@ -11,8 +11,6 @@ import type {
 } from '@a2a-js/sdk';
 import {
   ApprovalMode,
-  DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES,
-  DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD,
   GeminiClient,
 } from '@google/gemini-cli-core';
 import type { Config, Storage } from '@google/gemini-cli-core';
@@ -36,9 +34,8 @@ export function createMockConfig(
     storage: {
       getProjectTempDir: () => '/tmp',
     } as Storage,
-    getTruncateToolOutputThreshold: () =>
-      DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD,
-    getTruncateToolOutputLines: () => DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES,
+    getTruncateToolOutputThreshold: () => 1000,
+    getTruncateToolOutputLines: () => 50,
     getDebugMode: vi.fn().mockReturnValue(false),
     getContentGeneratorConfig: vi.fn().mockReturnValue({ model: 'gemini-pro' }),
     getModel: vi.fn().mockReturnValue('gemini-pro'),

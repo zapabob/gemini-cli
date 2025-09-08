@@ -227,7 +227,7 @@ export class Task {
     } = {
       coderAgent: coderAgentMessage,
       model: this.config.getModel(),
-      userTier: this.config.getUserTier(),
+      // userTier: this.config.getUserTier(), // メソッドが存在しないためコメントアウト
     };
 
     if (metadataError) {
