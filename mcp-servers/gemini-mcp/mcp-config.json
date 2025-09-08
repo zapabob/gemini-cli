@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "gemini-mcp": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/gemini-mcp/dist/index.js"
+      ]
+    }
+  }
+}
