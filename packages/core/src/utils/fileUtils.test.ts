@@ -608,7 +608,7 @@ describe('fileUtils', () => {
     });
 
     it('should use isBinaryFile for unknown extensions and detect as binary', async () => {
-      vi.mocked(mime.getType).mockReturnValueOnce(false); // Unknown mime type
+      vi.mocked(mime.getType).mockReturnValueOnce(null); // Unknown mime type
       // Create a file that isBinaryFile will identify as binary
       const binaryContent = Buffer.from([
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
@@ -618,7 +618,7 @@ describe('fileUtils', () => {
     });
 
     it('should default to text if mime type is unknown and content is not binary', async () => {
-      vi.mocked(mime.getType).mockReturnValueOnce(false); // Unknown mime type
+      vi.mocked(mime.getType).mockReturnValueOnce(null); // Unknown mime type
       // filePathForDetectTest is already a text file by default from beforeEach
       expect(await detectFileType(filePathForDetectTest)).toBe('text');
     });

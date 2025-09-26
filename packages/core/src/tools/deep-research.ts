@@ -159,7 +159,7 @@ export class DeepResearchTool extends BaseDeclarativeTool<
     return new DeepResearchToolInvocation(params, this.config);
   }
 
-  validateToolParams(params: DeepResearchToolParams): string | null {
+  override validateToolParams(params: DeepResearchToolParams): string | null {
     if (!params.query || params.query.trim() === '') {
       return 'Query cannot be empty';
     }
