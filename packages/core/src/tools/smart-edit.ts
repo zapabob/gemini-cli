@@ -28,28 +28,10 @@ import {
   type ModifiableDeclarativeTool,
   type ModifyContext,
 } from './modifiable-tool.js';
-import { IdeClient, IDEConnectionStatus } from '../ide/ide-client.js';
+import { IdeClient } from '../ide/ide-client.js';
 import { FixLLMEditWithInstruction } from '../utils/llm-edit-fixer.js';
-
-export function applyReplacement(
-  currentContent: string | null,
-  oldString: string,
-  newString: string,
-  isNewFile: boolean,
-): string {
-  if (isNewFile) {
-    return newString;
-  }
-  if (currentContent === null) {
-    // Should not happen if not a new file, but defensively return empty or newString if oldString is also empty
-    return oldString === '' ? newString : '';
-  }
-  // If oldString is empty and it's not a new file, do not modify the content.
-  if (oldString === '' && !isNewFile) {
-    return currentContent;
-  }
-  return currentContent.replaceAll(oldString, newString);
-}
+import { applyReplacement } from './edit.js';
+import { safeLiteralReplace } from '../utils/textUtils.js';
 
 interface ReplacementContext {
   params: EditToolParams;
@@ -77,6 +59,15 @@ function restoreTrailingNewline(
   return modifiedContent;
 }
 
+/**
+ * Escapes characters with special meaning in regular expressions.
+ * @param str The string to escape.
+ * @returns The escaped string.
+ */
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 async function calculateExactReplacement(
   context: ReplacementContext,
 ): Promise<ReplacementResult | null> {
@@ -89,7 +80,8 @@ async function calculateExactReplacement(
 
   const exactOccurrences = normalizedCode.split(normalizedSearch).length - 1;
   if (exactOccurrences > 0) {
-    let modifiedCode = normalizedCode.replaceAll(
+    let modifiedCode = safeLiteralReplace(
+      normalizedCode,
       normalizedSearch,
       normalizedReplace,
     );
@@ -163,6 +155,68 @@ async function calculateFlexibleReplacement(
   return null;
 }
 
+async function calculateRegexReplacement(
+  context: ReplacementContext,
+): Promise<ReplacementResult | null> {
+  const { currentContent, params } = context;
+  const { old_string, new_string } = params;
+
+  // Normalize line endings for consistent processing.
+  const normalizedSearch = old_string.replace(/\r\n/g, '\n');
+  const normalizedReplace = new_string.replace(/\r\n/g, '\n');
+
+  // This logic is ported from your Python implementation.
+  // It builds a flexible, multi-line regex from a search string.
+  const delimiters = ['(', ')', ':', '[', ']', '{', '}', '>', '<', '='];
+
+  let processedString = normalizedSearch;
+  for (const delim of delimiters) {
+    processedString = processedString.split(delim).join(` ${delim} `);
+  }
+
+  // Split by any whitespace and remove empty strings.
+  const tokens = processedString.split(/\s+/).filter(Boolean);
+
+  if (tokens.length === 0) {
+    return null;
+  }
+
+  const escapedTokens = tokens.map(escapeRegex);
+  // Join tokens with `\s*` to allow for flexible whitespace between them.
+  const pattern = escapedTokens.join('\\s*');
+
+  // The final pattern captures leading whitespace (indentation) and then matches the token pattern.
+  // 'm' flag enables multi-line mode, so '^' matches the start of any line.
+  const finalPattern = `^(\\s*)${pattern}`;
+  const flexibleRegex = new RegExp(finalPattern, 'm');
+
+  const match = flexibleRegex.exec(currentContent);
+
+  if (!match) {
+    return null;
+  }
+
+  const indentation = match[1] || '';
+  const newLines = normalizedReplace.split('\n');
+  const newBlockWithIndent = newLines
+    .map((line) => `${indentation}${line}`)
+    .join('\n');
+
+  // Use replace with the regex to substitute the matched content.
+  // Since the regex doesn't have the 'g' flag, it will only replace the first occurrence.
+  const modifiedCode = currentContent.replace(
+    flexibleRegex,
+    newBlockWithIndent,
+  );
+
+  return {
+    newContent: restoreTrailingNewline(currentContent, modifiedCode),
+    occurrences: 1, // This method is designed to find and replace only the first occurrence.
+    finalOldString: normalizedSearch,
+    finalNewString: normalizedReplace,
+  };
+}
+
 /**
  * Detects the line ending style of a string.
  * @param content The string content to analyze.
@@ -199,6 +253,11 @@ export async function calculateReplacement(
   const flexibleResult = await calculateFlexibleReplacement(context);
   if (flexibleResult) {
     return flexibleResult;
+  }
+
+  const regexResult = await calculateRegexReplacement(context);
+  if (regexResult) {
+    return regexResult;
   }
 
   return {
@@ -310,7 +369,7 @@ class EditToolInvocation implements ToolInvocation<EditToolParams, ToolResult> {
       params.new_string,
       initialError.raw,
       currentContent,
-      this.config.getGeminiClient(),
+      this.config.getBaseLlmClient(),
       abortSignal,
     );
 
@@ -322,8 +381,8 @@ class EditToolInvocation implements ToolInvocation<EditToolParams, ToolResult> {
         isNewFile: false,
         error: {
           display: `No changes required. The file already meets the specified conditions.`,
-          raw: `A secondary check determined that no changes were necessary to fulfill the instruction. Explanation: ${fixedEdit.explanation}. Original error with the parameters given: ${initialError.raw}`,
-          type: ToolErrorType.EDIT_NO_CHANGE,
+          raw: `A secondary check by an LLM determined that no changes were necessary to fulfill the instruction. Explanation: ${fixedEdit.explanation}. Original error with the parameters given: ${initialError.raw}`,
+          type: ToolErrorType.EDIT_NO_CHANGE_LLM_JUDGEMENT,
         },
         originalLineEnding,
       };
@@ -507,6 +566,9 @@ class EditToolInvocation implements ToolInvocation<EditToolParams, ToolResult> {
     try {
       editData = await this.calculateEdit(this.params, abortSignal);
     } catch (error) {
+      if (abortSignal.aborted) {
+        throw error;
+      }
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.log(`Error preparing edit: ${errorMsg}`);
       return false;
@@ -528,8 +590,7 @@ class EditToolInvocation implements ToolInvocation<EditToolParams, ToolResult> {
     );
     const ideClient = await IdeClient.getInstance();
     const ideConfirmation =
-      this.config.getIdeMode() &&
-      ideClient?.getConnectionStatus().status === IDEConnectionStatus.Connected
+      this.config.getIdeMode() && ideClient.isDiffingEnabled()
         ? ideClient.openDiff(this.params.file_path, editData.newContent)
         : undefined;
 
@@ -593,6 +654,9 @@ class EditToolInvocation implements ToolInvocation<EditToolParams, ToolResult> {
     try {
       editData = await this.calculateEdit(this.params, signal);
     } catch (error) {
+      if (signal.aborted) {
+        throw error;
+      }
       const errorMsg = error instanceof Error ? error.message : String(error);
       return {
         llmContent: `Error preparing edit: ${errorMsg}`,
@@ -768,6 +832,58 @@ A good instruction should concisely answer:
   }
 
   /**
+   * Quickly checks if the file path can be resolved directly against the workspace root.
+   * @param filePath The relative file path to check.
+   * @returns The absolute path if the file exists, otherwise null.
+   */
+  private findDirectPath(filePath: string): string | null {
+    const directPath = path.join(this.config.getTargetDir(), filePath);
+    return fs.existsSync(directPath) ? directPath : null;
+  }
+
+  /**
+   * Searches for a file across all configured workspace directories.
+   * @param filePath The file path (can be partial) to search for.
+   * @returns A list of absolute paths for all matching files found.
+   */
+  private findAmbiguousPaths(filePath: string): string[] {
+    const workspaceContext = this.config.getWorkspaceContext();
+    const fileSystem = this.config.getFileSystemService();
+    const searchPaths = workspaceContext.getDirectories();
+    return fileSystem.findFiles(filePath, searchPaths);
+  }
+
+  /**
+   * Attempts to correct a relative file path to an absolute path.
+   * This function modifies `params.file_path` in place if successful.
+   * @param params The tool parameters containing the file_path to correct.
+   * @returns An error message string if correction fails, otherwise null.
+   */
+  private correctPath(params: EditToolParams): string | null {
+    const directPath = this.findDirectPath(params.file_path);
+    if (directPath) {
+      params.file_path = directPath;
+      return null;
+    }
+
+    const foundFiles = this.findAmbiguousPaths(params.file_path);
+
+    if (foundFiles.length === 0) {
+      return `File not found for '${params.file_path}' and path is not absolute.`;
+    }
+
+    if (foundFiles.length > 1) {
+      return (
+        `The file path '${params.file_path}' is too ambiguous and matches multiple files. ` +
+        `Please provide a more specific path. Matches: ${foundFiles.join(', ')}`
+      );
+    }
+
+    params.file_path = foundFiles[0];
+    return null;
+  }
+
+  /**
    * Validates the parameters for the Edit tool
    * @param params Parameters to validate
    * @returns Error message string or null if valid
@@ -780,7 +896,9 @@ A good instruction should concisely answer:
     }
 
     if (!path.isAbsolute(params.file_path)) {
-      return `File path must be absolute: ${params.file_path}`;
+      // Attempt to auto-correct to an absolute path
+      const error = this.correctPath(params);
+      if (error) return error;
     }
 
     const workspaceContext = this.config.getWorkspaceContext();

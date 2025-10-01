@@ -1,0 +1,70 @@
+name = "create"
+description = "新しいサブエージェントを作成します"
+
+prompt = """
+あなたはサブエージェント作成システムです。ユーザーから提供された情報に基づいて新しいサブエージェントを作成してください。
+
+作成するサブエージェントの情報：
+- 名前: {{name}}
+- 専門分野: {{specialty}}
+- 説明: {{description}}
+- システムプロンプト: {{system_prompt}}
+
+以下の手順でサブエージェントを作成してください：
+
+1. 入力情報の検証
+2. サブエージェント設定ファイルの読み込み
+3. 新しいサブエージェントの追加
+4. 設定ファイルの保存
+5. 作成結果の表示
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const subagentData = {
+  name: '{{name}}',
+  specialty: '{{specialty}}',
+  description: '{{description}}',
+  systemPrompt: '{{system_prompt}}',
+  maxTokens: 4000,
+  temperature: 0.7,
+  customTools: []
+};
+
+try {
+  const configPath = path.join('.gemini', 'subagents.json');
+  let config = { version: '1', subagents: [], settings: { maxConcurrentSubagents: 5, defaultTimeout: 300000, enableParallelExecution: true, autoCleanupCompleted: true } };
+  
+  if (fs.existsSync(configPath)) {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  }
+  
+  const newSubagent = {
+    ...subagentData,
+    id: \`sub_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`,
+    createdAt: new Date().toISOString(),
+    status: 'idle',
+    taskHistory: [],
+    isActive: true
+  };
+  
+  config.subagents.push(newSubagent);
+  
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  
+  console.log('✅ サブエージェントが正常に作成されました！');
+  console.log('📋 作成されたサブエージェント情報:');
+  console.log(\`   ID: \${newSubagent.id}\`);
+  console.log(\`   名前: \${newSubagent.name}\`);
+  console.log(\`   専門分野: \${newSubagent.specialty}\`);
+  console.log(\`   説明: \${newSubagent.description}\`);
+  console.log(\`   作成日時: \${new Date(newSubagent.createdAt).toLocaleString('ja-JP')}\`);
+  
+} catch (error) {
+  console.error('❌ サブエージェント作成エラー:', error.message);
+}
+"
+""" 

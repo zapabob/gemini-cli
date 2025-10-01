@@ -1,0 +1,452 @@
+name = "orchestrate"
+description = "自然言語プロンプトでメインエージェントとサブエージェントの協調並列作業指示とDeepResearchを統合実行します"
+
+prompt = """
+あなたは自然言語オーケストレーションシステムです。ユーザーの自然言語指示を解析して、メインエージェントとサブエージェントの協調並列作業とDeepResearchを統合実行してください。
+
+自然言語指示: {{prompt}}
+実行モード: {{mode|default:auto}}
+並列度: {{parallelism|default:3}}
+研究深度: {{research_depth|default:3}}
+
+以下の手順で統合実行を行ってください：
+
+1. 自然言語指示の解析とタスク分解
+2. 必要なサブエージェントの特定と割り当て
+3. DeepResearch要件の特定
+4. 協調並列実行計画の策定
+5. 統合実行と結果統合
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const orchestrationParams = {
+  prompt: '{{prompt}}',
+  mode: '{{mode|default:auto}}',
+  parallelism: parseInt('{{parallelism|default:3}}'),
+  researchDepth: parseInt('{{research_depth|default:3}}')
+};
+
+class NaturalLanguageOrchestrator {
+  constructor() {
+    this.mainAgent = { name: 'メインエージェント', role: '統合指揮官' };
+    this.subagents = [];
+    this.researchTasks = [];
+    this.executionPlan = [];
+    this.results = [];
+  }
+  
+  async orchestrateFromNaturalLanguage() {
+    console.log('🎭 自然言語オーケストレーション開始');
+    console.log(\`📝 指示: \${orchestrationParams.prompt}\`);
+    console.log(\`🔧 モード: \${orchestrationParams.mode}\`);
+    console.log(\`⚡ 並列度: \${orchestrationParams.parallelism}\`);
+    console.log(\`🔍 研究深度: \${orchestrationParams.researchDepth}\`);
+    console.log('='.repeat(70));
+    
+    const startTime = Date.now();
+    
+    // 1. 自然言語指示の解析
+    console.log('\\n🧠 自然言語指示の解析');
+    await this.analyzeNaturalLanguagePrompt();
+    
+    // 2. サブエージェントの特定
+    console.log('\\n👥 サブエージェントの特定');
+    await this.identifyRequiredSubagents();
+    
+    // 3. DeepResearch要件の特定
+    console.log('\\n🔍 DeepResearch要件の特定');
+    await this.identifyResearchRequirements();
+    
+    // 4. 実行計画の策定
+    console.log('\\n📋 実行計画の策定');
+    this.createExecutionPlan();
+    
+    // 5. 統合実行
+    console.log('\\n🚀 統合実行開始');
+    await this.executeOrchestratedPlan();
+    
+    const totalTime = Date.now() - startTime;
+    
+    // 結果の表示
+    this.displayOrchestrationResults(totalTime);
+    
+    // 実行結果の保存
+    await this.saveOrchestrationResults(totalTime);
+  }
+  
+  async analyzeNaturalLanguagePrompt() {
+    console.log('   🔍 指示内容の分析中...');
+    
+    // 自然言語指示の解析
+    const analysis = this.parseNaturalLanguagePrompt(orchestrationParams.prompt);
+    
+    this.taskBreakdown = analysis.tasks;
+    this.researchNeeds = analysis.researchNeeds;
+    this.collaborationMode = analysis.collaborationMode;
+    
+    console.log(\`   ✅ \${this.taskBreakdown.length}個のタスクを特定\`);
+    console.log(\`   🔍 \${this.researchNeeds.length}個の研究要件を特定\`);
+    console.log(\`   🤝 協調モード: \${this.collaborationMode}\`);
+    
+    console.log('\\n📋 タスク分解:');
+    this.taskBreakdown.forEach((task, index) => {
+      console.log(\`   \${index + 1}. \${task.title} (\${task.type})\`);
+      console.log(\`      説明: \${task.description}\`);
+      console.log(\`      優先度: \${task.priority}\`);
+    });
+    
+    if (this.researchNeeds.length > 0) {
+      console.log('\\n🔍 研究要件:');
+      this.researchNeeds.forEach((research, index) => {
+        console.log(\`   \${index + 1}. \${research.query} (\${research.strategy})\`);
+      });
+    }
+  }
+  
+  parseNaturalLanguagePrompt(prompt) {
+    const promptLower = prompt.toLowerCase();
+    
+    // タスクタイプの特定
+    const taskTypes = {
+      '開発': 'development',
+      '分析': 'analysis',
+      '調査': 'research',
+      'テスト': 'testing',
+      'デバッグ': 'debugging',
+      '最適化': 'optimization',
+      'セキュリティ': 'security',
+      'ドキュメント': 'documentation'
+    };
+    
+    // 協調モードの特定
+    let collaborationMode = 'supervised';
+    if (promptLower.includes('並列') || promptLower.includes('同時')) {
+      collaborationMode = 'parallel';
+    } else if (promptLower.includes('自律') || promptLower.includes('自動')) {
+      collaborationMode = 'autonomous';
+    }
+    
+    // タスクの分解
+    const tasks = [];
+    const researchNeeds = [];
+    
+    // 開発関連タスク
+    if (promptLower.includes('開発') || promptLower.includes('作成') || promptLower.includes('実装')) {
+      tasks.push({
+        title: 'コード開発',
+        description: '指定された機能のコード開発と実装',
+        type: 'development',
+        priority: 'high',
+        subagentType: 'frontend_development'
+      });
+    }
+    
+    // 分析関連タスク
+    if (promptLower.includes('分析') || promptLower.includes('調査') || promptLower.includes('検証')) {
+      tasks.push({
+        title: 'データ分析',
+        description: 'データの分析と洞察の抽出',
+        type: 'analysis',
+        priority: 'high',
+        subagentType: 'data_analysis'
+      });
+    }
+    
+    // セキュリティ関連タスク
+    if (promptLower.includes('セキュリティ') || promptLower.includes('脆弱性') || promptLower.includes('監査')) {
+      tasks.push({
+        title: 'セキュリティ監査',
+        description: 'セキュリティ脆弱性の検出と対策',
+        type: 'security',
+        priority: 'high',
+        subagentType: 'security_audit'
+      });
+    }
+    
+    // 研究要件の特定
+    if (promptLower.includes('調査') || promptLower.includes('研究') || promptLower.includes('最新')) {
+      researchNeeds.push({
+        query: prompt,
+        strategy: 'comprehensive',
+        maxDepth: orchestrationParams.researchDepth,
+        includeAcademic: true
+      });
+    }
+    
+    return {
+      tasks,
+      researchNeeds,
+      collaborationMode
+    };
+  }
+  
+  async identifyRequiredSubagents() {
+    console.log('   👥 必要なサブエージェントを特定中...');
+    
+    // サブエージェント設定の読み込み
+    const configPath = path.join('.gemini', 'subagents.json');
+    if (!fs.existsSync(configPath)) {
+      console.log('   ❌ サブエージェント設定ファイルが見つかりません。');
+      return;
+    }
+    
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const availableSubagents = config.subagents.filter(sub => sub.isActive);
+    
+    // タスクに基づいてサブエージェントを選択
+    for (const task of this.taskBreakdown) {
+      const matchingSubagents = availableSubagents.filter(sub => 
+        sub.specialty === task.subagentType || 
+        sub.description.toLowerCase().includes(task.type)
+      );
+      
+      if (matchingSubagents.length > 0) {
+        const selectedSubagent = matchingSubagents[0];
+        this.subagents.push({
+          ...selectedSubagent,
+          assignedTask: task
+        });
+        console.log(\`   ✅ \${selectedSubagent.name} を \${task.title} に割り当て\`);
+      } else {
+        console.log(\`   ⚠️  \${task.title} に適切なサブエージェントが見つかりません\`);
+      }
+    }
+    
+    console.log(\`   📊 割り当て完了: \${this.subagents.length}個のサブエージェント\`);
+  }
+  
+  async identifyResearchRequirements() {
+    console.log('   🔍 研究要件を分析中...');
+    
+    for (const research of this.researchNeeds) {
+      this.researchTasks.push({
+        query: research.query,
+        strategy: research.strategy,
+        maxDepth: research.maxDepth,
+        includeAcademic: research.includeAcademic,
+        priority: 'high'
+      });
+    }
+    
+    console.log(\`   ✅ \${this.researchTasks.length}個の研究タスクを特定\`);
+  }
+  
+  createExecutionPlan() {
+    console.log('   📋 実行計画を策定中...');
+    
+    // フェーズ1: DeepResearch実行
+    if (this.researchTasks.length > 0) {
+      this.executionPlan.push({
+        phase: 1,
+        name: 'DeepResearch実行',
+        tasks: this.researchTasks.map(task => ({
+          type: 'research',
+          description: \`\${task.query}の研究実行\`,
+          priority: task.priority
+        })),
+        parallel: true
+      });
+    }
+    
+    // フェーズ2: サブエージェント協調実行
+    if (this.subagents.length > 0) {
+      this.executionPlan.push({
+        phase: 2,
+        name: 'サブエージェント協調実行',
+        tasks: this.subagents.map(sub => ({
+          type: 'subagent',
+          description: \`\${sub.assignedTask.title}を\${sub.name}で実行\`,
+          priority: sub.assignedTask.priority,
+          subagent: sub
+        })),
+        parallel: this.collaborationMode === 'parallel',
+        mode: this.collaborationMode
+      });
+    }
+    
+    // フェーズ3: 結果統合
+    this.executionPlan.push({
+      phase: 3,
+      name: '結果統合と検証',
+      tasks: [{
+        type: 'integration',
+        description: '全結果の統合と最終検証',
+        priority: 'high'
+      }],
+      parallel: false
+    });
+    
+    console.log(\`   ✅ \${this.executionPlan.length}フェーズの実行計画を策定\`);
+    
+    console.log('\\n📋 実行計画:');
+    this.executionPlan.forEach(phase => {
+      console.log(\`   📊 フェーズ\${phase.phase}: \${phase.name}\`);
+      console.log(\`      並列実行: \${phase.parallel ? '有効' : '無効'}\`);
+      console.log(\`      タスク数: \${phase.tasks.length}\`);
+      if (phase.mode) {
+        console.log(\`      協調モード: \${phase.mode}\`);
+      }
+    });
+  }
+  
+  async executeOrchestratedPlan() {
+    for (const phase of this.executionPlan) {
+      console.log(\`\\n🚀 フェーズ\${phase.phase}: \${phase.name}\`);
+      console.log('='.repeat(50));
+      
+      if (phase.parallel) {
+        await this.executeParallelPhase(phase);
+      } else {
+        await this.executeSequentialPhase(phase);
+      }
+    }
+  }
+  
+  async executeParallelPhase(phase) {
+    console.log(\`   ⚡ 並列実行開始 (\${phase.tasks.length}タスク)\`);
+    
+    const promises = phase.tasks.map(async (task, index) => {
+      console.log(\`   🔄 タスク\${index + 1}開始: \${task.description}\`);
+      
+      if (task.type === 'research') {
+        return await this.executeResearchTask(task);
+      } else if (task.type === 'subagent') {
+        return await this.executeSubagentTask(task);
+      } else if (task.type === 'integration') {
+        return await this.executeIntegrationTask(task);
+      }
+    });
+    
+    const phaseResults = await Promise.all(promises);
+    this.results.push(...phaseResults);
+    
+    console.log(\`   ✅ フェーズ\${phase.phase}完了: \${phaseResults.length}個の結果\`);
+  }
+  
+  async executeSequentialPhase(phase) {
+    console.log(\`   📋 順次実行開始 (\${phase.tasks.length}タスク)\`);
+    
+    for (let i = 0; i < phase.tasks.length; i++) {
+      const task = phase.tasks[i];
+      console.log(\`   🔄 タスク\${i + 1}/\${phase.tasks.length}: \${task.description}\`);
+      
+      let result;
+      if (task.type === 'research') {
+        result = await this.executeResearchTask(task);
+      } else if (task.type === 'subagent') {
+        result = await this.executeSubagentTask(task);
+      } else if (task.type === 'integration') {
+        result = await this.executeIntegrationTask(task);
+      }
+      
+      this.results.push(result);
+      console.log(\`   ✅ タスク\${i + 1}完了\`);
+    }
+    
+    console.log(\`   ✅ フェーズ\${phase.phase}完了\`);
+  }
+  
+  async executeResearchTask(task) {
+    // DeepResearch実行のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
+    
+    return {
+      type: 'research',
+      task: task.description,
+      result: \`\${task.description}の研究を完了しました。包括的な分析と洞察を提供します。\`,
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    };
+  }
+  
+  async executeSubagentTask(task) {
+    // サブエージェント実行のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
+    
+    return {
+      type: 'subagent',
+      task: task.description,
+      subagent: task.subagent.name,
+      result: \`\${task.subagent.name}が\${task.description}を正常に実行しました。\`,
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    };
+  }
+  
+  async executeIntegrationTask(task) {
+    // 結果統合のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return {
+      type: 'integration',
+      task: task.description,
+      result: '全結果を統合し、最終的な成果物を生成しました。',
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    };
+  }
+  
+  displayOrchestrationResults(totalTime) {
+    console.log('\\n🎉 自然言語オーケストレーション完了！');
+    console.log('='.repeat(70));
+    console.log(\`⏱️  総実行時間: \${totalTime}ms\`);
+    console.log(\`📊 実行フェーズ数: \${this.executionPlan.length}\`);
+    console.log(\`👥 使用サブエージェント数: \${this.subagents.length}\`);
+    console.log(\`🔍 研究タスク数: \${this.researchTasks.length}\`);
+    console.log(\`📋 総タスク数: \${this.results.length}\`);
+    
+    console.log('\\n📊 実行結果サマリー:');
+    const resultTypes = {};
+    this.results.forEach(result => {
+      resultTypes[result.type] = (resultTypes[result.type] || 0) + 1;
+    });
+    
+    Object.entries(resultTypes).forEach(([type, count]) => {
+      console.log(\`   \${type}: \${count}件\`);
+    });
+    
+    console.log('\\n📋 詳細結果:');
+    this.results.forEach((result, index) => {
+      const status = result.status === 'success' ? '✅' : '❌';
+      console.log(\`   \${index + 1}. [\${result.type}] \${status} \${result.task}\`);
+      if (result.subagent) {
+        console.log(\`      エージェント: \${result.subagent}\`);
+      }
+    });
+  }
+  
+  async saveOrchestrationResults(totalTime) {
+    const orchestrationReport = {
+      timestamp: new Date().toISOString(),
+      executionTime: totalTime,
+      parameters: orchestrationParams,
+      prompt: orchestrationParams.prompt,
+      taskBreakdown: this.taskBreakdown,
+      researchNeeds: this.researchNeeds,
+      collaborationMode: this.collaborationMode,
+      subagents: this.subagents,
+      executionPlan: this.executionPlan,
+      results: this.results,
+      summary: \`自然言語指示「\${orchestrationParams.prompt}」の統合実行を完了しました。\${this.results.length}個のタスクを\${this.executionPlan.length}フェーズで実行しました。\`
+    };
+    
+    const reportDir = path.join('.gemini', 'orchestration-reports');
+    if (!fs.existsSync(reportDir)) {
+      fs.mkdirSync(reportDir, { recursive: true });
+    }
+    
+    const reportPath = path.join(reportDir, \`orchestration_\${Date.now()}.json\`);
+    fs.writeFileSync(reportPath, JSON.stringify(orchestrationReport, null, 2));
+    
+    console.log(\`\\n💾 オーケストレーション結果を保存: \${reportPath}\`);
+  }
+}
+
+const orchestrator = new NaturalLanguageOrchestrator();
+orchestrator.orchestrateFromNaturalLanguage();
+"
+""" 

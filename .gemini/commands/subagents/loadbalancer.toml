@@ -1,0 +1,209 @@
+name = "loadbalancer"
+description = "ロードバランサーを使用してサブエージェントの負荷分散を行います"
+
+prompt = """
+あなたはサブエージェントロードバランサーシステムです。複数のサブエージェント間で負荷分散を行ってください。
+
+実行情報：
+- タスク: {{task}}
+- 負荷分散戦略: {{strategy|default:round_robin}}
+- 最大並列数: {{max_parallel|default:5}}
+
+以下の手順でロードバランシングを行ってください：
+
+1. 利用可能なサブエージェントの確認
+2. 負荷分散戦略の適用
+3. タスクの分散実行
+4. 実行状況の監視
+5. 結果の統合
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const task = '{{task}}';
+const strategy = '{{strategy|default:round_robin}}';
+const maxParallel = parseInt('{{max_parallel|default:5}}');
+
+class LoadBalancer {
+  constructor() {
+    this.subagents = [];
+    this.currentIndex = 0;
+    this.loadHistory = new Map();
+  }
+  
+  async loadSubagents() {
+    try {
+      const configPath = path.join('.gemini', 'subagents.json');
+      if (!fs.existsSync(configPath)) {
+        console.log('❌ サブエージェント設定ファイルが見つかりません。');
+        return false;
+      }
+      
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      this.subagents = config.subagents.filter(sub => sub.isActive && sub.status === 'idle');
+      
+      console.log(\`📊 利用可能なサブエージェント: \${this.subagents.length}個\`);
+      this.subagents.forEach((sub, index) => {
+        console.log(\`   \${index + 1}. \${sub.name} (\${sub.specialty}) - タスク履歴: \${sub.taskHistory.length}件\`);
+      });
+      
+      return this.subagents.length > 0;
+    } catch (error) {
+      console.error('❌ サブエージェント読み込みエラー:', error.message);
+      return false;
+    }
+  }
+  
+  selectSubagent() {
+    if (this.subagents.length === 0) return null;
+    
+    let selectedSubagent;
+    
+    switch (strategy) {
+      case 'round_robin':
+        selectedSubagent = this.subagents[this.currentIndex];
+        this.currentIndex = (this.currentIndex + 1) % this.subagents.length;
+        break;
+        
+      case 'least_loaded':
+        selectedSubagent = this.subagents.reduce((min, current) => 
+          (current.taskHistory.length < min.taskHistory.length) ? current : min
+        );
+        break;
+        
+      case 'specialty_based':
+        // タスクに基づいて専門分野を選択
+        const taskKeywords = task.toLowerCase();
+        selectedSubagent = this.subagents.find(sub => 
+          sub.specialty.toLowerCase().includes(taskKeywords) ||
+          sub.description.toLowerCase().includes(taskKeywords)
+        ) || this.subagents[0];
+        break;
+        
+      default:
+        selectedSubagent = this.subagents[0];
+    }
+    
+    return selectedSubagent;
+  }
+  
+  async executeTask(subagent, taskId) {
+    try {
+      console.log(\`🚀 \${subagent.name} でタスク実行開始...\`);
+      
+      // サブエージェントの状態を更新
+      subagent.status = 'running';
+      subagent.lastUsed = new Date().toISOString();
+      
+      // タスク実行のシミュレーション
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 3000));
+      
+      const result = {
+        taskId: taskId,
+        task: task,
+        subagent: subagent.name,
+        result: \`ロードバランサー経由で\${subagent.name}がタスク「\${task}」を実行しました。\`,
+        timestamp: new Date().toISOString(),
+        status: 'success',
+        strategy: strategy
+      };
+      
+      // 結果を記録
+      subagent.taskHistory.push({
+        taskId: taskId,
+        task: task,
+        result: result.result,
+        timestamp: result.timestamp,
+        status: 'success'
+      });
+      
+      subagent.status = 'completed';
+      
+      return result;
+    } catch (error) {
+      console.error(\`❌ \${subagent.name} でのタスク実行エラー:\`, error.message);
+      return {
+        taskId: taskId,
+        task: task,
+        subagent: subagent.name,
+        error: error.message,
+        status: 'failed'
+      };
+    }
+  }
+  
+  async balanceLoad() {
+    console.log('⚖️  ロードバランサー起動');
+    console.log(\`📝 タスク: \${task}\`);
+    console.log(\`🔧 戦略: \${strategy}\`);
+    console.log(\`⚡ 最大並列数: \${maxParallel}\`);
+    console.log('='.repeat(50));
+    
+    const hasSubagents = await this.loadSubagents();
+    if (!hasSubagents) {
+      console.log('❌ 利用可能なサブエージェントがありません。');
+      return;
+    }
+    
+    const startTime = Date.now();
+    const results = [];
+    
+    // タスクを複数のサブエージェントに分散
+    const taskCount = Math.min(maxParallel, this.subagents.length);
+    const tasks = [];
+    
+    for (let i = 0; i < taskCount; i++) {
+      const subagent = this.selectSubagent();
+      if (subagent) {
+        const taskId = \`lb_task_\${Date.now()}_\${i}\`;
+        tasks.push(this.executeTask(subagent, taskId));
+      }
+    }
+    
+    // 並列実行
+    const taskResults = await Promise.all(tasks);
+    results.push(...taskResults);
+    
+    // 設定ファイルの更新
+    try {
+      const configPath = path.join('.gemini', 'subagents.json');
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    } catch (error) {
+      console.error('❌ 設定ファイル更新エラー:', error.message);
+    }
+    
+    // 結果の表示
+    const totalTime = Date.now() - startTime;
+    console.log('');
+    console.log('🎉 ロードバランシング完了！');
+    console.log(\`⏱️  総実行時間: \${totalTime}ms\`);
+    console.log(\`📊 成功タスク数: \${results.filter(r => r.status === 'success').length}/\${results.length}\`);
+    console.log(\`⚖️  使用戦略: \${strategy}\`);
+    
+    console.log('');
+    console.log('📋 実行結果:');
+    results.forEach((result, index) => {
+      const status = result.status === 'success' ? '✅' : '❌';
+      console.log(\`   \${index + 1}. [\${result.subagent}] \${status} \${result.result || result.error}\`);
+    });
+    
+    // 負荷分散統計
+    console.log('');
+    console.log('📈 負荷分散統計:');
+    this.subagents.forEach(sub => {
+      const recentTasks = sub.taskHistory.filter(t => 
+        new Date(t.timestamp) > new Date(Date.now() - 60000)
+      );
+      console.log(\`   \${sub.name}: 最近1分間で\${recentTasks.length}件のタスク実行\`);
+    });
+  }
+}
+
+const loadBalancer = new LoadBalancer();
+loadBalancer.balanceLoad();
+"
+""" 

@@ -1,0 +1,146 @@
+name = "init"
+description = "デフォルトのサブエージェントを初期化します"
+
+prompt = """
+あなたはサブエージェント初期化システムです。デフォルトのサブエージェントを作成してシステムを初期化してください。
+
+以下のデフォルトサブエージェントを作成します：
+1. コードレビューエージェント
+2. デバッグエージェント
+3. データ分析エージェント
+4. セキュリティ監査エージェント
+5. パフォーマンス最適化エージェント
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const defaultSubagents = [
+  {
+    name: 'コードレビューエージェント',
+    specialty: 'code_review',
+    description: 'コードの品質とベストプラクティスをチェックする専門エージェント',
+    systemPrompt: 'あなたは経験豊富なコードレビュアーです。コードの品質、セキュリティ、パフォーマンス、可読性を徹底的にチェックし、改善提案を行います。',
+    maxTokens: 4000,
+    temperature: 0.3
+  },
+  {
+    name: 'デバッグエージェント',
+    specialty: 'debugging',
+    description: 'バグの特定と修正を専門とするエージェント',
+    systemPrompt: 'あなたは熟練したデバッガーです。エラーログ、スタックトレース、コードの問題を分析し、効率的な修正方法を提案します。',
+    maxTokens: 4000,
+    temperature: 0.2
+  },
+  {
+    name: 'データ分析エージェント',
+    specialty: 'data_analysis',
+    description: 'データの分析と可視化を専門とするエージェント',
+    systemPrompt: 'あなたはデータサイエンティストです。データの分析、統計処理、可視化、洞察の抽出を専門とします。',
+    maxTokens: 4000,
+    temperature: 0.5
+  },
+  {
+    name: 'セキュリティ監査エージェント',
+    specialty: 'security_audit',
+    description: 'セキュリティ脆弱性の検出と対策を専門とするエージェント',
+    systemPrompt: 'あなたはセキュリティ専門家です。コード、設定、アーキテクチャのセキュリティリスクを特定し、対策を提案します。',
+    maxTokens: 4000,
+    temperature: 0.1
+  },
+  {
+    name: 'パフォーマンス最適化エージェント',
+    specialty: 'performance_optimization',
+    description: 'アプリケーションのパフォーマンス最適化を専門とするエージェント',
+    systemPrompt: 'あなたはパフォーマンスエンジニアです。コード、アルゴリズム、システムの最適化を専門とし、効率的な改善策を提案します。',
+    maxTokens: 4000,
+    temperature: 0.4
+  }
+];
+
+async function initializeDefaultSubagents() {
+  try {
+    console.log('🚀 デフォルトサブエージェント初期化開始');
+    console.log('='.repeat(50));
+    
+    const configPath = path.join('.gemini', 'subagents.json');
+    let config = {
+      version: '1',
+      subagents: [],
+      settings: {
+        maxConcurrentSubagents: 5,
+        defaultTimeout: 300000,
+        enableParallelExecution: true,
+        autoCleanupCompleted: true
+      }
+    };
+    
+    // 既存の設定ファイルがある場合は読み込み
+    if (fs.existsSync(configPath)) {
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      console.log('📁 既存の設定ファイルを読み込みました。');
+    }
+    
+    let createdCount = 0;
+    
+    for (const subagentData of defaultSubagents) {
+      // 既存のサブエージェントとの重複チェック
+      const existingSubagent = config.subagents.find(sub => 
+        sub.name === subagentData.name || sub.specialty === subagentData.specialty
+      );
+      
+      if (existingSubagent) {
+        console.log(\`⏭️  \${subagentData.name} は既に存在します。スキップします。\`);
+        continue;
+      }
+      
+      // 新しいサブエージェントを作成
+      const newSubagent = {
+        ...subagentData,
+        id: \`sub_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`,
+        createdAt: new Date().toISOString(),
+        status: 'idle',
+        taskHistory: [],
+        isActive: true
+      };
+      
+      config.subagents.push(newSubagent);
+      createdCount++;
+      
+      console.log(\`✅ \${newSubagent.name} を作成しました (ID: \${newSubagent.id})\`);
+    }
+    
+    // 設定ファイルを保存
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    
+    console.log('');
+    console.log('🎉 初期化完了！');
+    console.log(\`📊 作成されたサブエージェント: \${createdCount}個\`);
+    console.log(\`📋 総サブエージェント数: \${config.subagents.length}個\`);
+    
+    console.log('');
+    console.log('📋 利用可能なサブエージェント:');
+    config.subagents.forEach((sub, index) => {
+      const status = sub.isActive ? '✅' : '❌';
+      console.log(\`   \${index + 1}. \${status} \${sub.name} (\${sub.specialty})\`);
+    });
+    
+    console.log('');
+    console.log('🔧 使用可能なコマンド:');
+    console.log('   /subagents:list - サブエージェント一覧表示');
+    console.log('   /subagents:create - 新しいサブエージェント作成');
+    console.log('   /subagents:execute - サブエージェントでタスク実行');
+    console.log('   /subagents:parallel - 並列タスク実行');
+    console.log('   /subagents:loadbalancer - ロードバランサー実行');
+    console.log('   /subagents:collaborative - 協調作業実行');
+    
+  } catch (error) {
+    console.error('❌ 初期化エラー:', error.message);
+  }
+}
+
+initializeDefaultSubagents();
+"
+""" 

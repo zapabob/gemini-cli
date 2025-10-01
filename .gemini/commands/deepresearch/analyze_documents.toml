@@ -1,0 +1,357 @@
+name = "analyze_documents"
+description = "ワークスペース内の文書を分析して研究洞察を抽出します"
+
+prompt = """
+あなたは文書分析システムです。ワークスペース内の文書を分析して、研究に有用な洞察を抽出してください。
+
+分析対象: {{file_pattern|default:**/*}}
+分析タイプ: {{analysis_type|default:comprehensive}}
+メタデータを含む: {{include_metadata|default:true}}
+
+以下の手順で文書分析を実行してください：
+
+1. ワークスペース内の文書の特定
+2. 文書の内容分析と構造解析
+3. キーワードとトピックの抽出
+4. 洞察とパターンの特定
+5. 分析レポートの生成
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const analysisParams = {
+  filePattern: '{{file_pattern|default:**/*}}',
+  analysisType: '{{analysis_type|default:comprehensive}}',
+  includeMetadata: '{{include_metadata|default:true}}' === 'true'
+};
+
+class DocumentAnalyzer {
+  constructor() {
+    this.documents = [];
+    this.analysisResults = [];
+    this.keywords = new Map();
+    this.topics = new Set();
+  }
+  
+  async analyzeWorkspace() {
+    console.log('📄 ワークスペース文書分析開始');
+    console.log(`🔍 ファイルパターン: ${analysisParams.filePattern}`);
+    console.log(`🔧 分析タイプ: ${analysisParams.analysisType}`);
+    console.log(`📊 メタデータ: ${analysisParams.includeMetadata ? '含む' : '含まない'}`);
+    console.log('='.repeat(60));
+    
+    const startTime = Date.now();
+    
+    // 文書の特定
+    console.log('\n📁 文書の特定');
+    await this.discoverDocuments();
+    
+    // 文書の分析
+    console.log('\n🔍 文書の分析');
+    await this.analyzeDocuments();
+    
+    // 洞察の抽出
+    console.log('\n🧠 洞察の抽出');
+    this.extractInsights();
+    
+    // レポートの生成
+    console.log('\n📊 レポートの生成');
+    this.generateReport();
+    
+    const totalTime = Date.now() - startTime;
+    
+    // 結果の表示
+    this.displayResults(totalTime);
+    
+    // 分析結果の保存
+    await this.saveAnalysisResults(totalTime);
+  }
+  
+  async discoverDocuments() {
+    const workspacePath = process.cwd();
+    const documentTypes = [
+      '.md', '.txt', '.json', '.yaml', '.yml', '.toml',
+      '.js', '.ts', '.py', '.java', '.cpp', '.c',
+      '.html', '.css', '.xml', '.csv', '.log'
+    ];
+    
+    const discoveredFiles = [];
+    
+    function scanDirectory(dir, depth = 0) {
+      if (depth > 5) return; // 深すぎるディレクトリはスキップ
+      
+      try {
+        const items = fs.readdirSync(dir);
+        
+        for (const item of items) {
+          const fullPath = path.join(dir, item);
+          const stat = fs.statSync(fullPath);
+          
+          if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+            scanDirectory(fullPath, depth + 1);
+          } else if (stat.isFile()) {
+            const ext = path.extname(item).toLowerCase();
+            if (documentTypes.includes(ext)) {
+              discoveredFiles.push({
+                path: fullPath,
+                name: item,
+                extension: ext,
+                size: stat.size,
+                modified: stat.mtime,
+                relativePath: path.relative(workspacePath, fullPath)
+              });
+            }
+          }
+        }
+      } catch (error) {
+        // アクセスできないディレクトリはスキップ
+      }
+    }
+    
+    scanDirectory(workspacePath);
+    this.documents = discoveredFiles.slice(0, 50); // 最大50ファイルに制限
+    
+    console.log(`   ✅ ${this.documents.length}個の文書を発見`);
+    
+    // 文書タイプ別の統計
+    const typeStats = {};
+    this.documents.forEach(doc => {
+      typeStats[doc.extension] = (typeStats[doc.extension] || 0) + 1;
+    });
+    
+    console.log('   📊 文書タイプ別統計:');
+    Object.entries(typeStats).forEach(([ext, count]) => {
+      console.log(`      ${ext}: ${count}件`);
+    });
+  }
+  
+  async analyzeDocuments() {
+    for (const doc of this.documents) {
+      console.log(`   🔍 分析中: ${doc.relativePath}`);
+      
+      try {
+        const content = fs.readFileSync(doc.path, 'utf8');
+        const analysis = this.analyzeDocumentContent(content, doc);
+        this.analysisResults.push(analysis);
+        
+        // キーワードの抽出
+        this.extractKeywords(content, doc.relativePath);
+        
+        // トピックの特定
+        this.identifyTopics(content, doc.relativePath);
+        
+      } catch (error) {
+        console.log(`   ⚠️  読み込みエラー: ${doc.relativePath}`);
+      }
+    }
+    
+    console.log(`   ✅ ${this.analysisResults.length}個の文書を分析完了`);
+  }
+  
+  analyzeDocumentContent(content, doc) {
+    const lines = content.split('\n');
+    const words = content.toLowerCase().split(/\s+/);
+    
+    const analysis = {
+      document: doc.relativePath,
+      type: doc.extension,
+      size: doc.size,
+      lines: lines.length,
+      words: words.length,
+      characters: content.length,
+      modified: doc.modified,
+      complexity: this.calculateComplexity(content),
+      structure: this.analyzeStructure(content),
+      language: this.detectLanguage(content),
+      metadata: analysisParams.includeMetadata ? {
+        path: doc.path,
+        name: doc.name,
+        extension: doc.extension
+      } : undefined
+    };
+    
+    return analysis;
+  }
+  
+  calculateComplexity(content) {
+    const sentences = content.split(/[.!?]+/).length;
+    const words = content.split(/\s+/).length;
+    const avgWordsPerSentence = words / sentences;
+    
+    let complexity = 'low';
+    if (avgWordsPerSentence > 20) complexity = 'high';
+    else if (avgWordsPerSentence > 15) complexity = 'medium';
+    
+    return complexity;
+  }
+  
+  analyzeStructure(content) {
+    const structure = {
+      hasHeaders: /^#+\s/.test(content),
+      hasCodeBlocks: /```/.test(content),
+      hasLinks: /\[.*?\]\(.*?\)/.test(content),
+      hasLists: /^[ \t]*[-*+]\s/.test(content),
+      hasTables: /\|.*\|/.test(content)
+    };
+    
+    return structure;
+  }
+  
+  detectLanguage(content) {
+    // 簡単な言語検出
+    if (/function|const|let|var|import|export/.test(content)) return 'javascript/typescript';
+    if (/def |import |class |from /.test(content)) return 'python';
+    if (/public |private |class |interface /.test(content)) return 'java';
+    if (/<html|<div|<span/.test(content)) return 'html';
+    if (/{\s*[".\w]/.test(content)) return 'json';
+    return 'text/markdown';
+  }
+  
+  extractKeywords(content, docPath) {
+    const words = content.toLowerCase().match(/\b\w{3,}\b/g) || [];
+    const wordFreq = {};
+    
+    words.forEach(word => {
+      if (word.length > 3) {
+        wordFreq[word] = (wordFreq[word] || 0) + 1;
+      }
+    });
+    
+    // 上位10個のキーワードを抽出
+    const topKeywords = Object.entries(wordFreq)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([word, freq]) => ({ word, frequency: freq }));
+    
+    this.keywords.set(docPath, topKeywords);
+  }
+  
+  identifyTopics(content, docPath) {
+    const topics = [
+      'programming', 'development', 'research', 'analysis',
+      'configuration', 'documentation', 'testing', 'deployment',
+      'api', 'database', 'frontend', 'backend', 'security'
+    ];
+    
+    const foundTopics = topics.filter(topic => 
+      content.toLowerCase().includes(topic)
+    );
+    
+    foundTopics.forEach(topic => this.topics.add(topic));
+  }
+  
+  extractInsights() {
+    console.log('   🧠 パターンと洞察を分析中...');
+    
+    // 文書サイズの分析
+    const sizes = this.analysisResults.map(r => r.size);
+    const avgSize = sizes.reduce((a, b) => a + b, 0) / sizes.length;
+    
+    // 複雑度の分析
+    const complexityStats = {};
+    this.analysisResults.forEach(r => {
+      complexityStats[r.complexity] = (complexityStats[r.complexity] || 0) + 1;
+    });
+    
+    // 言語別の分析
+    const languageStats = {};
+    this.analysisResults.forEach(r => {
+      languageStats[r.language] = (languageStats[r.language] || 0) + 1;
+    });
+    
+    this.insights = {
+      totalDocuments: this.analysisResults.length,
+      averageSize: Math.round(avgSize),
+      complexityDistribution: complexityStats,
+      languageDistribution: languageStats,
+      topTopics: Array.from(this.topics).slice(0, 10),
+      totalKeywords: this.keywords.size
+    };
+  }
+  
+  generateReport() {
+    console.log('   📊 分析レポートを生成中...');
+    
+    this.report = {
+      summary: `ワークスペース内の${this.analysisResults.length}個の文書を分析しました。`,
+      insights: this.insights,
+      recommendations: this.generateRecommendations()
+    };
+  }
+  
+  generateRecommendations() {
+    const recommendations = [];
+    
+    if (this.insights.complexityDistribution.high > 5) {
+      recommendations.push('複雑な文書が多いため、簡潔化を検討してください');
+    }
+    
+    if (this.insights.languageDistribution['javascript/typescript'] > 10) {
+      recommendations.push('JavaScript/TypeScriptファイルが多いため、型安全性の向上を検討してください');
+    }
+    
+    if (this.insights.topTopics.includes('security')) {
+      recommendations.push('セキュリティ関連の文書が含まれているため、セキュリティレビューを推奨します');
+    }
+    
+    return recommendations;
+  }
+  
+  displayResults(totalTime) {
+    console.log('\n🎉 文書分析完了！');
+    console.log('='.repeat(60));
+    console.log(`⏱️  総分析時間: ${totalTime}ms`);
+    console.log(`📄 分析文書数: ${this.analysisResults.length}`);
+    console.log(`🔍 抽出キーワード: ${this.keywords.size}文書`);
+    console.log(`📚 特定トピック: ${this.topics.size}個`);
+    
+    console.log('\n📊 分析サマリー:');
+    console.log(`   平均文書サイズ: ${this.insights.averageSize} bytes`);
+    console.log(`   複雑度分布: ${JSON.stringify(this.insights.complexityDistribution)}`);
+    console.log(`   言語分布: ${JSON.stringify(this.insights.languageDistribution)}`);
+    
+    console.log('\n🔍 主要トピック:');
+    this.insights.topTopics.forEach((topic, index) => {
+      console.log(`   ${index + 1}. ${topic}`);
+    });
+    
+    if (this.report.recommendations.length > 0) {
+      console.log('\n💡 推奨事項:');
+      this.report.recommendations.forEach((rec, index) => {
+        console.log(`   ${index + 1}. ${rec}`);
+      });
+    }
+  }
+  
+  async saveAnalysisResults(totalTime) {
+    const analysisReport = {
+      timestamp: new Date().toISOString(),
+      executionTime: totalTime,
+      parameters: analysisParams,
+      summary: this.report.summary,
+      insights: this.insights,
+      recommendations: this.report.recommendations,
+      documents: this.analysisResults,
+      keywords: Object.fromEntries(this.keywords),
+      topics: Array.from(this.topics)
+    };
+    
+    const reportDir = path.join('.gemini', 'analysis-reports');
+    if (!fs.existsSync(reportDir)) {
+      fs.mkdirSync(reportDir, { recursive: true });
+    }
+    
+    const reportPath = path.join(reportDir, `analysis_${Date.now()}.json`);
+    fs.writeFileSync(reportPath, JSON.stringify(analysisReport, null, 2));
+    
+    console.log(`\n💾 分析結果を保存: ${reportPath}`);
+  }
+}
+
+const analyzer = new DocumentAnalyzer();
+analyzer.analyzeWorkspace();
+"
+""" 

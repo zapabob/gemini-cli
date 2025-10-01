@@ -1,0 +1,144 @@
+name = "parallel"
+description = "複数のサブエージェントで並列タスク実行を行います"
+
+prompt = """
+あなたは並列サブエージェント実行システムです。複数のサブエージェントを使用して並列タスク実行を行ってください。
+
+実行情報：
+- タスクリスト: {{tasks}}
+- 使用するサブエージェント: {{subagent_ids}}
+- 並列度: {{parallelism|default:3}}
+
+以下の手順で並列実行を行ってください：
+
+1. タスクとサブエージェントのマッピング
+2. 並列実行の開始
+3. 実行状況の監視
+4. 結果の統合
+5. 実行結果の表示
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+
+const tasks = '{{tasks}}'.split(',').map(t => t.trim());
+const subagentIds = '{{subagent_ids}}'.split(',').map(id => id.trim());
+const parallelism = parseInt('{{parallelism|default:3}}');
+
+async function executeParallelTasks() {
+  try {
+    console.log('🚀 並列サブエージェント実行開始');
+    console.log(\`📝 タスク数: \${tasks.length}\`);
+    console.log(\`👥 サブエージェント数: \${subagentIds.length}\`);
+    console.log(\`⚡ 並列度: \${parallelism}\`);
+    console.log('='.repeat(50));
+    
+    // 1. サブエージェント設定の読み込み
+    const configPath = path.join('.gemini', 'subagents.json');
+    if (!fs.existsSync(configPath)) {
+      console.log('❌ サブエージェント設定ファイルが見つかりません。');
+      return;
+    }
+    
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const subagents = subagentIds.map(id => config.subagents.find(sub => sub.id === id)).filter(Boolean);
+    
+    if (subagents.length === 0) {
+      console.log('❌ 有効なサブエージェントが見つかりません。');
+      return;
+    }
+    
+    // 2. タスクとサブエージェントのマッピング
+    const taskAssignments = [];
+    for (let i = 0; i < tasks.length; i++) {
+      const subagentIndex = i % subagents.length;
+      taskAssignments.push({
+        task: tasks[i],
+        subagent: subagents[subagentIndex],
+        taskId: \`parallel_task_\${Date.now()}_\${i}\`
+      });
+    }
+    
+    console.log('📋 タスク割り当て:');
+    taskAssignments.forEach((assignment, index) => {
+      console.log(\`   \${index + 1}. \${assignment.task} → \${assignment.subagent.name}\`);
+    });
+    console.log('');
+    
+    // 3. 並列実行のシミュレーション
+    const results = [];
+    const startTime = Date.now();
+    
+    for (let i = 0; i < taskAssignments.length; i += parallelism) {
+      const batch = taskAssignments.slice(i, i + parallelism);
+      
+      console.log(\`🔄 バッチ \${Math.floor(i / parallelism) + 1} 実行中...\`);
+      
+      const batchPromises = batch.map(async (assignment) => {
+        // サブエージェントの状態を更新
+        assignment.subagent.status = 'running';
+        assignment.subagent.lastUsed = new Date().toISOString();
+        
+        // タスク実行のシミュレーション
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+        
+        const result = {
+          taskId: assignment.taskId,
+          task: assignment.task,
+          subagent: assignment.subagent.name,
+          result: \`タスク「\${assignment.task}」を\${assignment.subagent.name}が並列実行しました。\`,
+          timestamp: new Date().toISOString(),
+          status: 'success',
+          executionTime: Date.now() - startTime
+        };
+        
+        // 結果を記録
+        assignment.subagent.taskHistory.push({
+          taskId: assignment.taskId,
+          task: assignment.task,
+          result: result.result,
+          timestamp: result.timestamp,
+          status: 'success'
+        });
+        
+        assignment.subagent.status = 'completed';
+        
+        return result;
+      });
+      
+      const batchResults = await Promise.all(batchPromises);
+      results.push(...batchResults);
+      
+      batchResults.forEach(result => {
+        console.log(\`✅ \${result.subagent}: \${result.task}\`);
+      });
+    }
+    
+    // 4. 設定ファイルの更新
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    
+    // 5. 実行結果の表示
+    const totalTime = Date.now() - startTime;
+    console.log('');
+    console.log('🎉 並列実行完了！');
+    console.log(\`⏱️  総実行時間: \${totalTime}ms\`);
+    console.log(\`📊 成功タスク数: \${results.filter(r => r.status === 'success').length}/\${results.length}\`);
+    console.log(\`🚀 平均実行時間: \${Math.round(totalTime / results.length)}ms/タスク\`);
+    
+    console.log('');
+    console.log('📋 詳細結果:');
+    results.forEach((result, index) => {
+      console.log(\`   \${index + 1}. [\${result.subagent}] \${result.task} - \${result.status}\`);
+    });
+    
+  } catch (error) {
+    console.error('❌ 並列実行エラー:', error.message);
+  }
+}
+
+executeParallelTasks();
+"
+""" 

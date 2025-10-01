@@ -1,0 +1,297 @@
+name = "collaborative"
+description = "メインエージェントとサブエージェントの協調作業を実行します"
+
+prompt = """
+あなたはメインエージェントとサブエージェントの協調システムです。複数のサブエージェントを統合して協調作業を行ってください。
+
+実行情報：
+- メインタスク: {{main_task}}
+- 協調モード: {{collaboration_mode|default:supervised}}
+- サブエージェント数: {{subagent_count|default:3}}
+
+以下の手順で協調作業を行ってください：
+
+1. メインタスクの分析と分割
+2. サブエージェントの選択と割り当て
+3. 協調実行の開始
+4. 進捗監視と調整
+5. 結果の統合と検証
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const mainTask = '{{main_task}}';
+const collaborationMode = '{{collaboration_mode|default:supervised}}';
+const subagentCount = parseInt('{{subagent_count|default:3}}');
+
+class CollaborativeSystem {
+  constructor() {
+    this.mainAgent = { name: 'メインエージェント', role: '協調統括' };
+    this.subagents = [];
+    this.taskBreakdown = [];
+    this.collaborationResults = [];
+  }
+  
+  async initialize() {
+    try {
+      const configPath = path.join('.gemini', 'subagents.json');
+      if (!fs.existsSync(configPath)) {
+        console.log('❌ サブエージェント設定ファイルが見つかりません。');
+        return false;
+      }
+      
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      this.subagents = config.subagents.filter(sub => sub.isActive).slice(0, subagentCount);
+      
+      console.log(\`🤖 協調システム初期化完了\`);
+      console.log(\`👤 メインエージェント: \${this.mainAgent.name}\`);
+      console.log(\`👥 参加サブエージェント: \${this.subagents.length}個\`);
+      this.subagents.forEach((sub, index) => {
+        console.log(\`   \${index + 1}. \${sub.name} (\${sub.specialty})\`);
+      });
+      
+      return this.subagents.length > 0;
+    } catch (error) {
+      console.error('❌ 協調システム初期化エラー:', error.message);
+      return false;
+    }
+  }
+  
+  async analyzeMainTask() {
+    console.log('🔍 メインタスク分析中...');
+    console.log(\`📝 タスク: \${mainTask}\`);
+    
+    // タスクの複雑度分析
+    const complexity = this.analyzeComplexity(mainTask);
+    console.log(\`📊 複雑度: \${complexity.level} (\${complexity.score}/10)\`);
+    
+    // タスク分割
+    this.taskBreakdown = this.breakdownTask(mainTask, complexity);
+    console.log(\`📋 タスク分割: \${this.taskBreakdown.length}個のサブタスク\`);
+    
+    this.taskBreakdown.forEach((subtask, index) => {
+      console.log(\`   \${index + 1}. \${subtask.title} → \${subtask.assignedAgent}\`);
+    });
+    
+    return this.taskBreakdown;
+  }
+  
+  analyzeComplexity(task) {
+    const keywords = ['複雑', '大規模', '統合', '分析', '設計', '開発'];
+    const score = keywords.reduce((acc, keyword) => 
+      acc + (task.includes(keyword) ? 2 : 0), 0
+    );
+    
+    let level = '低';
+    if (score > 6) level = '高';
+    else if (score > 3) level = '中';
+    
+    return { score: Math.min(score, 10), level };
+  }
+  
+  breakdownTask(task, complexity) {
+    const breakdown = [];
+    const subtasks = [
+      'タスク分析と計画策定',
+      'データ収集と前処理',
+      '詳細設計と実装',
+      'テストと検証',
+      '結果統合と報告'
+    ];
+    
+    subtasks.forEach((subtask, index) => {
+      const agentIndex = index % this.subagents.length;
+      breakdown.push({
+        id: \`subtask_\${index}\`,
+        title: subtask,
+        description: \`\${task}の\${subtask}を実行\`,
+        assignedAgent: this.subagents[agentIndex].name,
+        agentId: this.subagents[agentIndex].id,
+        priority: index === 0 ? 'high' : 'normal'
+      });
+    });
+    
+    return breakdown;
+  }
+  
+  async executeCollaboration() {
+    console.log('🚀 協調実行開始');
+    console.log(\`🔧 協調モード: \${collaborationMode}\`);
+    console.log('='.repeat(50));
+    
+    const startTime = Date.now();
+    
+    // 協調モードに応じた実行
+    switch (collaborationMode) {
+      case 'supervised':
+        await this.supervisedCollaboration();
+        break;
+      case 'autonomous':
+        await this.autonomousCollaboration();
+        break;
+      case 'parallel':
+        await this.parallelCollaboration();
+        break;
+      default:
+        await this.supervisedCollaboration();
+    }
+    
+    const totalTime = Date.now() - startTime;
+    console.log(\`⏱️  協調実行時間: \${totalTime}ms\`);
+  }
+  
+  async supervisedCollaboration() {
+    console.log('👨‍💼 監督付き協調モード');
+    
+    for (const subtask of this.taskBreakdown) {
+      console.log(\`\n📋 サブタスク実行: \${subtask.title}\`);
+      console.log(\`👤 担当: \${subtask.assignedAgent}\`);
+      
+      // メインエージェントの監督
+      console.log(\`👨‍💼 \${this.mainAgent.name}が監督中...\`);
+      
+      const result = await this.executeSubtask(subtask);
+      this.collaborationResults.push(result);
+      
+      console.log(\`✅ \${subtask.title} 完了\`);
+    }
+  }
+  
+  async autonomousCollaboration() {
+    console.log('🤖 自律協調モード');
+    
+    const promises = this.taskBreakdown.map(async (subtask) => {
+      console.log(\`🚀 \${subtask.assignedAgent} が自律実行開始: \${subtask.title}\`);
+      const result = await this.executeSubtask(subtask);
+      console.log(\`✅ \${subtask.assignedAgent} 完了: \${subtask.title}\`);
+      return result;
+    });
+    
+    this.collaborationResults = await Promise.all(promises);
+  }
+  
+  async parallelCollaboration() {
+    console.log('⚡ 並列協調モード');
+    
+    const batchSize = Math.ceil(this.taskBreakdown.length / 2);
+    for (let i = 0; i < this.taskBreakdown.length; i += batchSize) {
+      const batch = this.taskBreakdown.slice(i, i + batchSize);
+      console.log(\`🔄 バッチ \${Math.floor(i / batchSize) + 1} 並列実行中...\`);
+      
+      const batchPromises = batch.map(subtask => this.executeSubtask(subtask));
+      const batchResults = await Promise.all(batchPromises);
+      this.collaborationResults.push(...batchResults);
+    }
+  }
+  
+  async executeSubtask(subtask) {
+    try {
+      // サブエージェントの状態を更新
+      const subagent = this.subagents.find(sub => sub.id === subtask.agentId);
+      if (subagent) {
+        subagent.status = 'running';
+        subagent.lastUsed = new Date().toISOString();
+      }
+      
+      // タスク実行のシミュレーション
+      await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
+      
+      const result = {
+        subtaskId: subtask.id,
+        title: subtask.title,
+        agent: subtask.assignedAgent,
+        result: \`\${subtask.assignedAgent}が\${subtask.title}を協調実行しました。\`,
+        timestamp: new Date().toISOString(),
+        status: 'success',
+        collaborationMode: collaborationMode
+      };
+      
+      // 結果を記録
+      if (subagent) {
+        subagent.taskHistory.push({
+          taskId: subtask.id,
+          task: subtask.title,
+          result: result.result,
+          timestamp: result.timestamp,
+          status: 'success'
+        });
+        subagent.status = 'completed';
+      }
+      
+      return result;
+    } catch (error) {
+      return {
+        subtaskId: subtask.id,
+        title: subtask.title,
+        agent: subtask.assignedAgent,
+        error: error.message,
+        status: 'failed'
+      };
+    }
+  }
+  
+  async integrateResults() {
+    console.log('\n🔗 結果統合中...');
+    
+    const successCount = this.collaborationResults.filter(r => r.status === 'success').length;
+    const totalCount = this.collaborationResults.length;
+    
+    console.log(\`📊 協調実行結果: \${successCount}/\${totalCount} 成功\`);
+    console.log(\`🎯 成功率: \${Math.round((successCount / totalCount) * 100)}%\`);
+    
+    console.log('\n📋 詳細結果:');
+    this.collaborationResults.forEach((result, index) => {
+      const status = result.status === 'success' ? '✅' : '❌';
+      console.log(\`   \${index + 1}. [\${result.agent}] \${status} \${result.title}\`);
+    });
+    
+    // 最終統合結果
+    const finalResult = {
+      mainTask: mainTask,
+      collaborationMode: collaborationMode,
+      totalSubtasks: totalCount,
+      successfulSubtasks: successCount,
+      successRate: Math.round((successCount / totalCount) * 100),
+      results: this.collaborationResults,
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('\n🎉 協調作業完了！');
+    console.log(\`📝 メインタスク: \${finalResult.mainTask}\`);
+    console.log(\`🤝 協調モード: \${finalResult.collaborationMode}\`);
+    console.log(\`📈 成功率: \${finalResult.successRate}%\`);
+    
+    return finalResult;
+  }
+  
+  async saveResults(finalResult) {
+    try {
+      const configPath = path.join('.gemini', 'subagents.json');
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+      
+      console.log('💾 協調結果を保存しました。');
+    } catch (error) {
+      console.error('❌ 結果保存エラー:', error.message);
+    }
+  }
+}
+
+async function runCollaborativeSystem() {
+  const system = new CollaborativeSystem();
+  
+  const initialized = await system.initialize();
+  if (!initialized) return;
+  
+  await system.analyzeMainTask();
+  await system.executeCollaboration();
+  const finalResult = await system.integrateResults();
+  await system.saveResults(finalResult);
+}
+
+runCollaborativeSystem();
+"
+""" 

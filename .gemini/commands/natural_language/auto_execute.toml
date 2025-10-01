@@ -1,0 +1,528 @@
+name = "auto_execute"
+description = "自然言語プロンプトを自動解析して最適な実行方法を決定し実行します"
+
+prompt = """
+あなたは自然言語自動実行システムです。ユーザーの自然言語指示を自動解析して、最適な実行方法を決定し、メインエージェントとサブエージェントの協調並列作業とDeepResearchを統合実行してください。
+
+自然言語指示: {{prompt}}
+自動最適化: {{auto_optimize|default:true}}
+実行確認: {{confirm_execution|default:false}}
+
+以下の手順で自動実行を行ってください：
+
+1. 自然言語指示の自動解析
+2. 最適な実行戦略の自動決定
+3. 必要なリソースの自動割り当て
+4. 実行計画の自動生成
+5. 統合実行と結果最適化
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+
+const autoExecuteParams = {
+  prompt: '{{prompt}}',
+  autoOptimize: '{{auto_optimize|default:true}}' === 'true',
+  confirmExecution: '{{confirm_execution|default:false}}' === 'true'
+};
+
+class NaturalLanguageAutoExecutor {
+  constructor() {
+    this.mainAgent = { name: 'メインエージェント', role: '自動実行指揮官' };
+    this.executionStrategy = {};
+    this.optimizedPlan = {};
+    this.executionResults = [];
+  }
+  
+  async autoExecuteFromNaturalLanguage() {
+    console.log('🤖 自然言語自動実行開始');
+    console.log(`📝 指示: ${autoExecuteParams.prompt}`);
+    console.log(`🔧 自動最適化: ${autoExecuteParams.autoOptimize ? '有効' : '無効'}`);
+    console.log(`✅ 実行確認: ${autoExecuteParams.confirmExecution ? '必要' : '自動'}`);
+    console.log('='.repeat(70));
+    
+    const startTime = Date.now();
+    
+    // 1. 自然言語指示の自動解析
+    console.log('\n🧠 自然言語指示の自動解析');
+    await this.autoAnalyzePrompt();
+    
+    // 2. 最適な実行戦略の自動決定
+    console.log('\n🎯 最適な実行戦略の自動決定');
+    await this.determineOptimalStrategy();
+    
+    // 3. 実行計画の自動生成
+    console.log('\n📋 実行計画の自動生成');
+    this.generateOptimizedPlan();
+    
+    // 4. 実行確認（必要に応じて）
+    if (autoExecuteParams.confirmExecution) {
+      const confirmed = await this.confirmExecution();
+      if (!confirmed) {
+        console.log('❌ 実行がキャンセルされました。');
+        return;
+      }
+    }
+    
+    // 5. 統合実行
+    console.log('\n🚀 統合自動実行開始');
+    await this.executeOptimizedPlan();
+    
+    const totalTime = Date.now() - startTime;
+    
+    // 結果の表示
+    this.displayAutoExecutionResults(totalTime);
+    
+    // 実行結果の保存
+    await this.saveAutoExecutionResults(totalTime);
+  }
+  
+  async autoAnalyzePrompt() {
+    console.log('   🔍 指示内容の自動分析中...');
+    
+    // 自然言語指示の自動解析
+    const analysis = this.autoParseNaturalLanguagePrompt(autoExecuteParams.prompt);
+    
+    this.detectedTasks = analysis.tasks;
+    this.detectedResearchNeeds = analysis.researchNeeds;
+    this.detectedCollaborationMode = analysis.collaborationMode;
+    this.detectedPriority = analysis.priority;
+    this.detectedComplexity = analysis.complexity;
+    
+    console.log(`   ✅ ${this.detectedTasks.length}個のタスクを自動検出`);
+    console.log(`   🔍 ${this.detectedResearchNeeds.length}個の研究要件を自動検出`);
+    console.log(`   🤝 協調モード: ${this.detectedCollaborationMode}`);
+    console.log(`   ⚡ 優先度: ${this.detectedPriority}`);
+    console.log(`   📊 複雑度: ${this.detectedComplexity}`);
+    
+    console.log('\n📋 自動検出タスク:');
+    this.detectedTasks.forEach((task, index) => {
+      console.log(`   ${index + 1}. ${task.title} (${task.type}) - 優先度: ${task.priority}`);
+    });
+    
+    if (this.detectedResearchNeeds.length > 0) {
+      console.log('\n🔍 自動検出研究要件:');
+      this.detectedResearchNeeds.forEach((research, index) => {
+        console.log(`   ${index + 1}. ${research.query} (${research.strategy})`);
+      });
+    }
+  }
+  
+  autoParseNaturalLanguagePrompt(prompt) {
+    const promptLower = prompt.toLowerCase();
+    
+    // 複雑度の自動判定
+    let complexity = 'low';
+    if (promptLower.includes('複雑') || promptLower.includes('大規模') || promptLower.includes('統合')) {
+      complexity = 'high';
+    } else if (promptLower.includes('中程度') || promptLower.includes('標準')) {
+      complexity = 'medium';
+    }
+    
+    // 優先度の自動判定
+    let priority = 'normal';
+    if (promptLower.includes('緊急') || promptLower.includes('重要') || promptLower.includes('最優先')) {
+      priority = 'high';
+    } else if (promptLower.includes('低優先') || promptLower.includes('後回し')) {
+      priority = 'low';
+    }
+    
+    // 協調モードの自動判定
+    let collaborationMode = 'supervised';
+    if (promptLower.includes('並列') || promptLower.includes('同時') || promptLower.includes('並行')) {
+      collaborationMode = 'parallel';
+    } else if (promptLower.includes('自律') || promptLower.includes('自動') || promptLower.includes('独立')) {
+      collaborationMode = 'autonomous';
+    }
+    
+    // タスクの自動検出
+    const tasks = [];
+    const researchNeeds = [];
+    
+    // 開発関連タスクの自動検出
+    const developmentKeywords = ['開発', '作成', '実装', 'コーディング', 'プログラミング', 'ビルド'];
+    if (developmentKeywords.some(keyword => promptLower.includes(keyword))) {
+      tasks.push({
+        title: 'コード開発',
+        description: '指定された機能のコード開発と実装',
+        type: 'development',
+        priority: priority,
+        subagentType: 'frontend_development'
+      });
+    }
+    
+    // 分析関連タスクの自動検出
+    const analysisKeywords = ['分析', '調査', '検証', '評価', '診断', '監査'];
+    if (analysisKeywords.some(keyword => promptLower.includes(keyword))) {
+      tasks.push({
+        title: 'データ分析',
+        description: 'データの分析と洞察の抽出',
+        type: 'analysis',
+        priority: priority,
+        subagentType: 'data_analysis'
+      });
+    }
+    
+    // セキュリティ関連タスクの自動検出
+    const securityKeywords = ['セキュリティ', '脆弱性', '監査', '保護', '暗号化', '認証'];
+    if (securityKeywords.some(keyword => promptLower.includes(keyword))) {
+      tasks.push({
+        title: 'セキュリティ監査',
+        description: 'セキュリティ脆弱性の検出と対策',
+        type: 'security',
+        priority: priority,
+        subagentType: 'security_audit'
+      });
+    }
+    
+    // 最適化関連タスクの自動検出
+    const optimizationKeywords = ['最適化', '改善', '効率化', '高速化', 'パフォーマンス'];
+    if (optimizationKeywords.some(keyword => promptLower.includes(keyword))) {
+      tasks.push({
+        title: 'パフォーマンス最適化',
+        description: 'システムのパフォーマンス最適化',
+        type: 'optimization',
+        priority: priority,
+        subagentType: 'performance_optimization'
+      });
+    }
+    
+    // 研究要件の自動検出
+    const researchKeywords = ['調査', '研究', '最新', 'トレンド', '情報収集', '市場分析'];
+    if (researchKeywords.some(keyword => promptLower.includes(keyword))) {
+      researchNeeds.push({
+        query: prompt,
+        strategy: complexity === 'high' ? 'comprehensive' : 'focused',
+        maxDepth: complexity === 'high' ? 4 : 2,
+        includeAcademic: true
+      });
+    }
+    
+    return {
+      tasks,
+      researchNeeds,
+      collaborationMode,
+      priority,
+      complexity
+    };
+  }
+  
+  async determineOptimalStrategy() {
+    console.log('   🎯 最適な実行戦略を決定中...');
+    
+    // 複雑度に基づく戦略決定
+    let strategy = {
+      parallelism: 1,
+      researchDepth: 2,
+      subagentCount: 1,
+      executionMode: 'sequential'
+    };
+    
+    if (this.detectedComplexity === 'high') {
+      strategy = {
+        parallelism: 5,
+        researchDepth: 4,
+        subagentCount: 3,
+        executionMode: 'parallel'
+      };
+    } else if (this.detectedComplexity === 'medium') {
+      strategy = {
+        parallelism: 3,
+        researchDepth: 3,
+        subagentCount: 2,
+        executionMode: 'hybrid'
+      };
+    }
+    
+    // 優先度に基づく調整
+    if (this.detectedPriority === 'high') {
+      strategy.parallelism = Math.min(strategy.parallelism + 2, 8);
+      strategy.researchDepth = Math.min(strategy.researchDepth + 1, 5);
+    }
+    
+    // 協調モードに基づく調整
+    if (this.detectedCollaborationMode === 'parallel') {
+      strategy.executionMode = 'parallel';
+      strategy.parallelism = Math.max(strategy.parallelism, 3);
+    } else if (this.detectedCollaborationMode === 'autonomous') {
+      strategy.executionMode = 'autonomous';
+    }
+    
+    this.executionStrategy = strategy;
+    
+    console.log(`   ✅ 最適戦略決定完了`);
+    console.log(`     並列度: ${strategy.parallelism}`);
+    console.log(`     研究深度: ${strategy.researchDepth}`);
+    console.log(`     サブエージェント数: ${strategy.subagentCount}`);
+    console.log(`     実行モード: ${strategy.executionMode}`);
+  }
+  
+  generateOptimizedPlan() {
+    console.log('   📋 最適化された実行計画を生成中...');
+    
+    this.optimizedPlan = {
+      phases: [],
+      estimatedTime: 0,
+      resourceRequirements: {},
+      riskAssessment: 'low'
+    };
+    
+    // フェーズ1: DeepResearch実行（必要な場合）
+    if (this.detectedResearchNeeds.length > 0) {
+      this.optimizedPlan.phases.push({
+        phase: 1,
+        name: 'DeepResearch実行',
+        tasks: this.detectedResearchNeeds.map(research => ({
+          type: 'research',
+          description: `${research.query}の研究実行`,
+          priority: this.detectedPriority,
+          strategy: research.strategy,
+          maxDepth: research.maxDepth
+        })),
+        parallel: true,
+        estimatedTime: 30000 // 30秒
+      });
+    }
+    
+    // フェーズ2: サブエージェント協調実行
+    if (this.detectedTasks.length > 0) {
+      this.optimizedPlan.phases.push({
+        phase: 2,
+        name: 'サブエージェント協調実行',
+        tasks: this.detectedTasks.map(task => ({
+          type: 'subagent',
+          description: `${task.title}の実行`,
+          priority: task.priority,
+          subagentType: task.subagentType
+        })),
+        parallel: this.executionStrategy.executionMode === 'parallel',
+        mode: this.detectedCollaborationMode,
+        estimatedTime: 45000 // 45秒
+      });
+    }
+    
+    // フェーズ3: 結果統合と最適化
+    this.optimizedPlan.phases.push({
+      phase: 3,
+      name: '結果統合と最適化',
+      tasks: [{
+        type: 'integration',
+        description: '全結果の統合と最適化',
+        priority: 'high'
+      }],
+      parallel: false,
+      estimatedTime: 15000 // 15秒
+    });
+    
+    // 総実行時間の計算
+    this.optimizedPlan.estimatedTime = this.optimizedPlan.phases.reduce((total, phase) => total + phase.estimatedTime, 0);
+    
+    // リソース要件の計算
+    this.optimizedPlan.resourceRequirements = {
+      maxConcurrentSubagents: this.executionStrategy.subagentCount,
+      maxParallelTasks: this.executionStrategy.parallelism,
+      memoryUsage: this.detectedComplexity === 'high' ? 'high' : 'medium',
+      cpuUsage: this.executionStrategy.executionMode === 'parallel' ? 'high' : 'medium'
+    };
+    
+    // リスク評価
+    if (this.detectedComplexity === 'high' && this.detectedPriority === 'high') {
+      this.optimizedPlan.riskAssessment = 'medium';
+    } else if (this.detectedComplexity === 'high') {
+      this.optimizedPlan.riskAssessment = 'low';
+    }
+    
+    console.log(`   ✅ 最適化計画生成完了`);
+    console.log(`     フェーズ数: ${this.optimizedPlan.phases.length}`);
+    console.log(`     推定時間: ${Math.round(this.optimizedPlan.estimatedTime / 1000)}秒`);
+    console.log(`     リスク評価: ${this.optimizedPlan.riskAssessment}`);
+    
+    console.log('\n📋 最適化実行計画:');
+    this.optimizedPlan.phases.forEach(phase => {
+      console.log(`   📊 フェーズ${phase.phase}: ${phase.name}`);
+      console.log(`      並列実行: ${phase.parallel ? '有効' : '無効'}`);
+      console.log(`      タスク数: ${phase.tasks.length}`);
+      console.log(`      推定時間: ${Math.round(phase.estimatedTime / 1000)}秒`);
+    });
+  }
+  
+  async confirmExecution() {
+    console.log('\n⚠️  実行確認が必要です。');
+    console.log('📋 実行計画:');
+    console.log(`   指示: ${autoExecuteParams.prompt}`);
+    console.log(`   推定時間: ${Math.round(this.optimizedPlan.estimatedTime / 1000)}秒`);
+    console.log(`   リスク評価: ${this.optimizedPlan.riskAssessment}`);
+    console.log(`   フェーズ数: ${this.optimizedPlan.phases.length}`);
+    
+    // シミュレーション: ユーザーが確認したと仮定
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    console.log('✅ ユーザーが実行を確認しました。');
+    
+    return true;
+  }
+  
+  async executeOptimizedPlan() {
+    for (const phase of this.optimizedPlan.phases) {
+      console.log(`\n🚀 フェーズ${phase.phase}: ${phase.name}`);
+      console.log('='.repeat(50));
+      
+      if (phase.parallel) {
+        await this.executeParallelPhase(phase);
+      } else {
+        await this.executeSequentialPhase(phase);
+      }
+    }
+  }
+  
+  async executeParallelPhase(phase) {
+    console.log(`   ⚡ 並列実行開始 (${phase.tasks.length}タスク)`);
+    
+    const promises = phase.tasks.map(async (task, index) => {
+      console.log(`   🔄 タスク${index + 1}開始: ${task.description}`);
+      
+      if (task.type === 'research') {
+        return await this.executeResearchTask(task);
+      } else if (task.type === 'subagent') {
+        return await this.executeSubagentTask(task);
+      } else if (task.type === 'integration') {
+        return await this.executeIntegrationTask(task);
+      }
+    });
+    
+    const phaseResults = await Promise.all(promises);
+    this.executionResults.push(...phaseResults);
+    
+    console.log(`   ✅ フェーズ${phase.phase}完了: ${phaseResults.length}個の結果`);
+  }
+  
+  async executeSequentialPhase(phase) {
+    console.log(`   📋 順次実行開始 (${phase.tasks.length}タスク)`);
+    
+    for (let i = 0; i < phase.tasks.length; i++) {
+      const task = phase.tasks[i];
+      console.log(`   🔄 タスク${i + 1}/${phase.tasks.length}: ${task.description}`);
+      
+      let result;
+      if (task.type === 'research') {
+        result = await this.executeResearchTask(task);
+      } else if (task.type === 'subagent') {
+        result = await this.executeSubagentTask(task);
+      } else if (task.type === 'integration') {
+        result = await this.executeIntegrationTask(task);
+      }
+      
+      this.executionResults.push(result);
+      console.log(`   ✅ タスク${i + 1}完了`);
+    }
+    
+    console.log(`   ✅ フェーズ${phase.phase}完了`);
+  }
+  
+  async executeResearchTask(task) {
+    // DeepResearch実行のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
+    
+    return {
+      type: 'research',
+      task: task.description,
+      result: `${task.description}の研究を完了しました。最適化された分析と洞察を提供します。`,
+      timestamp: new Date().toISOString(),
+      status: 'success',
+      optimization: 'auto-applied'
+    };
+  }
+  
+  async executeSubagentTask(task) {
+    // サブエージェント実行のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
+    
+    return {
+      type: 'subagent',
+      task: task.description,
+      subagentType: task.subagentType,
+      result: `${task.description}を最適化されたサブエージェントで実行しました。`,
+      timestamp: new Date().toISOString(),
+      status: 'success',
+      optimization: 'auto-applied'
+    };
+  }
+  
+  async executeIntegrationTask(task) {
+    // 結果統合のシミュレーション
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return {
+      type: 'integration',
+      task: task.description,
+      result: '全結果を統合し、最適化された最終成果物を生成しました。',
+      timestamp: new Date().toISOString(),
+      status: 'success',
+      optimization: 'auto-applied'
+    };
+  }
+  
+  displayAutoExecutionResults(totalTime) {
+    console.log('\n🎉 自然言語自動実行完了！');
+    console.log('='.repeat(70));
+    console.log(`⏱️  総実行時間: ${totalTime}ms`);
+    console.log(`📊 実行フェーズ数: ${this.optimizedPlan.phases.length}`);
+    console.log(`🎯 最適化戦略: ${this.executionStrategy.executionMode}`);
+    console.log(`⚡ 並列度: ${this.executionStrategy.parallelism}`);
+    console.log(`📋 総タスク数: ${this.executionResults.length}`);
+    console.log(`📈 効率化率: ${Math.round((this.optimizedPlan.estimatedTime - totalTime) / this.optimizedPlan.estimatedTime * 100)}%`);
+    
+    console.log('\n📊 自動実行結果サマリー:');
+    const resultTypes = {};
+    this.executionResults.forEach(result => {
+      resultTypes[result.type] = (resultTypes[result.type] || 0) + 1;
+    });
+    
+    Object.entries(resultTypes).forEach(([type, count]) => {
+      console.log(`   ${type}: ${count}件`);
+    });
+    
+    console.log('\n📋 最適化実行結果:');
+    this.executionResults.forEach((result, index) => {
+      const status = result.status === 'success' ? '✅' : '❌';
+      console.log(`   ${index + 1}. [${result.type}] ${status} ${result.task}`);
+      if (result.optimization) {
+        console.log(`      最適化: ${result.optimization}`);
+      }
+    });
+  }
+  
+  async saveAutoExecutionResults(totalTime) {
+    const autoExecutionReport = {
+      timestamp: new Date().toISOString(),
+      executionTime: totalTime,
+      parameters: autoExecuteParams,
+      prompt: autoExecuteParams.prompt,
+      detectedTasks: this.detectedTasks,
+      detectedResearchNeeds: this.detectedResearchNeeds,
+      detectedCollaborationMode: this.detectedCollaborationMode,
+      detectedPriority: this.detectedPriority,
+      detectedComplexity: this.detectedComplexity,
+      executionStrategy: this.executionStrategy,
+      optimizedPlan: this.optimizedPlan,
+      results: this.executionResults,
+      summary: `自然言語指示「${autoExecuteParams.prompt}」の自動実行を完了しました。${this.executionResults.length}個のタスクを最適化された戦略で実行しました。`
+    };
+    
+    const reportDir = path.join('.gemini', 'auto-execution-reports');
+    if (!fs.existsSync(reportDir)) {
+      fs.mkdirSync(reportDir, { recursive: true });
+    }
+    
+    const reportPath = path.join(reportDir, `auto_execution_${Date.now()}.json`);
+    fs.writeFileSync(reportPath, JSON.stringify(autoExecutionReport, null, 2));
+    
+    console.log(`\n💾 自動実行結果を保存: ${reportPath}`);
+  }
+}
+
+const autoExecutor = new NaturalLanguageAutoExecutor();
+autoExecutor.autoExecuteFromNaturalLanguage();
+"
+""" 

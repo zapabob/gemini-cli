@@ -4,10 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { createHash } from 'node:crypto';
 import { type Content, Type } from '@google/genai';
-import { type GeminiClient } from '../core/client.js';
+import { type BaseLlmClient } from '../core/baseLlmClient.js';
 import { LruCache } from './LruCache.js';
 import { DEFAULT_GEMINI_FLASH_MODEL } from '../config/models.js';
+import { promptIdContext } from './promptIdContext.js';
 
 const MAX_CACHE_SIZE = 50;
 
@@ -93,8 +95,9 @@ const editCorrectionWithInstructionCache = new LruCache<
  * @param new_string The original replacement string.
  * @param error The error that occurred during the initial edit.
  * @param current_content The current content of the file.
- * @param geminiClient The Gemini client to use for the LLM call.
+ * @param baseLlmClient The BaseLlmClient to use for the LLM call.
  * @param abortSignal An abort signal to cancel the operation.
+ * @param promptId A unique ID for the prompt.
  * @returns A new search and replace pair.
  */
 export async function FixLLMEditWithInstruction(
@@ -103,10 +106,28 @@ export async function FixLLMEditWithInstruction(
   new_string: string,
   error: string,
   current_content: string,
-  geminiClient: GeminiClient,
+  baseLlmClient: BaseLlmClient,
   abortSignal: AbortSignal,
 ): Promise<SearchReplaceEdit> {
-  const cacheKey = `${instruction}---${old_string}---${new_string}--${current_content}--${error}`;
+  let promptId = promptIdContext.getStore();
+  if (!promptId) {
+    promptId = `llm-fixer-fallback-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    console.warn(
+      `Could not find promptId in context. This is unexpected. Using a fallback ID: ${promptId}`,
+    );
+  }
+
+  const cacheKey = createHash('sha256')
+    .update(
+      JSON.stringify([
+        current_content,
+        old_string,
+        new_string,
+        instruction,
+        error,
+      ]),
+    )
+    .digest('hex');
   const cachedResult = editCorrectionWithInstructionCache.get(cacheKey);
   if (cachedResult) {
     return cachedResult;
@@ -120,21 +141,19 @@ export async function FixLLMEditWithInstruction(
   const contents: Content[] = [
     {
       role: 'user',
-      parts: [
-        {
-          text: `${EDIT_SYS_PROMPT}
-${userPrompt}`,
-        },
-      ],
+      parts: [{ text: userPrompt }],
     },
   ];
 
-  const result = (await geminiClient.generateJson(
+  const result = (await baseLlmClient.generateJson({
     contents,
-    SearchReplaceEditSchema,
+    schema: SearchReplaceEditSchema,
     abortSignal,
-    DEFAULT_GEMINI_FLASH_MODEL,
-  )) as unknown as SearchReplaceEdit;
+    model: DEFAULT_GEMINI_FLASH_MODEL,
+    systemInstruction: EDIT_SYS_PROMPT,
+    promptId,
+    maxAttempts: 1,
+  })) as unknown as SearchReplaceEdit;
 
   editCorrectionWithInstructionCache.set(cacheKey, result);
   return result;

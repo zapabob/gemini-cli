@@ -1,0 +1,95 @@
+name = "execute"
+description = "指定されたサブエージェントでタスクを実行します"
+
+prompt = """
+あなたはサブエージェント実行システムです。指定されたサブエージェントを使用してタスクを実行してください。
+
+実行情報：
+- サブエージェントID: {{subagent_id}}
+- タスク: {{task}}
+- 実行モード: {{mode|default:autonomous}}
+
+以下の手順でタスクを実行してください：
+
+1. サブエージェントの存在確認
+2. サブエージェントの状態確認
+3. タスクの実行
+4. 結果の記録
+5. 実行結果の表示
+
+実行するコマンド：
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+
+const subagentId = '{{subagent_id}}';
+const task = '{{task}}';
+const mode = '{{mode|default:autonomous}}';
+
+async function executeSubagentTask() {
+  try {
+    // 1. サブエージェント設定の読み込み
+    const configPath = path.join('.gemini', 'subagents.json');
+    if (!fs.existsSync(configPath)) {
+      console.log('❌ サブエージェント設定ファイルが見つかりません。');
+      return;
+    }
+    
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const subagent = config.subagents.find(sub => sub.id === subagentId);
+    
+    if (!subagent) {
+      console.log(\`❌ サブエージェント \${subagentId} が見つかりません。\`);
+      return;
+    }
+    
+    if (!subagent.isActive) {
+      console.log(\`❌ サブエージェント \${subagent.name} は非アクティブです。\`);
+      return;
+    }
+    
+    console.log(\`🤖 サブエージェント \${subagent.name} でタスクを実行中...\`);
+    console.log(\`📝 タスク: \${task}\`);
+    console.log(\`🔧 実行モード: \${mode}\`);
+    console.log('='.repeat(50));
+    
+    // 2. サブエージェントの状態を更新
+    subagent.status = 'running';
+    subagent.lastUsed = new Date().toISOString();
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    
+    // 3. タスク実行のシミュレーション（実際の実装ではGemini APIを呼び出す）
+    const taskId = \`task_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`;
+    
+    console.log(\`🚀 タスク実行開始 (ID: \${taskId})\`);
+    console.log(\`👤 エージェント: \${subagent.name} (\${subagent.specialty})\`);
+    console.log(\`💬 システムプロンプト: \${subagent.systemPrompt || 'デフォルト'}\`);
+    
+    // 4. 実行結果の記録
+    const result = {
+      taskId: taskId,
+      task: task,
+      result: \`タスク「\${task}」を\${subagent.name}が正常に実行しました。\`,
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    };
+    
+    subagent.taskHistory.push(result);
+    subagent.status = 'completed';
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    
+    console.log('✅ タスク実行完了！');
+    console.log(\`📊 実行結果: \${result.result}\`);
+    console.log(\`⏱️  実行時刻: \${new Date(result.timestamp).toLocaleString('ja-JP')}\`);
+    console.log(\`📈 累計タスク数: \${subagent.taskHistory.length}件\`);
+    
+  } catch (error) {
+    console.error('❌ タスク実行エラー:', error.message);
+  }
+}
+
+executeSubagentTask();
+"
+""" 

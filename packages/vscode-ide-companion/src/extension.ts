@@ -9,11 +9,25 @@ import { IDEServer } from './ide-server.js';
 import semver from 'semver';
 import { DiffContentProvider, DiffManager } from './diff-manager.js';
 import { createLogger } from './utils/logger.js';
-import { activate as activateCursorExtension } from './cursorExtension.js';
+import {
+  detectIdeFromEnv,
+  IDE_DEFINITIONS,
+  type IdeInfo,
+} from '@google/gemini-cli-core/src/ide/detect-ide.js';
 
 const CLI_IDE_COMPANION_IDENTIFIER = 'Google.gemini-cli-vscode-ide-companion';
 const INFO_MESSAGE_SHOWN_KEY = 'geminiCliInfoMessageShown';
 export const DIFF_SCHEME = 'gemini-diff';
+
+/**
+ * IDE environments where the installation greeting is hidden.  In these
+ * environments we either are pre-installed and the installation message is
+ * confusing or we just want to be quiet.
+ */
+const HIDE_INSTALLATION_GREETING_IDES: ReadonlySet<IdeInfo['name']> = new Set([
+  IDE_DEFINITIONS.firebasestudio.name,
+  IDE_DEFINITIONS.cloudshell.name,
+]);
 
 let ideServer: IDEServer;
 let logger: vscode.OutputChannel;
@@ -89,25 +103,12 @@ async function checkForUpdates(
 export async function activate(context: vscode.ExtensionContext) {
   logger = vscode.window.createOutputChannel('Gemini CLI IDE Companion');
   log = createLogger(context, logger);
-  log('🚀 Extension activated with Cursor integration');
-
-  // Cursor拡張機能をアクティベート
-  activateCursorExtension(context);
+  log('Extension activated');
 
   checkForUpdates(context, log);
 
   const diffContentProvider = new DiffContentProvider();
   const diffManager = new DiffManager(log, diffContentProvider);
-
-  ideServer = new IDEServer(log, diffManager);
-  try {
-    await ideServer.start(context);
-    // 公式のワークスペースパス更新も反映
-    // await ideServer.updateWorkspacePath(); // メソッドが存在しないためコメントアウト
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    log(`Failed to start IDE server: ${message}`);
-  }
 
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) => {
@@ -139,9 +140,19 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
   );
 
+  ideServer = new IDEServer(log, diffManager);
+  try {
+    await ideServer.start(context);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    log(`Failed to start IDE server: ${message}`);
+  }
 
+  const infoMessageEnabled = !HIDE_INSTALLATION_GREETING_IDES.has(
+    detectIdeFromEnv().name,
+  );
 
-  if (!context.globalState.get(INFO_MESSAGE_SHOWN_KEY)) {
+  if (!context.globalState.get(INFO_MESSAGE_SHOWN_KEY) && infoMessageEnabled) {
     void vscode.window.showInformationMessage(
       'Gemini CLI Companion extension successfully installed.',
     );

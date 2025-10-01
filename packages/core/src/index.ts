@@ -6,10 +6,10 @@
 
 // Export config
 export * from './config/config.js';
-export * from './config/agents.js';
-export * from './config/active-agent.js';
-export * from './config/subagents.js';
-export * from './config/loadBalancer.js';
+export * from './output/types.js';
+export * from './output/json-formatter.js';
+export * from './policy/types.js';
+export * from './policy/policy-engine.js';
 
 // Export Core Logic
 export * from './core/client.js';
@@ -23,61 +23,13 @@ export * from './core/turn.js';
 export * from './core/geminiRequest.js';
 export * from './core/coreToolScheduler.js';
 export * from './core/nonInteractiveToolExecutor.js';
+
+export * from './fallback/types.js';
+
 export * from './code_assist/codeAssist.js';
 export * from './code_assist/oauth2.js';
 export * from './code_assist/server.js';
 export * from './code_assist/types.js';
-
-// Export core functionality
-export * from './core/turn.js';
-export * from './core/coreToolScheduler.js';
-export * from './core/nonInteractiveToolExecutor.js';
-export * from './core/contentGenerator.js';
-export * from './core/client.js';
-export * from './core/geminiChat.js';
-export * from './core/logger.js';
-export * from './core/tokenLimits.js';
-
-// Export subagents
-export * from './subagents/index.js';
-
-// 協調エージェントシステム
-export { CollaborativeAgentSystem } from './subagents/collaborativeAgent.js';
-export type {
-  CollaborativeTaskOptions,
-  CollaborativeTaskResult,
-  RealTimeCollaborationOptions,
-  RealTimeCollaborationResult,
-  TaskAnalysis,
-  IntegratedResult,
-  Subtask,
-  CollaborationStep,
-  CollaborationAction,
-  CollaborationActionResult,
-  CollaborationMetrics,
-  CollaborationSessionResult,
-  SituationAnalysis
-} from './subagents/types.js';
-
-// 強化版協調エージェントシステム（リアルタイム通信統合）
-export { EnhancedCollaborativeAgentSystem } from './subagents/enhancedCollaborativeAgent.js';
-export { RealTimeCommunicationSystem } from './subagents/realTimeCommunication.js';
-export type {
-  RealTimeMessage,
-  RealTimeMessageType,
-  RealTimeSessionConfig,
-  RealTimeConnectionState,
-  RealTimeCommunicationStats,
-  TaskAssignmentMessage,
-  TaskProgressMessage,
-  TaskCompletionMessage,
-  CoordinationRequestMessage,
-  MainAgentDirectiveMessage,
-  SubagentReportMessage,
-  IntegrationRequestMessage,
-  PerformanceMetricsMessage,
-  SessionControlMessage
-} from './subagents/types.js';
 
 // Export utilities
 export * from './utils/paths.js';
@@ -92,6 +44,7 @@ export * from './utils/quotaErrorDetection.js';
 export * from './utils/fileUtils.js';
 export * from './utils/retry.js';
 export * from './utils/shell-utils.js';
+export * from './utils/terminalSerializer.js';
 export * from './utils/systemEncoding.js';
 export * from './utils/textUtils.js';
 export * from './utils/formatters.js';
@@ -101,7 +54,8 @@ export * from './utils/errorParsing.js';
 export * from './utils/workspaceContext.js';
 export * from './utils/ignorePatterns.js';
 export * from './utils/partUtils.js';
-export * from './utils/ide-trust.js';
+export * from './utils/promptIdContext.js';
+export * from './utils/thoughtUtils.js';
 
 // Export services
 export * from './services/fileDiscoveryService.js';
@@ -113,15 +67,12 @@ export * from './services/fileSystemService.js';
 export * from './ide/ide-client.js';
 export * from './ide/ideContext.js';
 export * from './ide/ide-installer.js';
-export { getIdeInfo, DetectedIde } from './ide/detect-ide.js';
-export { type IdeInfo } from './ide/detect-ide.js';
+export { IDE_DEFINITIONS, type IdeInfo } from './ide/detect-ide.js';
 export * from './ide/constants.js';
+export * from './ide/types.js';
 
 // Export Shell Execution Service
 export * from './services/shellExecutionService.js';
-
-// Export loadBalancerService (独自機能)
-export * from './services/loadBalancerService.js';
 
 // Export base tool definitions
 export * from './tools/tools.js';
@@ -146,6 +97,7 @@ export * from './tools/web-search.js';
 export * from './tools/read-many-files.js';
 export * from './tools/mcp-client.js';
 export * from './tools/mcp-tool.js';
+export * from './tools/write-todos.js';
 
 // MCP OAuth
 export { MCPOAuthProvider } from './mcp/oauth-provider.js';
@@ -160,10 +112,6 @@ export type {
   OAuthProtectedResourceMetadata,
 } from './mcp/oauth-utils.js';
 export { OAuthUtils } from './mcp/oauth-utils.js';
-
-// Re-export @google/genai types and values
-export type { Part, PartListUnion, PartUnion, Content, FunctionCall, GenerateContentResponse } from '@google/genai';
-export { FinishReason } from '@google/genai';
 
 // Export telemetry functions
 export * from './telemetry/index.js';
