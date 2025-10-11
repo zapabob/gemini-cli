@@ -121,3 +121,13 @@ export { Storage } from './config/storage.js';
 
 // Export test utils
 export * from './test-utils/index.js';
+
+// Export subagent functionality
+export * from './config/subagents.js';
+export * from './config/loadBalancer.js';
+export * from './subagents/executor.js';
+export * from './subagents/collaborativeAgent.js';
+export * from './subagents/enhancedCollaborativeAgent.js';
+export * from './subagents/mainAgentInterface.js';
+export * from './subagents/types.js';
+export * from './services/loadBalancerService.js';

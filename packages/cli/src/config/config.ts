@@ -13,11 +13,9 @@ import process from 'node:process';
 import { mcpCommand } from '../commands/mcp.js';
 import type {
   FileFilteringOptions,
-  MCPServerConfig,
   OutputFormat,
 } from '@google/gemini-cli-core';
-import { extensionsCommand } from '../commands/extensions.js';
-import {
+import { MCPServerConfig ,
   Config,
   loadServerHierarchicalMemory,
   setGeminiMdFilename as setServerGeminiMdFilename,
@@ -34,6 +32,8 @@ import {
   resolveTelemetrySettings,
   FatalConfigError,
 } from '@google/gemini-cli-core';
+import { extensionsCommand } from '../commands/extensions.js';
+import { agentsCommand } from '../commands/agents/index.js';
 import type { Settings } from './settings.js';
 
 import type { Extension } from './extension.js';
@@ -275,7 +275,8 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
         })
         .option('ide-mode', {
           type: 'boolean',
-          description: 'Enable IDE integration mode (connect to IDE companion).',
+          description:
+            'Enable IDE integration mode (connect to IDE companion).',
         })
         .option('proxy', {
           type: 'string',
@@ -354,6 +355,9 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
     yargsInstance.command(extensionsCommand);
   }
 
+  // Register agents subcommands
+  yargsInstance.command('agents', 'サブエージェントの管理', async (yargs) => agentsCommand(await yargs.argv));
+
   yargsInstance
     .version(await getCliVersion()) // This will enable the --version flag based on package.json
     .alias('v', 'version')
@@ -371,7 +375,9 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
   // and not return to main CLI logic
   if (
     result._.length > 0 &&
-    (result._[0] === 'mcp' || result._[0] === 'extensions')
+    (result._[0] === 'mcp' ||
+      result._[0] === 'extensions' ||
+      result._[0] === 'agents')
   ) {
     // MCP commands handle their own execution and process exit
     process.exit(0);
@@ -467,8 +473,6 @@ export async function loadCliConfig(
   const memoryImportFormat = settings.context?.importFormat || 'tree';
 
   const ideMode = settings.ide?.enabled ?? false;
-  const ideModeFeature =
-    argv.ideModeFeature ?? (settings as any).ideModeFeature ?? false;
 
   // Early warn for IDE mode without port to satisfy tests and give immediate feedback
   if (ideMode && !process.env['GEMINI_CLI_IDE_SERVER_PORT']) {
@@ -567,8 +571,8 @@ export async function loadCliConfig(
       } as Record<string, MCPServerConfig>;
     }
   }
-  
-  const question = argv.promptInteractive || argv.prompt || (argv.promptWords || []).join(' ');
+
+  const question = argv.promptInteractive || argv.prompt || argv.query || '';
 
   // Determine approval mode with backward compatibility
   let approvalMode: ApprovalMode;

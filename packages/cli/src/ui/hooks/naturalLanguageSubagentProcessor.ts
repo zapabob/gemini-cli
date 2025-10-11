@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { 
-  getSubagentsBySpecialty,
-  SubagentExecutor,
-  Subagent,
-  SubagentSpecialty
-} from '@google/gemini-cli-core';
+// これらの機能は上流リポジトリで削除されたため、無効化
+// import {
+//   getSubagentsBySpecialty,
+//   SubagentExecutor,
+//   Subagent,
+//   SubagentSpecialty
+// } from '@google/gemini-cli-core';
 
 /**
  * 高度な自然言語プロンプト解釈システム
@@ -17,38 +18,132 @@ import {
  */
 export class NaturalLanguageSubagentProcessor {
   private readonly subagentKeywords = {
-    'code_review': ['コードレビュー', 'レビュー', 'code review', 'review', 'コード確認', 'コードチェック'],
-    'debugging': ['デバッグ', 'debug', 'バグ修正', 'エラー修正', 'トラブルシューティング', 'troubleshooting'],
-    'data_analysis': ['データ分析', 'data analysis', '分析', 'analytics', '統計', 'statistics'],
-    'security_audit': ['セキュリティ', 'security', '監査', 'audit', '脆弱性', 'vulnerability'],
-    'performance_optimization': ['パフォーマンス', 'performance', '最適化', 'optimization', '高速化'],
-    'documentation': ['ドキュメント', 'documentation', '文書', '説明書', 'manual'],
-    'testing': ['テスト', 'test', 'テスト作成', 'test creation', '品質保証', 'QA'],
-    'architecture_design': ['アーキテクチャ', 'architecture', '設計', 'design', '構造', 'structure'],
-    'api_design': ['API', 'api', 'インターフェース', 'interface', 'エンドポイント', 'endpoint'],
-    'machine_learning': ['機械学習', 'machine learning', 'ML', 'ml', 'AI', 'ai', '学習', 'learning']
+    code_review: [
+      'コードレビュー',
+      'レビュー',
+      'code review',
+      'review',
+      'コード確認',
+      'コードチェック',
+    ],
+    debugging: [
+      'デバッグ',
+      'debug',
+      'バグ修正',
+      'エラー修正',
+      'トラブルシューティング',
+      'troubleshooting',
+    ],
+    data_analysis: [
+      'データ分析',
+      'data analysis',
+      '分析',
+      'analytics',
+      '統計',
+      'statistics',
+    ],
+    security_audit: [
+      'セキュリティ',
+      'security',
+      '監査',
+      'audit',
+      '脆弱性',
+      'vulnerability',
+    ],
+    performance_optimization: [
+      'パフォーマンス',
+      'performance',
+      '最適化',
+      'optimization',
+      '高速化',
+    ],
+    documentation: [
+      'ドキュメント',
+      'documentation',
+      '文書',
+      '説明書',
+      'manual',
+    ],
+    testing: [
+      'テスト',
+      'test',
+      'テスト作成',
+      'test creation',
+      '品質保証',
+      'QA',
+    ],
+    architecture_design: [
+      'アーキテクチャ',
+      'architecture',
+      '設計',
+      'design',
+      '構造',
+      'structure',
+    ],
+    api_design: [
+      'API',
+      'api',
+      'インターフェース',
+      'interface',
+      'エンドポイント',
+      'endpoint',
+    ],
+    machine_learning: [
+      '機械学習',
+      'machine learning',
+      'ML',
+      'ml',
+      'AI',
+      'ai',
+      '学習',
+      'learning',
+    ],
   };
 
   private readonly parallelKeywords = [
-    '並列', 'parallel', '同時', 'simultaneous', '複数', 'multiple',
-    'チーム', 'team', '複数の', 'several', '複数で', 'with multiple',
-    '並行', 'concurrent', '同時実行', 'concurrent execution'
+    '並列',
+    'parallel',
+    '同時',
+    'simultaneous',
+    '複数',
+    'multiple',
+    'チーム',
+    'team',
+    '複数の',
+    'several',
+    '複数で',
+    'with multiple',
+    '並行',
+    'concurrent',
+    '同時実行',
+    'concurrent execution',
   ];
 
   // リアルタイム表示用コールバック
-  private onProgressUpdate?: (message: string, type: 'info' | 'success' | 'error' | 'progress') => void;
+  private onProgressUpdate?: (
+    message: string,
+    type: 'info' | 'success' | 'error' | 'progress',
+  ) => void;
 
   /**
    * リアルタイム表示コールバックを設定
    */
-  setProgressCallback(callback: (message: string, type: 'info' | 'success' | 'error' | 'progress') => void) {
+  setProgressCallback(
+    callback: (
+      message: string,
+      type: 'info' | 'success' | 'error' | 'progress',
+    ) => void,
+  ) {
     this.onProgressUpdate = callback;
   }
 
   /**
    * 進捗メッセージを送信
    */
-  private sendProgress(message: string, type: 'info' | 'success' | 'error' | 'progress' = 'info') {
+  private sendProgress(
+    message: string,
+    type: 'info' | 'success' | 'error' | 'progress' = 'info',
+  ) {
     if (this.onProgressUpdate) {
       this.onProgressUpdate(message, type);
     }
@@ -68,19 +163,22 @@ export class NaturalLanguageSubagentProcessor {
     collaborationType?: 'independent' | 'coordinated' | 'hierarchical';
   }> {
     this.sendProgress('🧠 高度な自然言語プロンプト解析開始...', 'progress');
-    
+
     // 1. 並列化検出
     const parallelizationAnalysis = this.analyzeParallelization(prompt);
-    
+
     // 2. 専門分野ルーティング
     const routingAnalysis = this.analyzeSpecialtyRouting(prompt);
-    
+
     // 3. 実行モード決定
-    const executionMode = this.determineExecutionMode(prompt, parallelizationAnalysis);
-    
+    const executionMode = this.determineExecutionMode(
+      prompt,
+      parallelizationAnalysis,
+    );
+
     // 4. 優先度分析
     const priority = this.analyzePriority(prompt);
-    
+
     // 5. 協調タイプ分析
     const collaborationType = this.analyzeCollaborationType(prompt);
 
@@ -89,7 +187,10 @@ export class NaturalLanguageSubagentProcessor {
       return { shouldExecute: false };
     }
 
-    this.sendProgress(`🎯 専門分野検出: ${routingAnalysis.detectedSpecialty}`, 'success');
+    this.sendProgress(
+      `🎯 専門分野検出: ${routingAnalysis.detectedSpecialty}`,
+      'success',
+    );
     this.sendProgress(`⚡ 実行モード: ${executionMode}`, 'info');
     this.sendProgress(`🔝 優先度: ${priority}`, 'info');
     this.sendProgress(`🤝 協調タイプ: ${collaborationType}`, 'info');
@@ -97,15 +198,23 @@ export class NaturalLanguageSubagentProcessor {
     // サブエージェントを取得
     try {
       this.sendProgress('🔍 サブエージェントを検索中...', 'progress');
-      const subagents = await getSubagentsBySpecialty(routingAnalysis.detectedSpecialty as SubagentSpecialty);
-      
+      const subagents = await getSubagentsBySpecialty(
+        routingAnalysis.detectedSpecialty as SubagentSpecialty,
+      );
+
       if (subagents.length === 0) {
-        this.sendProgress('❌ 該当するサブエージェントが見つかりませんでした', 'error');
+        this.sendProgress(
+          '❌ 該当するサブエージェントが見つかりませんでした',
+          'error',
+        );
         return { shouldExecute: false };
       }
 
-      this.sendProgress(`✅ ${subagents.length}個のサブエージェントを発見しました`, 'success');
-      
+      this.sendProgress(
+        `✅ ${subagents.length}個のサブエージェントを発見しました`,
+        'success',
+      );
+
       return {
         shouldExecute: subagents.length > 0,
         specialty: routingAnalysis.detectedSpecialty,
@@ -113,10 +222,13 @@ export class NaturalLanguageSubagentProcessor {
         subagents,
         executionMode,
         priority,
-        collaborationType
+        collaborationType,
       };
     } catch (error) {
-      this.sendProgress(`❌ サブエージェント取得エラー: ${error instanceof Error ? error.message : String(error)}`, 'error');
+      this.sendProgress(
+        `❌ サブエージェント取得エラー: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+      );
       console.error('サブエージェント取得エラー:', error);
       return { shouldExecute: false };
     }
@@ -131,20 +243,25 @@ export class NaturalLanguageSubagentProcessor {
     parallelKeywords: string[];
   } {
     const lowerPrompt = prompt.toLowerCase();
-    const foundKeywords = this.parallelKeywords.filter(keyword => 
-      lowerPrompt.includes(keyword.toLowerCase())
+    const foundKeywords = this.parallelKeywords.filter((keyword) =>
+      lowerPrompt.includes(keyword.toLowerCase()),
     );
 
     const isParallel = foundKeywords.length > 0;
     let parallelLevel: 'none' | 'low' | 'medium' | 'high' = 'none';
 
     if (isParallel) {
-      const strongParallelKeywords = ['並列', 'parallel', '同時', 'simultaneous'];
+      const strongParallelKeywords = [
+        '並列',
+        'parallel',
+        '同時',
+        'simultaneous',
+      ];
       const mediumParallelKeywords = ['複数', 'multiple', 'チーム', 'team'];
-      
-      if (strongParallelKeywords.some(k => lowerPrompt.includes(k))) {
+
+      if (strongParallelKeywords.some((k) => lowerPrompt.includes(k))) {
         parallelLevel = 'high';
-      } else if (mediumParallelKeywords.some(k => lowerPrompt.includes(k))) {
+      } else if (mediumParallelKeywords.some((k) => lowerPrompt.includes(k))) {
         parallelLevel = 'medium';
       } else {
         parallelLevel = 'low';
@@ -168,10 +285,10 @@ export class NaturalLanguageSubagentProcessor {
 
     // キーワードベースの検出
     for (const [specialty, keywords] of Object.entries(this.subagentKeywords)) {
-      const matchedKeywords = keywords.filter(keyword => 
-        lowerPrompt.includes(keyword.toLowerCase())
+      const matchedKeywords = keywords.filter((keyword) =>
+        lowerPrompt.includes(keyword.toLowerCase()),
       );
-      
+
       if (matchedKeywords.length > 0) {
         const keywordConfidence = matchedKeywords.length / keywords.length;
         if (keywordConfidence > confidence) {
@@ -184,9 +301,12 @@ export class NaturalLanguageSubagentProcessor {
     // タスク内容抽出
     let task: string | undefined;
     if (detectedSpecialty) {
-      const specialtyKeywords = this.subagentKeywords[detectedSpecialty as keyof typeof this.subagentKeywords];
+      const specialtyKeywords =
+        this.subagentKeywords[
+          detectedSpecialty as keyof typeof this.subagentKeywords
+        ];
       let taskStartIndex = -1;
-      
+
       for (const keyword of specialtyKeywords) {
         const index = lowerPrompt.indexOf(keyword.toLowerCase());
         if (index !== -1) {
@@ -209,41 +329,66 @@ export class NaturalLanguageSubagentProcessor {
    * 実行モード決定
    */
   private determineExecutionMode(
-    prompt: string, 
-    parallelizationAnalysis: { isParallel: boolean; parallelLevel: string }
+    prompt: string,
+    parallelizationAnalysis: { isParallel: boolean; parallelLevel: string },
   ): 'parallel' | 'sequential' | 'hybrid' {
     if (!parallelizationAnalysis.isParallel) {
       return 'sequential';
     }
 
     const lowerPrompt = prompt.toLowerCase();
-    
+
     // ハイブリッド実行のキーワード
-    const hybridKeywords = ['段階的', 'step by step', '順次', 'sequential', '段階'];
-    const hasHybridKeywords = hybridKeywords.some(k => lowerPrompt.includes(k));
+    const hybridKeywords = [
+      '段階的',
+      'step by step',
+      '順次',
+      'sequential',
+      '段階',
+    ];
+    const hasHybridKeywords = hybridKeywords.some((k) =>
+      lowerPrompt.includes(k),
+    );
 
     if (hasHybridKeywords) {
       return 'hybrid';
     }
 
-    return parallelizationAnalysis.parallelLevel === 'high' ? 'parallel' : 'sequential';
+    return parallelizationAnalysis.parallelLevel === 'high'
+      ? 'parallel'
+      : 'sequential';
   }
 
   /**
    * 優先度分析
    */
-  private analyzePriority(prompt: string): 'low' | 'medium' | 'high' | 'urgent' {
+  private analyzePriority(
+    prompt: string,
+  ): 'low' | 'medium' | 'high' | 'urgent' {
     const lowerPrompt = prompt.toLowerCase();
-    
-    const urgentKeywords = ['緊急', 'urgent', '急いで', 'asap', 'すぐに', 'immediately'];
-    const highKeywords = ['重要', 'important', '優先', 'priority', '高優先度'];
-    const lowKeywords = ['ゆっくり', 'slowly', '低優先度', 'low priority', '時間かけて'];
 
-    if (urgentKeywords.some(k => lowerPrompt.includes(k))) {
+    const urgentKeywords = [
+      '緊急',
+      'urgent',
+      '急いで',
+      'asap',
+      'すぐに',
+      'immediately',
+    ];
+    const highKeywords = ['重要', 'important', '優先', 'priority', '高優先度'];
+    const lowKeywords = [
+      'ゆっくり',
+      'slowly',
+      '低優先度',
+      'low priority',
+      '時間かけて',
+    ];
+
+    if (urgentKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'urgent';
-    } else if (highKeywords.some(k => lowerPrompt.includes(k))) {
+    } else if (highKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'high';
-    } else if (lowKeywords.some(k => lowerPrompt.includes(k))) {
+    } else if (lowKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'low';
     }
 
@@ -253,18 +398,41 @@ export class NaturalLanguageSubagentProcessor {
   /**
    * 協調タイプ分析
    */
-  private analyzeCollaborationType(prompt: string): 'independent' | 'coordinated' | 'hierarchical' {
+  private analyzeCollaborationType(
+    prompt: string,
+  ): 'independent' | 'coordinated' | 'hierarchical' {
     const lowerPrompt = prompt.toLowerCase();
-    
-    const hierarchicalKeywords = ['階層', 'hierarchical', '監督', 'supervision', '管理', 'management'];
-    const coordinatedKeywords = ['協調', 'coordination', '連携', 'collaboration', '調整', 'adjustment'];
-    const independentKeywords = ['独立', 'independent', '個別', 'separate', '単独', 'alone'];
 
-    if (hierarchicalKeywords.some(k => lowerPrompt.includes(k))) {
+    const hierarchicalKeywords = [
+      '階層',
+      'hierarchical',
+      '監督',
+      'supervision',
+      '管理',
+      'management',
+    ];
+    const coordinatedKeywords = [
+      '協調',
+      'coordination',
+      '連携',
+      'collaboration',
+      '調整',
+      'adjustment',
+    ];
+    const independentKeywords = [
+      '独立',
+      'independent',
+      '個別',
+      'separate',
+      '単独',
+      'alone',
+    ];
+
+    if (hierarchicalKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'hierarchical';
-    } else if (coordinatedKeywords.some(k => lowerPrompt.includes(k))) {
+    } else if (coordinatedKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'coordinated';
-    } else if (independentKeywords.some(k => lowerPrompt.includes(k))) {
+    } else if (independentKeywords.some((k) => lowerPrompt.includes(k))) {
       return 'independent';
     }
 
@@ -276,11 +444,14 @@ export class NaturalLanguageSubagentProcessor {
    * 実行モード別の処理、協調タイプ別の調整、優先度別のリソース管理
    */
   async executeAdvancedParallelSubagents(
-    subagents: Subagent[], 
+    subagents: Subagent[],
     task: string,
     executionMode: 'parallel' | 'sequential' | 'hybrid' = 'parallel',
     priority: 'low' | 'medium' | 'high' | 'urgent' = 'medium',
-    collaborationType: 'independent' | 'coordinated' | 'hierarchical' = 'coordinated'
+    collaborationType:
+      | 'independent'
+      | 'coordinated'
+      | 'hierarchical' = 'coordinated',
   ): Promise<{
     success: boolean;
     results: Array<{
@@ -300,7 +471,7 @@ export class NaturalLanguageSubagentProcessor {
     error?: string;
   }> {
     const startTime = Date.now();
-    
+
     try {
       this.sendProgress('🚀 高度な並列実行システム起動...', 'progress');
       this.sendProgress(`⚡ 実行モード: ${executionMode}`, 'info');
@@ -308,9 +479,12 @@ export class NaturalLanguageSubagentProcessor {
       this.sendProgress(`🤝 協調タイプ: ${collaborationType}`, 'info');
 
       const executor = new SubagentExecutor({
-        onProgress: (message: string, type: 'info' | 'success' | 'error' | 'progress') => {
+        onProgress: (
+          message: string,
+          type: 'info' | 'success' | 'error' | 'progress',
+        ) => {
           this.sendProgress(message, type);
-        }
+        },
       });
 
       let results: Array<{
@@ -324,21 +498,42 @@ export class NaturalLanguageSubagentProcessor {
       // 実行モード別の処理
       switch (executionMode) {
         case 'parallel':
-          results = await this.executeParallelMode(subagents, task, executor, priority);
+          results = await this.executeParallelMode(
+            subagents,
+            task,
+            executor,
+            priority,
+          );
           break;
         case 'sequential':
-          results = await this.executeSequentialMode(subagents, task, executor, priority);
+          results = await this.executeSequentialMode(
+            subagents,
+            task,
+            executor,
+            priority,
+          );
           break;
         case 'hybrid':
-          results = await this.executeHybridMode(subagents, task, executor, priority, collaborationType);
+          results = await this.executeHybridMode(
+            subagents,
+            task,
+            executor,
+            priority,
+            collaborationType,
+          );
           break;
         default:
-          results = await this.executeParallelMode(subagents, task, executor, priority);
+          results = await this.executeParallelMode(
+            subagents,
+            task,
+            executor,
+            priority,
+          );
           break;
       }
 
       const totalExecutionTime = Date.now() - startTime;
-      const successCount = results.filter(r => r.status === 'success').length;
+      const successCount = results.filter((r) => r.status === 'success').length;
       const successRate = (successCount / results.length) * 100;
 
       this.sendProgress(`✅ 高度な並列実行完了`, 'success');
@@ -353,12 +548,12 @@ export class NaturalLanguageSubagentProcessor {
           priority,
           collaborationType,
           totalExecutionTime,
-          successRate
-        }
+          successRate,
+        },
       };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.sendProgress(`❌ 高度な並列実行エラー: ${errorMessage}`, 'error');
       return {
         success: false,
@@ -368,9 +563,9 @@ export class NaturalLanguageSubagentProcessor {
           priority,
           collaborationType,
           totalExecutionTime: Date.now() - startTime,
-          successRate: 0
+          successRate: 0,
         },
-        error: errorMessage
+        error: errorMessage,
       };
     }
   }
@@ -382,22 +577,24 @@ export class NaturalLanguageSubagentProcessor {
     subagents: Subagent[],
     task: string,
     executor: SubagentExecutor,
-    priority: string
-  ): Promise<Array<{
-    subagentId: string;
-    subagentName: string;
-    result: string;
-    executionTime: number;
-    status: 'success' | 'error' | 'timeout';
-  }>> {
+    priority: string,
+  ): Promise<
+    Array<{
+      subagentId: string;
+      subagentName: string;
+      result: string;
+      executionTime: number;
+      status: 'success' | 'error' | 'timeout';
+    }>
+  > {
     this.sendProgress('⚡ 並列実行モード開始...', 'progress');
 
     // 優先度に応じたタイムアウト設定
     const timeoutMap = {
-      'urgent': 15000,
-      'high': 30000,
-      'medium': 45000,
-      'low': 60000
+      urgent: 15000,
+      high: 30000,
+      medium: 45000,
+      low: 60000,
     };
 
     const timeout = timeoutMap[priority as keyof typeof timeoutMap] || 30000;
@@ -406,15 +603,16 @@ export class NaturalLanguageSubagentProcessor {
       id: `parallel-task-${Date.now()}`,
       task,
       priority: priority as 'low' | 'medium' | 'high' | 'urgent',
-      timeout
+      timeout,
     });
 
-    return results.map(r => ({
+    return results.map((r) => ({
       subagentId: r.subagentId,
-      subagentName: subagents.find(s => s.id === r.subagentId)?.name || 'Unknown',
+      subagentName:
+        subagents.find((s) => s.id === r.subagentId)?.name || 'Unknown',
       result: r.result,
       executionTime: r.executionTime,
-      status: r.status === 'success' ? 'success' : 'error'
+      status: r.status === 'success' ? 'success' : 'error',
     }));
   }
 
@@ -425,14 +623,16 @@ export class NaturalLanguageSubagentProcessor {
     subagents: Subagent[],
     task: string,
     executor: SubagentExecutor,
-    priority: string
-  ): Promise<Array<{
-    subagentId: string;
-    subagentName: string;
-    result: string;
-    executionTime: number;
-    status: 'success' | 'error' | 'timeout';
-  }>> {
+    priority: string,
+  ): Promise<
+    Array<{
+      subagentId: string;
+      subagentName: string;
+      result: string;
+      executionTime: number;
+      status: 'success' | 'error' | 'timeout';
+    }>
+  > {
     this.sendProgress('📋 順次実行モード開始...', 'progress');
 
     const results: Array<{
@@ -445,14 +645,17 @@ export class NaturalLanguageSubagentProcessor {
 
     for (let i = 0; i < subagents.length; i++) {
       const subagent = subagents[i];
-      this.sendProgress(`🔄 ${subagent.name} (${i + 1}/${subagents.length}) を実行中...`, 'progress');
+      this.sendProgress(
+        `🔄 ${subagent.name} (${i + 1}/${subagents.length}) を実行中...`,
+        'progress',
+      );
 
       try {
         const result = await executor.executeTask(subagent, {
           id: `sequential-task-${Date.now()}-${i}`,
           task,
           priority: priority as 'low' | 'medium' | 'high' | 'urgent',
-          timeout: 30000
+          timeout: 30000,
         });
 
         results.push({
@@ -460,18 +663,21 @@ export class NaturalLanguageSubagentProcessor {
           subagentName: subagent.name,
           result: result.result,
           executionTime: result.executionTime,
-          status: result.status === 'success' ? 'success' : 'error'
+          status: result.status === 'success' ? 'success' : 'error',
         });
 
         this.sendProgress(`✅ ${subagent.name} 完了`, 'success');
       } catch (error) {
-        this.sendProgress(`❌ ${subagent.name} エラー: ${error instanceof Error ? error.message : String(error)}`, 'error');
+        this.sendProgress(
+          `❌ ${subagent.name} エラー: ${error instanceof Error ? error.message : String(error)}`,
+          'error',
+        );
         results.push({
           subagentId: subagent.id,
           subagentName: subagent.name,
           result: 'エラーが発生しました',
           executionTime: 0,
-          status: 'error'
+          status: 'error',
         });
       }
     }
@@ -487,14 +693,16 @@ export class NaturalLanguageSubagentProcessor {
     task: string,
     executor: SubagentExecutor,
     priority: string,
-    collaborationType: string
-  ): Promise<Array<{
-    subagentId: string;
-    subagentName: string;
-    result: string;
-    executionTime: number;
-    status: 'success' | 'error' | 'timeout';
-  }>> {
+    collaborationType: string,
+  ): Promise<
+    Array<{
+      subagentId: string;
+      subagentName: string;
+      result: string;
+      executionTime: number;
+      status: 'success' | 'error' | 'timeout';
+    }>
+  > {
     this.sendProgress('🔄 ハイブリッド実行モード開始...', 'progress');
 
     // サブエージェントをグループに分割
@@ -509,16 +717,24 @@ export class NaturalLanguageSubagentProcessor {
 
     for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
       const group = groups[groupIndex];
-      this.sendProgress(`📦 グループ ${groupIndex + 1}/${groups.length} (${group.length}個のサブエージェント) を並列実行中...`, 'progress');
+      this.sendProgress(
+        `📦 グループ ${groupIndex + 1}/${groups.length} (${group.length}個のサブエージェント) を並列実行中...`,
+        'progress',
+      );
 
       // グループ内で並列実行
-      const groupResults = await this.executeParallelMode(group, task, executor, priority);
+      const groupResults = await this.executeParallelMode(
+        group,
+        task,
+        executor,
+        priority,
+      );
       results.push(...groupResults);
 
       // グループ間で少し待機（リソース調整）
       if (groupIndex < groups.length - 1) {
         this.sendProgress('⏸️ 次のグループの準備中...', 'info');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
@@ -530,16 +746,20 @@ export class NaturalLanguageSubagentProcessor {
    */
   private createSubagentGroups(
     subagents: Subagent[],
-    collaborationType: string
+    collaborationType: string,
   ): Subagent[][] {
     const groups: Subagent[][] = [];
 
     switch (collaborationType) {
       case 'hierarchical': {
         // 階層的: 監督者と作業者に分ける
-        const supervisor = subagents.find(s => s.specialty === 'architecture_design');
-        const workers = subagents.filter(s => s.specialty !== 'architecture_design');
-        
+        const supervisor = subagents.find(
+          (s) => s.specialty === 'architecture_design',
+        );
+        const workers = subagents.filter(
+          (s) => s.specialty !== 'architecture_design',
+        );
+
         if (supervisor) {
           groups.push([supervisor]);
         }
@@ -555,14 +775,14 @@ export class NaturalLanguageSubagentProcessor {
       case 'coordinated': {
         // 協調的: 専門分野別にグループ化
         const specialtyGroups = new Map<string, Subagent[]>();
-        subagents.forEach(subagent => {
+        subagents.forEach((subagent) => {
           if (!specialtyGroups.has(subagent.specialty)) {
             specialtyGroups.set(subagent.specialty, []);
           }
           specialtyGroups.get(subagent.specialty)!.push(subagent);
         });
-        
-        specialtyGroups.forEach(group => {
+
+        specialtyGroups.forEach((group) => {
           if (group.length > 0) {
             groups.push(group);
           }
@@ -594,12 +814,18 @@ export class NaturalLanguageSubagentProcessor {
    * 利用可能な専門分野の説明を生成
    */
   getAvailableSpecialtiesDescription(): string {
-    const descriptions = Object.entries(this.subagentKeywords).map(([specialty, keywords]) => {
-      const japaneseKeywords = keywords.filter(k => /[\u3040-\u309F\u30A0-\u30FF]/.test(k));
-      const englishKeywords = keywords.filter(k => !/[\u3040-\u309F\u30A0-\u30FF]/.test(k));
-      
-      return `- **${specialty}**: ${japaneseKeywords.join(', ')} ${englishKeywords.length > 0 ? `(${englishKeywords.join(', ')})` : ''}`;
-    });
+    const descriptions = Object.entries(this.subagentKeywords).map(
+      ([specialty, keywords]) => {
+        const japaneseKeywords = keywords.filter((k) =>
+          /[\u3040-\u309F\u30A0-\u30FF]/.test(k),
+        );
+        const englishKeywords = keywords.filter(
+          (k) => !/[\u3040-\u309F\u30A0-\u30FF]/.test(k),
+        );
+
+        return `- **${specialty}**: ${japaneseKeywords.join(', ')} ${englishKeywords.length > 0 ? `(${englishKeywords.join(', ')})` : ''}`;
+      },
+    );
 
     return descriptions.join('\n');
   }
@@ -608,22 +834,39 @@ export class NaturalLanguageSubagentProcessor {
    * メインエージェントの動作を表示
    */
   displayMainAgentAction(action: string, details?: string) {
-    this.sendProgress(`🎯 メインエージェント: ${action}${details ? ` - ${details}` : ''}`, 'info');
+    this.sendProgress(
+      `🎯 メインエージェント: ${action}${details ? ` - ${details}` : ''}`,
+      'info',
+    );
   }
 
   /**
    * サブエージェントの動作を表示
    */
-  displaySubagentAction(subagentName: string, action: string, details?: string) {
-    this.sendProgress(`🤖 ${subagentName}: ${action}${details ? ` - ${details}` : ''}`, 'progress');
+  displaySubagentAction(
+    subagentName: string,
+    action: string,
+    details?: string,
+  ) {
+    this.sendProgress(
+      `🤖 ${subagentName}: ${action}${details ? ` - ${details}` : ''}`,
+      'progress',
+    );
   }
 
   /**
    * 協調作業の進行状況を表示
    */
-  displayCollaborationProgress(step: number, totalSteps: number, description: string) {
+  displayCollaborationProgress(
+    step: number,
+    totalSteps: number,
+    description: string,
+  ) {
     const progress = Math.round((step / totalSteps) * 100);
-    this.sendProgress(`🔄 協調作業進行中 (${step}/${totalSteps}) ${progress}%: ${description}`, 'progress');
+    this.sendProgress(
+      `🔄 協調作業進行中 (${step}/${totalSteps}) ${progress}%: ${description}`,
+      'progress',
+    );
   }
 
   /**
@@ -631,8 +874,8 @@ export class NaturalLanguageSubagentProcessor {
    * 後方互換性のため残存
    */
   async executeParallelSubagents(
-    subagents: Subagent[], 
-    task: string
+    subagents: Subagent[],
+    task: string,
   ): Promise<{
     success: boolean;
     results: Array<{
@@ -649,19 +892,19 @@ export class NaturalLanguageSubagentProcessor {
       task,
       'parallel',
       'medium',
-      'coordinated'
+      'coordinated',
     );
 
     // 後方互換性のため結果を変換
     return {
       success: advancedResult.success,
-      results: advancedResult.results.map(r => ({
+      results: advancedResult.results.map((r) => ({
         subagentId: r.subagentId,
         subagentName: r.subagentName,
         result: r.result,
-        executionTime: r.executionTime
+        executionTime: r.executionTime,
       })),
-      error: advancedResult.error
+      error: advancedResult.error,
     };
   }
-} 
+}

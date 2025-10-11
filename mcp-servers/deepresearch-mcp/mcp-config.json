@@ -1,4 +1,7 @@
 {
+  "implementationDate": "2025-10-01",
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-01T12:00:00Z",
   "mcpServers": {
     "deepresearch-mcp": {
       "command": "node",
@@ -7,4 +10,4 @@
       ]
     }
   }
-} 
+}

@@ -5,9 +5,99 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2025-10-11
+
+### Added
+
+- **🚀 公式リポジトリ統合**: 最新の公式バージョン（v0.10.0）と整合性を保ちつつ独自機能を維持
+  - 認証システムの改善を統合
+  - シェル実行サービスの信頼性向上を統合
+  - UIのフリッカー検出とメトリクスを統合
+  - ウェブ検索ツールのリファクタリングを統合
+  - テレメトリーシステムの強化を統合
+
+- **🤖 サブエージェント機能の完全実装**: 専門的なAIエージェントシステム
+  - 15種類の専門分野対応（コードレビュー、デバッグ、データ分析など）
+  - サブエージェント設定管理（subagents.json）
+  - サブエージェント実行器（SubagentExecutor）
+  - 並列実行機能（最大5並列）
+  - タスク履歴管理とステータス追跡
+  - カラーマネージャーによる視覚的な識別
+  - YAML設定ファイルからのサブエージェント読み込み
+  - 自然言語プロンプトからのサブエージェント作成
+
+- **🔬 DeepResearch機能の完全実装**: 多層的な研究分析ツール
+  - 最大3レベルまでの深い研究分析
+  - 3つの研究戦略（comprehensive/focused/exploratory）
+  - Google Search grounding統合
+  - 自動マークダウンファイル生成（\_docs/ディレクトリ）
+  - 複数ソース分析機能（最大10ソース）
+  - 学術ソース対応
+  - トピック抽出と関連性分析
+  - 英語・日本語のバイリンガルレポート生成
+
+- **🎨 コマンドシステムの拡張**: 新規コマンドの追加
+  - `agents create`: サブエージェント作成コマンド
+  - `agents list`: サブエージェント一覧表示
+  - `agents delete`: サブエージェント削除
+  - `agents execute`: サブエージェント実行
+  - `agents execute-parallel`: 並列実行
+  - `agents create-natural`: 自然言語からの作成
+
+### Enhanced
+
+- **📊 ツールレジストリの改善**: DeepResearchToolの統合
+  - ツール登録システムの強化
+  - エラーハンドリングの改善
+  - テスト基盤の充実
+
+- **🔧 設定システムの強化**: サブエージェント設定管理
+  - Zod スキーマバリデーション
+  - 型安全な設定管理
+  - デフォルト設定の提供
+
+- **📝 実装ログシステム**: MCPサーバーを活用した自動ログ生成
+  - 日時取得機能（MCPサーバー経由）
+  - yyyy-mm-dd\_機能名.md形式での自動保存
+  - \_docs/ディレクトリへの一元管理
+
+### Fixed
+
+- **🐛 型定義の修正**: TypeScriptエラーの解決
+  - サブエージェント関連の型定義
+  - DeepResearch関連の型定義
+  - インポートパスの修正
+
+### Changed
+
+- **📦 バージョン管理の改善**: セマンティックバージョニングの適用
+  - メインパッケージ: 0.8.0 → 0.11.0
+  - CLIパッケージ: 0.8.0 → 0.11.0
+  - Coreパッケージ: 0.8.0 → 0.11.0
+  - A2A Serverパッケージ: 0.8.0 → 0.11.0
+
+### Technical Details
+
+- Node.js 20以上対応を維持
+- TypeScript 5.3.3対応
+- 公式リポジトリ（v0.10.0）との整合性確保
+- 独自機能（サブエージェント、DeepResearch）の優先維持
+- 全パッケージのバージョン統一
+- ビルドプロセスの安定性向上
+
+### Migration Guide
+
+既存のユーザーへの影響：
+
+1. サブエージェント機能は新機能のため、既存機能には影響なし
+2. DeepResearch機能も新機能のため、既存機能には影響なし
+3. 設定ファイルは自動生成されるため、手動設定不要
+4. 公式v0.10.0の改善が統合されているため、パフォーマンスと信頼性が向上
+
 ## [0.7.0] - 2025-08-06
 
 ### Added
+
 - **🆕 Upstream Integration**: Successfully integrated latest upstream updates while preserving unique features
   - Strategic merge of upstream/main with custom enhancements
   - Preserved VSCode companion functionality with latest improvements
@@ -31,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Retained custom version management approach
 
 ### Added
+
 - **グローバルインストールシステム**: ワンコマンドインストールと管理機能
   - グローバルインストールスクリプト (install-global.js)
   - 自然言語CLIエントリーポイント (naturalLanguageCli.js)
@@ -72,6 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 自動化スクリプトの追加
 
 ### Fixed
+
 - **ビルドエラーの修正**: TypeScript型定義の問題を解決
   - vitest/globalsの型定義追加
   - 依存関係の更新と互換性確保
@@ -86,6 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - エラーハンドリングの強化
 
 ### Changed
+
 - **開発環境の最適化**: 開発効率の向上
   - ビルド時間の短縮
   - 依存関係の最適化
@@ -103,6 +196,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - progress:demo
 
 ### Technical Details
+
 - Node.js v22.14.0対応
 - TypeScript 5.8.3対応
 - 全パッケージのビルド成功確認
@@ -114,12 +208,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.1] - 2025-07-27
 
 ### Added
+
 - **公式リポジトリとの統合**: 最新機能との互換性向上
   - Sandbox Image URIを最新版（0.1.13-nightly.250727.3e81359c）に更新
   - 公式リポジトリの最新機能を反映
   - 独自機能を優先した統合実装
 
 ### Changed
+
 - **README.mdの大幅改善**: 公式リポジトリの最新構造を反映
   - インストール手順の簡素化と改善
   - 認証方法の詳細説明を追加
@@ -129,6 +225,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.1.13` → `us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.1.13-nightly.250727.3e81359c`
 
 ### Technical Details
+
 - 公式リポジトリの最新コミット（3e81359c）との互換性確保
 - 独自機能（Supervisor Command、Load Balancer、Sub-Agents等）の優先維持
 - ドキュメント構造の公式リポジトリとの統一
@@ -137,6 +234,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.0] - 2025-07-27
 
 ### Added
+
 - **Supervisor Command**: 自然言語での並列実装とサブエージェント調整機能
   - 自然言語での目標解析と実装要求の処理
   - 自動サブエージェント生成（DeepResearch Agent, Architecture Planner, Implementation Specialist）
@@ -148,6 +246,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - エラーハンドリングと復旧機能
 
 ### Fixed
+
 - **インポートパスの修正**: supervisorCommand.tsのモジュール解決問題を解決
   - `@google/gemini-cli-core/subagents/supervisor.js` の相対パス修正
   - `@google/gemini-cli-core/config/subagents.js` の相対パス修正
@@ -158,6 +257,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - メインパッケージ: 0.6.0（維持）
 
 ### Changed
+
 - **README.mdの更新**: Supervisor Command機能の詳細説明を追加
   - 新機能の使用例とオプション説明
   - インストール手順の改善
@@ -168,6 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 技術的詳細の文書化
 
 ### Technical Details
+
 - 相対パスでのインポート解決（`../../../../core/src/`）
 - 明示的な型定義指定（`DecisionLog`, `any`）
 - 全パッケージのビルド成功確認
@@ -177,6 +278,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0] - 2025-07-27
 
 ### Added
+
 - **GitHub Actions統合**: 自動コード分析とレビュー機能
   - 手動実行と自動実行の両方に対応
   - Pull Requestへの自動コメント追加
@@ -187,6 +289,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 包括的なドキュメントとセットアップスクリプト
 
 ### Technical Details
+
 - GitHub Actionsワークフローの完全実装（gemini-cli-action.yml）
 - セットアップスクリプトの作成（setup-gemini-cli.sh）
 - 詳細なドキュメント作成（github-actions.md）
@@ -196,6 +299,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0] - 2025-07-27
 
 ### Added
+
 - **DeepResearch機能**: 多層的な研究分析ツール
   - 最大3レベルまでの深い研究分析
   - 最大10ソースまでの分析制限
@@ -209,6 +313,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 自然言語プロンプトからの呼び出し対応
 
 ### Technical Details
+
 - DeepResearchToolの完全実装（481行）
 - 包括的なテストスイート（12テスト中12成功）
 - エラーハンドリングの修正（performMultiLevelResearch）
@@ -218,6 +323,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2025-07-27
 
 ### Added
+
 - **インストール手順の改善**: ソースからのインストール手順を追加
   - 詳細なビルド手順をREADMEに追加
   - インストール検証手順を追加
@@ -232,6 +338,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - クォータ制限時の適切なエラーハンドリング
 
 ### Fixed
+
 - **グローバルインストールの問題修正**: npm linkの動作改善
   - パス設定の自動化
   - 権限問題の解決
@@ -242,6 +349,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ESLintチェックの通過
 
 ### Changed
+
 - **ドキュメントの大幅改善**: README.mdの完全改訂
   - インストール手順の詳細化
   - トラブルシューティングセクションの追加
@@ -251,6 +359,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 技術的詳細の追加
 
 ### Technical Details
+
 - Node.js 20以上での動作確認完了
 - Windows 11環境での完全動作検証
 - 認証なしでも基本機能が動作することを確認
@@ -259,6 +368,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1] - 2025-07-26
 
 ### Fixed
+
 - **TypeScript型エラー修正**: VSCode拡張の`@types/glob`と`minimatch`の型競合を解決
   - `packages/vscode-ide-companion/tsconfig.json`に`skipLibCheck: true`を追加
   - 外部ライブラリの型定義競合をバイパス
@@ -270,6 +380,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 重要なランタイムエラーを修正
 
 ### Technical Details
+
 - 型安全性を維持しながら外部ライブラリとの互換性を向上
 - ビルドプロセスの安定性を向上
 - インストールとビルドの成功率を100%に改善
@@ -277,6 +388,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-07-26
 
 ### Added
+
 - **サブエージェント機能**: 専門的なAIエージェントシステム
   - コードレビュー専門エージェント
   - デバッグ専門エージェント
@@ -306,6 +418,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - データ整合性保証
 
 ### Fixed
+
 - TypeScriptコンパイルエラーの解決
 - エクスポート不足問題の修正
 - インポートパスの修正
@@ -313,11 +426,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GeminiClient重複エクスポート問題の解決
 
 ### Changed
+
 - モジュール間の依存関係を最適化
 - 型安全性の向上
 - エクスポート構造の改善
 
 ### Technical Details
+
 - 新機能の実装により、プロジェクトの機能性が大幅に向上
 - 既存APIとの互換性を維持
 - バグ修正により安定性が向上
@@ -325,15 +440,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.13] - 2025-07-25
 
 ### Fixed
+
 - 初期リリース後のバグ修正
 - 依存関係の更新
 
 ## [0.1.0] - 2025-07-25
 
 ### Added
+
 - 初期リリース
 - Gemini CLIの基本機能
 - インタラクティブモード
 - ファイル操作機能
 - MCPサーバー統合
-- テレメトリ機能 
+- テレメトリ機能
