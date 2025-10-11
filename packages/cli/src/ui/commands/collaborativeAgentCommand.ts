@@ -4,21 +4,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CommandKind, MessageActionReturn, SlashCommand } from './types.js';
-import { 
-  CollaborativeAgentSystem
-} from '@google/gemini-cli-core';
+import type { MessageActionReturn, SlashCommand } from './types.js';
+import { CommandKind } from './types.js';
+// CollaborativeAgentSystemは上流リポジトリで削除されたため、無効化
+// import {
+//   CollaborativeAgentSystem
+// } from '@google/gemini-cli-core';
 
 /**
  * 協調エージェントシステムのCLIコマンド
  */
 export const collaborativeAgentCommand: SlashCommand = {
   name: 'collaborative',
-  description: '協調エージェントシステム - メインエージェントとサブエージェントの協調作業',
+  description:
+    '協調エージェントシステム - メインエージェントとサブエージェントの協調作業',
   kind: CommandKind.BUILT_IN,
   action: async (_context, args): Promise<MessageActionReturn> => {
-    const argsArray = args.split(' ').filter(arg => arg.length > 0);
-    
+    const argsArray = args.split(' ').filter((arg) => arg.length > 0);
+
     if (argsArray.length === 0) {
       return {
         type: 'message',
@@ -43,7 +46,7 @@ export const collaborativeAgentCommand: SlashCommand = {
 **使用例:**
 - \`/collaborative execute "複雑なコードレビューを実行してください"\`
 - \`/collaborative realtime "リアルタイムでデバッグを支援してください"\`
-- \`/collaborative analyze "このプロジェクトの分析を行ってください"\``
+- \`/collaborative analyze "このプロジェクトの分析を行ってください"\``,
       };
     }
 
@@ -63,169 +66,197 @@ export const collaborativeAgentCommand: SlashCommand = {
         return {
           type: 'message',
           messageType: 'error',
-          content: `❌ 不明なサブコマンド: \`${subcommand}\`\n\n利用可能なコマンド:\n- execute, realtime, analyze, status`
+          content: `❌ 不明なサブコマンド: \`${subcommand}\`\n\n利用可能なコマンド:\n- execute, realtime, analyze, status`,
         };
     }
-  }
+  },
 };
 
 /**
  * 協調タスク実行ハンドラー
  */
-async function handleCollaborativeExecute(args: string[]): Promise<MessageActionReturn> {
-  if (args.length === 0) {
-    return {
-      type: 'message',
-      messageType: 'error',
-      content: '❌ 使用方法: `/collaborative execute <task>`\n\n例: `/collaborative execute "複雑なコードレビューを実行してください"`'
-    };
-  }
+// 協調エージェント機能は上流リポジトリで削除されたため、無効化
+async function handleCollaborativeExecute(
+  _args: string[],
+): Promise<MessageActionReturn> {
+  return {
+    type: 'message',
+    messageType: 'info',
+    content:
+      '🤖 **協調エージェント機能は現在利用できません**\n\nこの機能は上流リポジトリで削除されたため、無効化されています。',
+  };
 
-  const task = args.join(' ');
+  // 元の関数（削除された機能を使用するため無効化）
+  // async function handleCollaborativeExecute(args: string[]): Promise<MessageActionReturn> {
+  //   if (args.length === 0) {
+  //     return {
+  //       type: 'message',
+  //       messageType: 'error',
+  //       content: '❌ 使用方法: `/collaborative execute <task>`\n\n例: `/collaborative execute "複雑なコードレビューを実行してください"`'
+  //     };
+  //   }
 
-  try {
-    // モック実装のためany型キャスト（型安全にできない設計）
-    const mockGeminiClient = {
-      apiKey: 'mock-api-key',
-      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      defaultModel: 'models/gemini-1.5-flash',
-      defaultTemperature: 0.7,
-      defaultMaxTokens: 4096
-    } as any;
-    const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
-    
-    const result = await collaborativeSystem.executeCollaborativeTask(task, undefined, {
-      maxSubagents: 5,
-      timeout: 300000,
-      resultAggregation: 'consensus'
-    });
+  //   const task = args.join(' ');
 
-    if (result.success) {
-      const metrics = result.collaborationMetrics;
-      const analysis = result.mainAgentAnalysis;
-      
-      return {
-        type: 'message',
-        messageType: 'info',
-        content: `🤖 **協調タスク実行完了**
-
-**タスク**: ${task}
-**実行時間**: ${result.executionTime}ms
-**使用サブエージェント数**: ${metrics?.subagentsUsed || 0}
-**作成サブタスク数**: ${metrics?.subtasksCreated || 0}
-**総トークン使用量**: ${metrics?.totalTokensUsed || 0}
-
-**タスク分析**:
-- 複雑度: ${analysis?.complexity || '不明'}
-- 推定時間: ${analysis?.estimatedTime || '不明'}分
-- 必要ステップ数: ${analysis?.requiredSteps || '不明'}
-
-**最終結果**:
-${result.finalResult?.finalResult || '結果なし'}
-
-**品質スコア**: ${result.finalResult?.qualityScore || 0}
-**信頼度**: ${result.finalResult?.confidenceLevel || 0}
-
-**推奨事項**:
-${result.finalResult?.recommendations?.map((r: string) => `- ${r}`).join('\n') || 'なし'}`
-      };
-    } else {
-      return {
-        type: 'message',
-        messageType: 'error',
-        content: `❌ 協調タスク実行に失敗しました: ${result.error}`
-      };
-    }
-  } catch (error) {
-    return {
-      type: 'message',
-      messageType: 'error',
-      content: `❌ 協調タスク実行エラー: ${error instanceof Error ? error.message : String(error)}`
-    };
-  }
+  //   try {
+  //     // モック実装のためany型キャスト（型安全にできない設計）
+  //     const mockGeminiClient = {
+  //       apiKey: 'mock-api-key',
+  //       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+  //       defaultModel: 'models/gemini-1.5-flash',
+  //       defaultTemperature: 0.7,
+  //       defaultMaxTokens: 4096
+  //     } as any;
+  //     const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
+  //
+  //     const result = await collaborativeSystem.executeCollaborativeTask(task, undefined, {
+  //       maxSubagents: 5,
+  //       timeout: 300000,
+  //       resultAggregation: 'consensus'
+  //     });
+  //
+  //     if (result.success) {
+  //       const metrics = result.collaborationMetrics;
+  //       const analysis = result.mainAgentAnalysis;
+  //
+  //       return {
+  //         type: 'message',
+  //         messageType: 'info',
+  //         content: `🤖 **協調タスク実行完了**
+  //
+  // **タスク**: ${task}
+  // **実行時間**: ${result.executionTime}ms
+  // **使用サブエージェント数**: ${metrics?.subagentsUsed || 0}
+  // **作成サブタスク数**: ${metrics?.subtasksCreated || 0}
+  // **総トークン使用量**: ${metrics?.totalTokensUsed || 0}
+  //
+  // **タスク分析**:
+  // - 複雑度: ${analysis?.complexity || '不明'}
+  // - 推定時間: ${analysis?.estimatedTime || '不明'}分
+  // - 必要ステップ数: ${analysis?.requiredSteps || '不明'}
+  //
+  // **最終結果**:
+  // ${result.finalResult?.finalResult || '結果なし'}
+  //
+  // **品質スコア**: ${result.finalResult?.qualityScore || 0}
+  // **信頼度**: ${result.finalResult?.confidenceLevel || 0}
+  //
+  // **推奨事項**:
+  // ${result.finalResult?.recommendations?.map((r: string) => `- ${r}`).join('\n') || 'なし'}`
+  //       };
+  //     } else {
+  //       return {
+  //         type: 'message',
+  //         messageType: 'error',
+  //         content: `❌ 協調タスク実行に失敗しました: ${result.error}`
+  //       };
+  //     }
+  //   } catch (error) {
+  //     return {
+  //       type: 'message',
+  //       messageType: 'error',
+  //       content: `❌ 協調タスク実行エラー: ${error instanceof Error ? error.message : String(error)}`
+  //     };
+  //   }
+  // }
 }
 
 /**
  * リアルタイム協調実行ハンドラー
  */
-async function handleRealTimeCollaboration(args: string[]): Promise<MessageActionReturn> {
-  if (args.length === 0) {
-    return {
-      type: 'message',
-      messageType: 'error',
-      content: '❌ 使用方法: `/collaborative realtime <task>`\n\n例: `/collaborative realtime "リアルタイムでデバッグを支援してください"`'
-    };
-  }
+// リアルタイム協調機能は上流リポジトリで削除されたため、無効化
+async function handleRealTimeCollaboration(
+  _args: string[],
+): Promise<MessageActionReturn> {
+  return {
+    type: 'message',
+    messageType: 'info',
+    content:
+      '🤖 **リアルタイム協調機能は現在利用できません**\n\nこの機能は上流リポジトリで削除されたため、無効化されています。',
+  };
 
-  const task = args.join(' ');
+  // 元の関数（削除された機能を使用するため無効化）
+  // async function handleRealTimeCollaboration(args: string[]): Promise<MessageActionReturn> {
+  //   if (args.length === 0) {
+  //     return {
+  //       type: 'message',
+  //       messageType: 'error',
+  //       content: '❌ 使用方法: `/collaborative realtime <task>`\n\n例: `/collaborative realtime "リアルタイムでデバッグを支援してください"`'
+  //     };
+  //   }
 
-  try {
-    // モック実装のためany型キャスト（型安全にできない設計）
-    const mockGeminiClient = {
-      apiKey: 'mock-api-key',
-      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      defaultModel: 'models/gemini-1.5-flash',
-      defaultTemperature: 0.7,
-      defaultMaxTokens: 4096
-    } as any;
-    const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
-    
-    const result = await collaborativeSystem.executeRealTimeCollaboration(task, undefined, {
-      maxSteps: 10,
-      timeout: 300000,
-      enableRealTimeFeedback: true
-    });
+  //   const task = args.join(' ');
 
-    if (result.success) {
-      const metrics = result.metrics;
-      const steps = result.collaborationSteps;
-      
-      return {
-        type: 'message',
-        messageType: 'info',
-        content: `🤖 **リアルタイム協調実行完了**
-
-**タスク**: ${task}
-**セッションID**: ${result.sessionId}
-**実行時間**: ${result.executionTime}ms
-**実行ステップ数**: ${metrics?.totalSteps || 0}
-**成功ステップ数**: ${metrics?.successfulSteps || 0}
-**平均応答時間**: ${metrics?.averageResponseTime || 0}ms
-**総トークン使用量**: ${metrics?.totalTokensUsed || 0}
-
-**実行ステップ詳細**:
-${steps?.map((step, i) => 
-  `${i + 1}. ${step.action.type} - ${step.result.success ? '成功' : '失敗'} (${step.executionTime}ms)`
-).join('\n') || 'なし'}
-
-**最終結果**:
-${result.finalResult || '結果なし'}`
-      };
-    } else {
-      return {
-        type: 'message',
-        messageType: 'error',
-        content: `❌ リアルタイム協調実行に失敗しました: ${result.error}`
-      };
-    }
-  } catch (error) {
-    return {
-      type: 'message',
-      messageType: 'error',
-      content: `❌ リアルタイム協調実行エラー: ${error instanceof Error ? error.message : String(error)}`
-    };
-  }
+  //   try {
+  //     // モック実装のためany型キャスト（型安全にできない設計）
+  //     const mockGeminiClient = {
+  //       apiKey: 'mock-api-key',
+  //       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+  //       defaultModel: 'models/gemini-1.5-flash',
+  //       defaultTemperature: 0.7,
+  //       defaultMaxTokens: 4096
+  //     } as any;
+  //     const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
+  //
+  //     const result = await collaborativeSystem.executeRealTimeCollaboration(task, undefined, {
+  //       maxSteps: 10,
+  //       timeout: 300000,
+  //       enableRealTimeFeedback: true
+  //     });
+  //
+  //     if (result.success) {
+  //       const metrics = result.metrics;
+  //       const steps = result.collaborationSteps;
+  //
+  //       return {
+  //         type: 'message',
+  //         messageType: 'info',
+  //         content: `🤖 **リアルタイム協調実行完了**
+  //
+  // **タスク**: ${task}
+  // **セッションID**: ${result.sessionId}
+  // **実行時間**: ${result.executionTime}ms
+  // **実行ステップ数**: ${metrics?.totalSteps || 0}
+  // **成功ステップ数**: ${metrics?.successfulSteps || 0}
+  // **平均応答時間**: ${metrics?.averageResponseTime || 0}ms
+  // **総トークン使用量**: ${metrics?.totalTokensUsed || 0}
+  //
+  // **実行ステップ詳細**:
+  // ${steps?.map((step: any, i: number) =>
+  //   `${i + 1}. ${step.action.type} - ${step.result.success ? '成功' : '失敗'} (${step.executionTime}ms)`
+  // ).join('\n') || 'なし'}
+  //
+  // **最終結果**:
+  // ${result.finalResult || '結果なし'}`
+  //       };
+  //     } else {
+  //       return {
+  //         type: 'message',
+  //         messageType: 'error',
+  //         content: `❌ リアルタイム協調実行に失敗しました: ${result.error}`
+  //       };
+  //     }
+  //   } catch (error) {
+  //     return {
+  //       type: 'message',
+  //       messageType: 'error',
+  //       content: `❌ リアルタイム協調実行エラー: ${error instanceof Error ? error.message : String(error)}`
+  //     };
+  //   }
 }
 
 /**
  * タスク分析ハンドラー
  */
-async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> {
+async function handleTaskAnalysis(
+  args: string[],
+): Promise<MessageActionReturn> {
   if (args.length === 0) {
     return {
       type: 'message',
       messageType: 'error',
-      content: '❌ 使用方法: `/collaborative analyze <task>`\n\n例: `/collaborative analyze "このプロジェクトの分析を行ってください"`'
+      content:
+        '❌ 使用方法: `/collaborative analyze <task>`\n\n例: `/collaborative analyze "このプロジェクトの分析を行ってください"`',
     };
   }
 
@@ -235,7 +266,7 @@ async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> 
     // モック実装
     // const mockGeminiClient = {} as unknown;
     // const collaborativeSystem = new CollaborativeAgentSystem(mockGeminiClient);
-    
+
     // タスク分析のモック結果
     const mockAnalysis: {
       originalTask: string;
@@ -252,7 +283,7 @@ async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> 
       estimatedTime: 15,
       requiredSteps: 5,
       riskFactors: ['複雑な依存関係', 'データ量が多い'],
-      successCriteria: ['コード品質向上', 'パフォーマンス改善']
+      successCriteria: ['コード品質向上', 'パフォーマンス改善'],
     };
 
     return {
@@ -269,21 +300,21 @@ async function handleTaskAnalysis(args: string[]): Promise<MessageActionReturn> 
 - **必要な専門分野**: ${mockAnalysis.requiredSpecialties.join(', ')}
 
 **リスク要因**:
-${mockAnalysis.riskFactors.map(r => `- ${r}`).join('\n')}
+${mockAnalysis.riskFactors.map((r) => `- ${r}`).join('\n')}
 
 **成功基準**:
-${mockAnalysis.successCriteria.map(s => `- ${s}`).join('\n')}
+${mockAnalysis.successCriteria.map((s) => `- ${s}`).join('\n')}
 
 **推奨アクション**:
 - 複数のサブエージェントを並列実行
 - 段階的な検証プロセス
-- 品質チェックポイントの設定`
+- 品質チェックポイントの設定`,
     };
   } catch (error) {
     return {
       type: 'message',
       messageType: 'error',
-      content: `❌ タスク分析エラー: ${error instanceof Error ? error.message : String(error)}`
+      content: `❌ タスク分析エラー: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
 }
@@ -301,7 +332,7 @@ async function handleSystemStatus(): Promise<MessageActionReturn> {
       activeCollaborations: 0,
       totalExecutions: 42,
       successRate: 0.95,
-      averageExecutionTime: 2500
+      averageExecutionTime: 2500,
     };
 
     return {
@@ -320,13 +351,13 @@ async function handleSystemStatus(): Promise<MessageActionReturn> {
 - **平均実行時間**: ${status.averageExecutionTime}ms
 
 **システム健全性**: ✅ 良好
-**推奨アクション**: システムは正常に動作しています。`
+**推奨アクション**: システムは正常に動作しています。`,
     };
   } catch (error) {
     return {
       type: 'message',
       messageType: 'error',
-      content: `❌ システム状態取得エラー: ${error instanceof Error ? error.message : String(error)}`
+      content: `❌ システム状態取得エラー: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
-} 
+}

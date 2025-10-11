@@ -6,7 +6,31 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { MainAgentInterface, MainAgentInterfaceConfig, SubagentGeminiClient as GeminiClient, Config, ApprovalMode } from '@google/gemini-cli-core';
+import { Config, ApprovalMode } from '@google/gemini-cli-core';
+
+// これらのクラスは上流リポジトリで削除されたため、暫定実装
+interface MainAgentInterface {
+  initialize(): Promise<void>;
+  executeTask(
+    prompt: string,
+    context: Record<string, unknown>,
+    mode: string,
+    options: Record<string, unknown>,
+  ): Promise<Record<string, unknown>>;
+}
+
+interface MainAgentInterfaceConfig {
+  model?: string;
+  temperature?: number;
+}
+
+class GeminiClient {
+  constructor(_config: Record<string, unknown>) {
+    // 暫定実装
+  }
+}
+
+// MainAgentInterfaceを使用
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -23,40 +47,46 @@ export class NaturalLanguageCommand {
   /**
    * コマンド実行
    */
-  private async execute(prompt: string, options: any): Promise<void> {
+  private async execute(
+    prompt: string,
+    options: {
+      mode: string;
+      timeout: string;
+      context: Record<string, unknown>;
+    },
+  ): Promise<void> {
     try {
       console.log('🤖 自然言語プロンプト処理を開始します...');
       console.log(`📝 プロンプト: ${prompt}`);
       console.log(`🔧 実行モード: ${options.mode}`);
-      
+
       // 設定の初期化
       const config = await this.initializeConfig(options);
-      
+
       // メインエージェントの初期化
       this.mainAgent = new MainAgentInterface(config);
-      
+
       // 自然言語プロンプトの実行
       const startTime = Date.now();
       const result = await this.mainAgent.executeTask(
         prompt,
         options.context,
-        options.mode as any,
+        options.mode,
         {
-          timeout: parseInt(options.timeout) * 1000
-        }
+          timeout: parseInt(options.timeout, 10) * 1000,
+        },
       );
       const executionTime = Date.now() - startTime;
-      
+
       // 結果の表示
       this.displayResult(result, executionTime, options);
-      
+
       // 結果の保存
       if (options.output) {
         await this.saveResult(result, prompt, options.output);
       }
-      
+
       console.log('✅ 自然言語プロンプト処理が完了しました！');
-      
     } catch (error) {
       console.error('❌ エラーが発生しました:', error);
       process.exit(1);
@@ -66,7 +96,9 @@ export class NaturalLanguageCommand {
   /**
    * 設定の初期化
    */
-  private async initializeConfig(options: any): Promise<MainAgentInterfaceConfig> {
+  private async initializeConfig(
+    options: Record<string, unknown>,
+  ): Promise<MainAgentInterfaceConfig> {
     // Gemini APIキーの取得
     const apiKey = process.env['GEMINI_API_KEY'];
     if (!apiKey) {
@@ -78,7 +110,7 @@ export class NaturalLanguageCommand {
       apiKey,
       defaultModel: 'models/gemini-2.5-pro',
       defaultTemperature: 0.7,
-      defaultMaxTokens: 4096
+      defaultMaxTokens: 4096,
     });
 
     // 設定オブジェクトの初期化
@@ -97,7 +129,7 @@ export class NaturalLanguageCommand {
       fileFiltering: {
         respectGitIgnore: true,
         respectGeminiIgnore: true,
-        enableRecursiveFileSearch: false
+        enableRecursiveFileSearch: false,
       },
       checkpointing: false,
       noBrowser: true,
@@ -106,9 +138,9 @@ export class NaturalLanguageCommand {
       listExtensions: false,
       extensions: [],
       blockedMcpServers: [],
-      summarizeToolOutput: {}
+      summarizeToolOutput: {},
     });
-    
+
     // 出力ディレクトリの作成
     const outputPath = path.resolve(options.output);
     if (!fs.existsSync(outputPath)) {
@@ -123,46 +155,61 @@ export class NaturalLanguageCommand {
       enableNaturalLanguageProcessing: true,
       maxConcurrentSubagents: 5,
       autoAnalysisThreshold: 5,
-      decisionTimeout: parseInt(options.timeout) * 1000,
+      decisionTimeout: parseInt(options.timeout, 10) * 1000,
       enableRealTimeCoordination: true,
       enableCheckpointing: true,
-      researchOutputPath: outputPath
+      researchOutputPath: outputPath,
     };
   }
 
   /**
    * 結果の表示
    */
-  private displayResult(result: any, executionTime: number, options: any): void {
+  private displayResult(
+    result: Record<string, unknown>,
+    executionTime: number,
+    options: Record<string, unknown>,
+  ): void {
     console.log('\n📊 実行結果:');
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     console.log(`✅ 成功: ${result.success ? 'はい' : 'いいえ'}`);
     console.log(`🆔 タスクID: ${result.taskId}`);
     console.log(`⏱️  実行時間: ${executionTime}ms`);
-    
+
     if (result.collaborationMetrics) {
-      console.log(`👥 使用サブエージェント数: ${result.collaborationMetrics.subagentsUsed || 0}`);
-      console.log(`📈 成功ステップ数: ${result.collaborationMetrics.successfulSteps || 0}/${result.collaborationMetrics.totalSteps || 0}`);
-      console.log(`⚡ 平均応答時間: ${result.collaborationMetrics.averageResponseTime || 0}ms`);
+      console.log(
+        `👥 使用サブエージェント数: ${result.collaborationMetrics.subagentsUsed || 0}`,
+      );
+      console.log(
+        `📈 成功ステップ数: ${result.collaborationMetrics.successfulSteps || 0}/${result.collaborationMetrics.totalSteps || 0}`,
+      );
+      console.log(
+        `⚡ 平均応答時間: ${result.collaborationMetrics.averageResponseTime || 0}ms`,
+      );
     }
-    
+
     if (result.finalResult) {
       console.log(`\n📋 最終結果:`);
       console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
       console.log(result.finalResult.finalResult);
-      
-      if (result.finalResult.recommendations && result.finalResult.recommendations.length > 0) {
+
+      if (
+        result.finalResult.recommendations &&
+        result.finalResult.recommendations.length > 0
+      ) {
         console.log(`\n💡 推奨事項:`);
-        result.finalResult.recommendations.forEach((rec: string, index: number) => {
-          console.log(`${index + 1}. ${rec}`);
-        });
+        result.finalResult.recommendations.forEach(
+          (rec: string, index: number) => {
+            console.log(`${index + 1}. ${rec}`);
+          },
+        );
       }
     }
-    
+
     if (result.error) {
       console.log(`\n❌ エラー: ${result.error}`);
     }
-    
+
     if (options.verbose) {
       console.log(`\n🔍 詳細情報:`);
       console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -173,12 +220,16 @@ export class NaturalLanguageCommand {
   /**
    * 結果の保存
    */
-  private async saveResult(result: any, prompt: string, outputPath: string): Promise<void> {
+  private async saveResult(
+    result: Record<string, unknown>,
+    prompt: string,
+    outputPath: string,
+  ): Promise<void> {
     try {
       const timestamp = new Date().toISOString().split('T')[0];
       const filename = `${timestamp}_natural_language_result_${result.taskId}.md`;
       const filepath = path.join(outputPath, filename);
-      
+
       const content = `# 自然言語プロンプト処理結果
 
 ## 実行日時
@@ -193,12 +244,16 @@ ${prompt}
 - 実行時間: ${result.executionTime}ms
 
 ## 協調メトリクス
-${result.collaborationMetrics ? `
+${
+  result.collaborationMetrics
+    ? `
 - 使用サブエージェント数: ${result.collaborationMetrics.subagentsUsed || 0}
 - 成功ステップ数: ${result.collaborationMetrics.successfulSteps || 0}/${result.collaborationMetrics.totalSteps || 0}
 - 平均応答時間: ${result.collaborationMetrics.averageResponseTime || 0}ms
 - 総トークン使用量: ${result.collaborationMetrics.totalTokensUsed || 0}
-` : 'なし'}
+`
+    : 'なし'
+}
 
 ## 最終結果
 ${result.finalResult ? result.finalResult.finalResult : 'なし'}
@@ -214,7 +269,6 @@ ${result.error ? `## エラー\n${result.error}` : ''}
 
       await fs.promises.writeFile(filepath, content, 'utf-8');
       console.log(`📄 結果を保存しました: ${filepath}`);
-      
     } catch (error) {
       console.error('❌ 結果の保存に失敗しました:', error);
     }
@@ -226,48 +280,59 @@ ${result.error ? `## エラー\n${result.error}` : ''}
   async run(args: string[]): Promise<void> {
     const argv = await yargs(hideBin(args))
       .usage('$0 <prompt> [options]')
-      .command('$0 <prompt>', '自然言語プロンプトで並列作業を自律的に分担する', (yargs) => {
-        return yargs
-          .positional('prompt', {
-            describe: '自然言語プロンプト',
-            type: 'string',
-            demandOption: true
-          })
-          .option('context', {
-            alias: 'c',
-            describe: '追加のコンテキスト情報',
-            type: 'string'
-          })
-          .option('output', {
-            alias: 'o',
-            describe: '出力ファイルのパス',
-            type: 'string',
-            default: './_docs'
-          })
-          .option('mode', {
-            alias: 'm',
-            describe: '実行モード (auto|natural_language|autonomous|supervisor|manual)',
-            type: 'string',
-            choices: ['auto', 'natural_language', 'autonomous', 'supervisor', 'manual'],
-            default: 'auto'
-          })
-          .option('timeout', {
-            alias: 't',
-            describe: 'タイムアウト時間（秒）',
-            type: 'number',
-            default: 300
-          })
-          .option('verbose', {
-            alias: 'v',
-            describe: '詳細なログを出力',
-            type: 'boolean',
-            default: false
-          })
-          .help()
-          .alias('h', 'help');
-      })
-      .argv;
+      .command(
+        '$0 <prompt>',
+        '自然言語プロンプトで並列作業を自律的に分担する',
+        (yargs) => yargs
+            .positional('prompt', {
+              describe: '自然言語プロンプト',
+              type: 'string',
+              demandOption: true,
+            })
+            .option('context', {
+              alias: 'c',
+              describe: '追加のコンテキスト情報',
+              type: 'string',
+            })
+            .option('output', {
+              alias: 'o',
+              describe: '出力ファイルのパス',
+              type: 'string',
+              default: './_docs',
+            })
+            .option('mode', {
+              alias: 'm',
+              describe:
+                '実行モード (auto|natural_language|autonomous|supervisor|manual)',
+              type: 'string',
+              choices: [
+                'auto',
+                'natural_language',
+                'autonomous',
+                'supervisor',
+                'manual',
+              ],
+              default: 'auto',
+            })
+            .option('timeout', {
+              alias: 't',
+              describe: 'タイムアウト時間（秒）',
+              type: 'number',
+              default: 300,
+            })
+            .option('verbose', {
+              alias: 'v',
+              describe: '詳細なログを出力',
+              type: 'boolean',
+              default: false,
+            })
+            .help()
+            .alias('h', 'help'),
+      ).argv;
 
-    await this.execute((argv as any).prompt as string, argv);
+    await this.execute(
+      (argv as Record<string, unknown>).prompt as string,
+      argv as Record<string, unknown>,
+    );
   }
-} 
+}

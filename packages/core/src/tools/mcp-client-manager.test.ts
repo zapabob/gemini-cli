@@ -48,7 +48,7 @@ describe('McpClientManager', () => {
       false,
       {} as WorkspaceContext,
     );
-    await manager.discoverAllMcpTools();
+    await manager.discoverAllMcpTools({} as Config);
     expect(mockedMcpClient.connect).toHaveBeenCalledOnce();
     expect(mockedMcpClient.discover).toHaveBeenCalledOnce();
   });
@@ -73,7 +73,7 @@ describe('McpClientManager', () => {
       false, // folder is not trusted
       {} as WorkspaceContext,
     );
-    await manager.discoverAllMcpTools();
+    await manager.discoverAllMcpTools({} as Config);
     // When folder is not trusted, MCP tools should not be discovered
     expect(mockedMcpClient.connect).not.toHaveBeenCalled();
     expect(mockedMcpClient.discover).not.toHaveBeenCalled();

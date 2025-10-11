@@ -4,13 +4,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BaseDeclarativeTool, ToolResult, ToolCallConfirmationDetails, Kind, ToolInvocation, ToolLocation } from './tools.js';
+import type {
+  ToolResult,
+  ToolCallConfirmationDetails,
+  ToolInvocation,
+  ToolLocation} from './tools.js';
+import {
+  BaseDeclarativeTool,
+  Kind
+} from './tools.js';
 // import { SchemaValidator } from '../utils/schemaValidator.js';
 import { getErrorMessage } from '../utils/errors.js';
-import { Config } from '../config/config.js';
-import { recordFileOperationMetric, FileOperation } from '../telemetry/metrics.js';
+import type { Config } from '../config/config.js';
+import {
+  recordFileOperationMetric,
+  FileOperation,
+} from '../telemetry/metrics.js';
 import { getResponseText } from '../utils/generateContentResponseUtilities.js';
-import { Type } from '@google/genai';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -127,7 +137,8 @@ export class DeepResearchTool extends BaseDeclarativeTool<
           },
           strategy: {
             type: 'string',
-            description: 'Research strategy: comprehensive, focused, or exploratory.',
+            description:
+              'Research strategy: comprehensive, focused, or exploratory.',
           },
           include_academic: {
             type: 'boolean',
@@ -151,15 +162,17 @@ export class DeepResearchTool extends BaseDeclarativeTool<
         required: ['query'],
       },
       true, // isOutputMarkdown
-      true  // canUpdateOutput
+      true, // canUpdateOutput
     );
   }
 
-  protected createInvocation(params: DeepResearchToolParams): ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
+  protected createInvocation(
+    params: DeepResearchToolParams,
+  ): ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
     return new DeepResearchToolInvocation(params, this.config);
   }
 
-  validateToolParams(params: DeepResearchToolParams): string | null {
+  override validateToolParams(params: DeepResearchToolParams): string | null {
     if (!params.query || params.query.trim() === '') {
       return 'Query cannot be empty';
     }
@@ -167,10 +180,12 @@ export class DeepResearchTool extends BaseDeclarativeTool<
   }
 }
 
-class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
+class DeepResearchToolInvocation
+  implements ToolInvocation<DeepResearchToolParams, DeepResearchToolResult>
+{
   constructor(
     readonly params: DeepResearchToolParams,
-    private readonly config: Config
+    private readonly config: Config,
   ) {}
 
   getDescription(): string {
@@ -181,12 +196,15 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
     return [];
   }
 
-  async shouldConfirmExecute(abortSignal: AbortSignal): Promise<ToolCallConfirmationDetails | false> {
+  async shouldConfirmExecute(
+    _abortSignal: AbortSignal,
+  ): Promise<ToolCallConfirmationDetails | false> {
     // Deep research can be resource-intensive, so we ask for confirmation
     // if the query is complex or involves many sources
-    const isComplex = this.params.query.length > 200 || 
-                     (this.params.max_sources && this.params.max_sources > 15) ||
-                     (this.params.max_depth && this.params.max_depth > 5);
+    const isComplex =
+      this.params.query.length > 200 ||
+      (this.params.max_sources && this.params.max_sources > 15) ||
+      (this.params.max_depth && this.params.max_depth > 5);
 
     if (isComplex) {
       return {
@@ -212,7 +230,7 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
    */
   async execute(
     signal: AbortSignal,
-    updateOutput?: (output: string) => void,
+    _updateOutput?: (output: string) => void,
   ): Promise<DeepResearchToolResult> {
     // Validate parameters
     if (!this.params.query || this.params.query.trim() === '') {
@@ -275,12 +293,16 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
       });
 
       // Save research results to markdown file
-      const savedFilePath = await this.saveResearchToMarkdown(query, researchResults, {
-        strategy,
-        timeTaken,
-        max_depth,
-        max_sources,
-      });
+      const savedFilePath = await this.saveResearchToMarkdown(
+        query,
+        researchResults,
+        {
+          strategy,
+          timeTaken,
+          max_depth,
+          max_sources,
+        },
+      );
 
       return {
         llmContent: formattedResults.analysis,
@@ -318,7 +340,15 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
       exclude_types: string[];
     },
   ): string {
-    const { strategy, max_depth, max_sources, include_academic, recent_years, focus_domains, exclude_types } = options;
+    const {
+      strategy,
+      max_depth,
+      max_sources,
+      include_academic,
+      recent_years,
+      focus_domains,
+      exclude_types,
+    } = options;
 
     let prompt = `Perform a deep research analysis on: "${query}"\n\n`;
 
@@ -380,7 +410,7 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
     // Perform iterative deepening research
     for (let depth = 1; depth <= max_depth; depth++) {
       currentDepth = depth;
-      
+
       let levelPrompt = `${prompt}\n\nResearch Level ${depth}:`;
       if (depth > 1) {
         levelPrompt += `\nBased on previous findings: ${currentAnalysis.substring(0, 500)}...`;
@@ -398,7 +428,7 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
         if (responseText) {
           currentAnalysis += `\n\n--- Level ${depth} Analysis ---\n${responseText}`;
           sourcesCount += 5; // Estimate sources per level
-          
+
           // Extract topics from this level
           const levelTopics = this.extractTopics(responseText);
           topics.push(...levelTopics);
@@ -408,7 +438,6 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
         if (sourcesCount >= max_sources) {
           break;
         }
-
       } catch (error) {
         console.warn(`Error at research level ${depth}:`, error);
         throw error; // Re-throw the error so it can be caught by the execute method
@@ -430,16 +459,20 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
     // Simple topic extraction - in a real implementation, this would be more sophisticated
     const topics: string[] = [];
     const lines = text.split('\n');
-    
+
     for (const line of lines) {
-      if (line.includes('topic:') || line.includes('Topic:') || line.includes('subject:')) {
+      if (
+        line.includes('topic:') ||
+        line.includes('Topic:') ||
+        line.includes('subject:')
+      ) {
         const topic = line.split(':')[1]?.trim();
         if (topic) {
           topics.push(topic);
         }
       }
     }
-    
+
     return topics;
   }
 
@@ -472,29 +505,38 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
       const now = new Date();
       const timestamp = now.toISOString().split('T')[0]; // YYYY-MM-DD format
       // const timeStr = now.toISOString().split('T')[1].split('.')[0].replace(/:/g, '-'); // HH-MM-SS format
-      
+
       // Create a safe filename from the query
       const safeQuery = query
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .toLowerCase()
         .substring(0, 50); // Limit length
-      
+
       const filename = `${timestamp}_deepresearch_${safeQuery}.md`;
       const filepath = path.join(docsDir, filename);
 
       // Generate markdown content
-      const markdownContent = this.generateMarkdownContent(query, results, options);
+      const markdownContent = this.generateMarkdownContent(
+        query,
+        results,
+        options,
+      );
 
       // Write to file
       await fs.promises.writeFile(filepath, markdownContent, 'utf-8');
 
       // Record file operation metric
-      recordFileOperationMetric(this.config, FileOperation.CREATE, undefined, 'text/markdown', '.md');
+      recordFileOperationMetric(
+        this.config,
+        FileOperation.CREATE,
+        undefined,
+        'text/markdown',
+        '.md',
+      );
 
       console.log(`📄 DeepResearch results saved to: ${filepath}`);
       return filepath;
-
     } catch (error) {
       console.warn('Failed to save DeepResearch results to markdown:', error);
       return '';
@@ -542,7 +584,7 @@ class DeepResearchToolInvocation implements ToolInvocation<DeepResearchToolParam
 
 ## Key Topics
 
-${topics.map(topic => `- ${topic}`).join('\n')}
+${topics.map((topic) => `- ${topic}`).join('\n')}
 
 ## Detailed Analysis
 
@@ -580,10 +622,13 @@ ${this.generateJapaneseReport(analysis)}
    */
   private generateEnglishReport(analysis: string): string {
     // Extract and format the English content from the analysis
-    const englishSections = analysis.split('\n\n').filter(section => 
-      !section.includes('日本語') && !section.includes('Japanese')
-    );
-    
+    const englishSections = analysis
+      .split('\n\n')
+      .filter(
+        (section) =>
+          !section.includes('日本語') && !section.includes('Japanese'),
+      );
+
     return englishSections.join('\n\n');
   }
 
@@ -592,10 +637,12 @@ ${this.generateJapaneseReport(analysis)}
    */
   private generateJapaneseReport(analysis: string): string {
     // Extract and format the Japanese content from the analysis
-    const japaneseSections = analysis.split('\n\n').filter(section => 
-      section.includes('日本語') || section.includes('Japanese')
-    );
-    
+    const japaneseSections = analysis
+      .split('\n\n')
+      .filter(
+        (section) => section.includes('日本語') || section.includes('Japanese'),
+      );
+
     return japaneseSections.join('\n\n');
   }
 
@@ -636,7 +683,7 @@ ${query}
 - **Topics Explored**: ${topics.length}
 
 ## Key Topics
-${topics.map(topic => `- ${topic}`).join('\n')}
+${topics.map((topic) => `- ${topic}`).join('\n')}
 
 ## Detailed Analysis
 ${analysis}
@@ -654,4 +701,4 @@ The research utilized Google Search grounding for real-time information and sour
       display,
     };
   }
-} 
+}

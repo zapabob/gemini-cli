@@ -237,7 +237,7 @@ export class ToolRegistry {
     await this.discoverAndRegisterToolsFromCommand();
 
     // discover tools using MCP servers, if configured
-    await this.mcpClientManager.discoverAllMcpTools();
+    await this.mcpClientManager.discoverAllMcpTools(this.config);
   }
 
   /**
@@ -252,7 +252,7 @@ export class ToolRegistry {
     this.config.getPromptRegistry().clear();
 
     // discover tools using MCP servers, if configured
-    await this.mcpClientManager.discoverAllMcpTools();
+    await this.mcpClientManager.discoverAllMcpTools(this.config);
   }
 
   /**
@@ -286,6 +286,7 @@ export class ToolRegistry {
         this.config.getPromptRegistry(),
         this.config.getDebugMode(),
         this.config.getWorkspaceContext(),
+        this.config,
       );
     }
   }
