@@ -6,8 +6,34 @@ Gemini CLIは、開発者の生産性を最大化し、AIを活用した開発�
 
 ## 📅 リリース計画
 
+### ✅ v0.11.0 (2025-10-11) - **完了**
+**テーマ: 公式リポジトリ統合と独自機能強化**
+
 ### ✅ v0.7.0 (2025-07-29) - **完了**
 **テーマ: リリース準備システムと継続開発基盤**
+
+## 🔗 公式ロードマップ
+
+The
+[Official Gemini CLI Roadmap](https://github.com/orgs/google-gemini/projects/11/)
+
+Gemini CLI is an open-source AI agent that brings the power of Gemini directly
+into your terminal. It provides lightweight access to Gemini, giving you the
+most direct path from your prompt to our model.
+
+This document outlines our approach to the Gemini CLI roadmap. Here, you'll find
+our guiding principles and a breakdown of the key areas we are focused on for
+development. Our roadmap is not a static list but a dynamic set of priorities
+that are tracked live in our GitHub Issues.
+
+As an
+[Apache 2.0 open source project](https://github.com/google-gemini/gemini-cli?tab=Apache-2.0-1-ov-file#readme),
+we appreciate and welcome
+[public contributions](https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md),
+and will give first priority to those contributions aligned with our roadmap. If
+you want to propose a new feature or change to our roadmap, please start by
+[opening an issue for discussion](https://github.com/google-gemini/gemini-cli/issues/new/choose).
+>>>>>>> upstream/main
 
 #### 実装済み機能
 - **リリース準備システム**: 本番環境へのデプロイ準備機能
@@ -49,11 +75,17 @@ Gemini CLIは、開発者の生産性を最大化し、AIを活用した開発�
   - キャッシュ機能の強化
   - 並列処理の改善
 
-<<<<<<< HEAD
+
 ### 🔮 v0.9.0 (2025-Q4) - **計画中**
 **テーマ: エンタープライズ機能とセキュリティ強化**
 =======
-Our roadmap is managed directly through GitHub Issues. See our entry point Roadmap Issue [here](https://github.com/google-gemini/gemini-cli/issues/4191). This approach allows for transparency and gives you a direct way to learn more or get involved with any specific initiative. All our roadmap items will be tagged as Type:`Feature` and Label:`maintainer` for features we are actively working on, or Type:`Task` and Label:`maintainer` for a more detailed list of tasks.
+Our roadmap is managed directly through GitHub Issues. See our entry point
+Roadmap Issue [here](https://github.com/google-gemini/gemini-cli/issues/4191).
+This approach allows for transparency and gives you a direct way to learn more
+or get involved with any specific initiative. All our roadmap items will be
+tagged as Type:`Feature` and Label:`maintainer` for features we are actively
+working on, or Type:`Task` and Label:`maintainer` for a more detailed list of
+tasks.
 >>>>>>> upstream/main
 
 #### 予定機能
@@ -63,17 +95,11 @@ Our roadmap is managed directly through GitHub Issues. See our entry point Roadm
   - 監査ログとコンプライアンス
   - 統合開発環境（IDE）連携
 
-<<<<<<< HEAD
 - **セキュリティ強化**
   - エンドツーエンド暗号化
   - 多要素認証（MFA）
   - セキュリティスキャン
   - 脆弱性管理
-=======
-- **Target Quarter:** `Milestone` denotes the anticipated delivery timeline.
-- **Feature Area:** Labels such as `area/model` or `area/tooling` categorize the work.
-- **Issue Type:** _Workstream_ => _Epics_ => _Features_ => _Tasks|Bugs_
->>>>>>> upstream/main
 
 - **分析とレポート**
   - 使用状況分析
@@ -84,6 +110,7 @@ Our roadmap is managed directly through GitHub Issues. See our entry point Roadm
 ### 🎯 v1.0.0 (2026-Q1) - **正式リリース**
 **テーマ: 完全なエンタープライズソリューション**
 
+
 #### 目標機能
 - **完全なエンタープライズ対応**
   - 大規模組織での運用
@@ -91,23 +118,22 @@ Our roadmap is managed directly through GitHub Issues. See our entry point Roadm
   - グローバル展開対応
   - カスタマイズ可能なワークフロー
 
-<<<<<<< HEAD
 - **AI機能の完成**
   - 完全な自然言語理解
   - 予測分析と推奨機能
   - 自動化の高度化
   - 継続学習システム
-=======
-- **Authentication:** Secure user access via API keys, Gemini Code Assist login, etc.
-- **Model:** Support new Gemini models, multi-modality, local execution, and performance tuning.
-- **User Experience:** Improve the CLI's usability, performance, interactive features, and documentation.
 - **Tooling:** Built-in tools and the MCP ecosystem.
 - **Core:** Core functionality of the CLI
 - **Extensibility:** Bringing Gemini CLI to other surfaces e.g. GitHub.
-- **Contribution:** Improve the contribution process via test automation and CI/CD pipeline enhancements.
-- **Platform:** Manage installation, OS support, and the underlying CLI framework.
-- **Quality:** Focus on testing, reliability, performance, and overall product quality.
-- **Background Agents:** Enable long-running, autonomous tasks and proactive assistance.
+- **Contribution:** Improve the contribution process via test automation and
+  CI/CD pipeline enhancements.
+- **Platform:** Manage installation, OS support, and the underlying CLI
+  framework.
+- **Quality:** Focus on testing, reliability, performance, and overall product
+  quality.
+- **Background Agents:** Enable long-running, autonomous tasks and proactive
+  assistance.
 - **Security and Privacy:** For all things related to security and privacy
 >>>>>>> upstream/main
 
@@ -117,9 +143,9 @@ Our roadmap is managed directly through GitHub Issues. See our entry point Roadm
   - コミュニティ機能
   - マーケットプレイス
 
+
 ## 🔧 技術的ロードマップ
 
-<<<<<<< HEAD
 ### アーキテクチャ改善
 - **マイクロサービス化**: スケーラブルなアーキテクチャ
 - **コンテナ化**: Docker/Kubernetes対応
@@ -179,10 +205,27 @@ Our roadmap is managed directly through GitHub Issues. See our entry point Roadm
 
 **Gemini CLI** - 開発の未来を創造する 🚀
 =======
-- **Roadmap:** Please review and find areas in our [roadmap](https://github.com/google-gemini/gemini-cli/issues/4191) that you would like to contribute to. Contributions based on this will be easiest to integrate with.
-- **Report Bugs:** If you find an issue, please create a [bug](https://github.com/google-gemini/gemini-cli/issues/new?template=bug_report.yml) with as much detail as possible. If you believe it is a critical breaking issue preventing direct CLI usage, please tag it as `priority/p0`.
-- **Suggest Features:** Have a great idea? We'd love to hear it! Open a [feature request](https://github.com/google-gemini/gemini-cli/issues/new?template=feature_request.yml).
-- **Contribute Code:** Check out our [CONTRIBUTING.md](https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md) file for guidelines on how to submit pull requests. We have a list of "good first issues" for new contributors.
-- **Write Documentation:** Help us improve our documentation, tutorials, and examples.
-  We are excited about the future of Gemini CLI and look forward to building it with you!
+Gemini CLI is an open-source project, and we welcome contributions from the
+community! Whether you're a developer, a designer, or just an enthusiastic user
+you can find our
+[Community Guidelines here](https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md)
+to learn how to get started. There are many ways to get involved:
+
+- **Roadmap:** Please review and find areas in our
+  [roadmap](https://github.com/google-gemini/gemini-cli/issues/4191) that you
+  would like to contribute to. Contributions based on this will be easiest to
+  integrate with.
+- **Report Bugs:** If you find an issue, please create a
+  [bug](https://github.com/google-gemini/gemini-cli/issues/new?template=bug_report.yml)
+  with as much detail as possible. If you believe it is a critical breaking
+  issue preventing direct CLI usage, please tag it as `priority/p0`.
+- **Suggest Features:** Have a great idea? We'd love to hear it! Open a
+  [feature request](https://github.com/google-gemini/gemini-cli/issues/new?template=feature_request.yml).
+- **Contribute Code:** Check out our
+  [CONTRIBUTING.md](https://github.com/google-gemini/gemini-cli/blob/main/CONTRIBUTING.md)
+  file for guidelines on how to submit pull requests. We have a list of "good
+  first issues" for new contributors.
+- **Write Documentation:** Help us improve our documentation, tutorials, and
+  examples. We are excited about the future of Gemini CLI and look forward to
+  building it with you!
 >>>>>>> upstream/main

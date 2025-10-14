@@ -7,7 +7,9 @@
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
+Gemini CLI is an open-source AI agent that brings the power of Gemini directly
+into your terminal. It provides lightweight access to Gemini, giving you the
+most direct path from your prompt to our model.
 
 ## 🚀 Why Gemini CLI?
 
@@ -28,7 +30,7 @@ Gemini CLI is an open-source AI agent that brings the power of Gemini directly i
 - Ground your queries with the [Google Search](https://ai.google.dev/gemini-api/docs/grounding)
   tool, built into Gemini.
 
-### 🆕 Enhanced Features (Custom Extensions)
+### 🆕 Enhanced Features (Custom Extensions) - v0.11.0
 - **🆕 Load Balancing**: Distribute requests across multiple Gemini API endpoints for improved reliability and performance
 - **🆕 Sub-Agents**: Create specialized AI agents for different tasks and coordinate them seamlessly
 - **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
@@ -41,10 +43,10 @@ Gemini CLI is an open-source AI agent that brings the power of Gemini directly i
 - **🆕 Natural Language CLI**: Intuitive command interface with natural language processing
 - **🆕 Advanced Error Handling**: Comprehensive error classification and recovery systems
 
-## 🆕 Latest Features (v0.7.0) - Upstream Integration Complete
+## 🆕 Latest Features (v0.11.0) - Official Integration Complete
 
-**🆕 Upstream Integration**: Successfully integrated latest upstream updates while preserving unique features
-**🆕 Enhanced IDE Integration**: Improved VSCode companion with latest upstream features
+**🆕 Official Integration**: Successfully integrated latest official updates while preserving unique features
+**🆕 Enhanced IDE Integration**: Improved VSCode companion with latest official features
 **🆕 Advanced Configuration**: Unified configuration system with upstream compatibility
 **🆕 Strategic Merge**: Preserved custom features while adopting latest improvements
 
@@ -285,6 +287,17 @@ jobs:
       - name: Analyze Code
         run: gemini analyze --output-format markdown
 ```
+=======
+- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
+  account.
+- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window.
+- **🔧 Built-in tools**: Google Search grounding, file operations, shell
+  commands, web fetching.
+- **🔌 Extensible**: MCP (Model Context Protocol) support for custom
+  integrations.
+- **💻 Terminal-first**: Designed for developers who live in the command line.
+- **🛡️ Open source**: Apache 2.0 licensed.
+>>>>>>> upstream/main
 
 ## 📦 Installation
 
@@ -441,7 +454,9 @@ See [Releases](./docs/releases.md) for more details.
 
 ### Preview
 
-New preview releases will be published each week at UTC 2359 on Tuesdays. These releases will not have been fully vetted and may contain regressions or other outstanding issues. Please help us test and install with `preview` tag.
+New preview releases will be published each week at UTC 2359 on Tuesdays. These
+releases will not have been fully vetted and may contain regressions or other
+outstanding issues. Please help us test and install with `preview` tag.
 
 ```bash
 npm install -g @google/gemini-cli@preview
@@ -449,7 +464,9 @@ npm install -g @google/gemini-cli@preview
 
 ### Stable
 
-- New stable releases will be published each week at UTC 2000 on Tuesdays, this will be the full promotion of last week's `preview` release + any bug fixes and validations. Use `latest` tag.
+- New stable releases will be published each week at UTC 2000 on Tuesdays, this
+  will be the full promotion of last week's `preview` release + any bug fixes
+  and validations. Use `latest` tag.
 
 ```bash
 npm install -g @google/gemini-cli@latest
@@ -457,7 +474,9 @@ npm install -g @google/gemini-cli@latest
 
 ### Nightly
 
-- New releases will be published each week at UTC 0000 each day, This will be all changes from the main branch as represented at time of release. It should be assumed there are pending validations and issues. Use `nightly` tag.
+- New releases will be published each week at UTC 0000 each day, This will be
+  all changes from the main branch as represented at time of release. It should
+  be assumed there are pending validations and issues. Use `nightly` tag.
 
 ```bash
 npm install -g @google/gemini-cli@nightly
@@ -473,24 +492,33 @@ npm install -g @google/gemini-cli@nightly
 
 ### Automation & Integration
 
-- Automate operational tasks like querying pull requests or handling complex rebases
-- Use MCP servers to connect new capabilities, including [media generation with Imagen, Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+- Automate operational tasks like querying pull requests or handling complex
+  rebases
+- Use MCP servers to connect new capabilities, including
+  [media generation with Imagen, Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
 - Run non-interactively in scripts for workflow automation
 
 ### Advanced Capabilities
 
-- Ground your queries with built-in [Google Search](https://ai.google.dev/gemini-api/docs/grounding) for real-time information
+- Ground your queries with built-in
+  [Google Search](https://ai.google.dev/gemini-api/docs/grounding) for real-time
+  information
 - Conversation checkpointing to save and resume complex sessions
 - Custom context files (GEMINI.md) to tailor behavior for your projects
 
 ### GitHub Integration
 
-Integrate Gemini CLI directly into your GitHub workflows with [**Gemini CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli):
+Integrate Gemini CLI directly into your GitHub workflows with
+[**Gemini CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli):
 
-- **Pull Request Reviews**: Automated code review with contextual feedback and suggestions
-- **Issue Triage**: Automated labeling and prioritization of GitHub issues based on content analysis
-- **On-demand Assistance**: Mention `@gemini-cli` in issues and pull requests for help with debugging, explanations, or task delegation
-- **Custom Workflows**: Build automated, scheduled and on-demand workflows tailored to your team's needs
+- **Pull Request Reviews**: Automated code review with contextual feedback and
+  suggestions
+- **Issue Triage**: Automated labeling and prioritization of GitHub issues based
+  on content analysis
+- **On-demand Assistance**: Mention `@gemini-cli` in issues and pull requests
+  for help with debugging, explanations, or task delegation
+- **Custom Workflows**: Build automated, scheduled and on-demand workflows
+  tailored to your team's needs
 
 ## 🔐 Authentication Options
 
@@ -498,20 +526,17 @@ Choose the authentication method that best fits your needs:
 
 ### Option 1: Login with Google (OAuth login using your Google Account)
 
-**✨ Best for:**
-
-- Individual developers.
-- Google AI Pro and AI Ultra subscribers.
-- Anyone who has a Gemini Code Assist license.
-
-_See [quota limits and terms of service](https://cloud.google.com/gemini/docs/quotas) for details._
+**✨ Best for:** Individual developers as well as anyone who has a Gemini Code
+Assist License. (see
+[quota limits and terms of service](https://cloud.google.com/gemini/docs/quotas)
+for details)
 
 **Benefits:**
 
-- **Free tier** with 60 requests/min and 1,000 requests/day
-- **Gemini 2.5 Pro and Flash** with 1M token context window
+- **Free tier**: 60 requests/min and 1,000 requests/day
+- **Gemini 2.5 Pro** with 1M token context window
 - **No API key management** - just sign in with your Google account
-- **Automatic updates** to our latest models
+- **Automatic updates** to latest models
 
 #### Start Gemini CLI, then choose _Login with Google_ and follow the browser authentication flow when prompted
 
@@ -523,7 +548,7 @@ gemini
 
 ```bash
 # Set your Google Cloud Project
-export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_NAME"
+export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
 gemini
 ```
 
@@ -560,7 +585,8 @@ export GOOGLE_GENAI_USE_VERTEXAI=true
 gemini
 ```
 
-For Google Workspace accounts and other authentication methods, see the [authentication guide](./docs/cli/authentication.md).
+For Google Workspace accounts and other authentication methods, see the
+[authentication guide](./docs/get-started/authentication.md).
 
 ## 🚀 Getting Started
 
@@ -637,10 +663,14 @@ gemini-natural
 
 ### Getting Started
 
-- [**Quickstart Guide**](./docs/cli/index.md) - Get up and running quickly
-- [**Authentication Setup**](./docs/cli/authentication.md) - Detailed auth configuration
-- [**Configuration Guide**](./docs/cli/configuration.md) - Settings and customization
-- [**Keyboard Shortcuts**](./docs/keyboard-shortcuts.md) - Productivity tips
+- [**Quickstart Guide**](./docs/get-started/index.md) - Get up and running
+  quickly.
+- [**Authentication Setup**](./docs/get-started/authentication.md) - Detailed
+  auth configuration.
+- [**Configuration Guide**](./docs/get-started/configuration.md) - Settings and
+  customization.
+- [**Keyboard Shortcuts**](./docs/cli/keyboard-shortcuts.md) - Productivity
+  tips.
 
 ### Next Steps
 
@@ -666,10 +696,15 @@ npm run update:check
 
 ### Core Features
 
-- [**Commands Reference**](./docs/cli/commands.md) - All slash commands (`/help`, `/chat`, `/mcp`, etc.)
-- [**Checkpointing**](./docs/checkpointing.md) - Save and resume conversations
-- [**Memory Management**](./docs/tools/memory.md) - Using GEMINI.md context files
-- [**Token Caching**](./docs/cli/token-caching.md) - Optimize token usage
+- [**Commands Reference**](./docs/cli/commands.md) - All slash commands
+  (`/help`, `/chat`, etc).
+- [**Custom Commands**](./docs/cli/custom-commands.md) - Create your own
+  reusable commands.
+- [**Context Files (GEMINI.md)**](./docs/cli/gemini-md.md) - Provide persistent
+  context to Gemini CLI.
+- [**Checkpointing**](./docs/cli/checkpointing.md) - Save and resume
+  conversations.
+- [**Token Caching**](./docs/cli/token-caching.md) - Optimize token usage.
 
 ### Tools & Extensions
 
@@ -677,35 +712,37 @@ npm run update:check
   - [File System Operations](./docs/tools/file-system.md)
   - [Shell Commands](./docs/tools/shell.md)
   - [Web Fetch & Search](./docs/tools/web-fetch.md)
-  - [Multi-file Operations](./docs/tools/multi-file.md)
-- [**MCP Server Integration**](./docs/tools/mcp-server.md) - Extend with custom tools
-- [**Custom Extensions**](./docs/extension.md) - Build your own commands
+- [**MCP Server Integration**](./docs/tools/mcp-server.md) - Extend with custom
+  tools.
+- [**Custom Extensions**](./docs/extensions/index.md) - Build and share your own
+  commands.
 
 ### Advanced Topics
 
-- [**Architecture Overview**](./docs/architecture.md) - How Gemini CLI works
-- [**IDE Integration**](./docs/ide-integration.md) - VS Code companion
-- [**Sandboxing & Security**](./docs/sandbox.md) - Safe execution environments
-- [**Enterprise Deployment**](./docs/deployment.md) - Docker, system-wide config
-- [**Telemetry & Monitoring**](./docs/telemetry.md) - Usage tracking
-- [**Tools API Development**](./docs/core/tools-api.md) - Create custom tools
-
-### Configuration & Customization
-
-- [**Settings Reference**](./docs/cli/configuration.md) - All configuration options
-- [**Theme Customization**](./docs/cli/themes.md) - Visual customization
-- [**.gemini Directory**](./docs/gemini-ignore.md) - Project-specific settings
-- [**Environment Variables**](./docs/cli/configuration.md#environment-variables)
+- [**Headless Mode (Scripting)**](./docs/cli/headless.md) - Use Gemini CLI in
+  automated workflows.
+- [**Architecture Overview**](./docs/architecture.md) - How Gemini CLI works.
+- [**IDE Integration**](./docs/ide-integration/index.md) - VS Code companion.
+- [**Sandboxing & Security**](./docs/cli/sandbox.md) - Safe execution
+  environments.
+- [**Trusted Folders**](./docs/cli/trusted-folders.md) - Control execution
+  policies by folder.
+- [**Enterprise Guide**](./docs/cli/enterprise.md) - Deploy and manage in a
+  corporate environment.
+- [**Telemetry & Monitoring**](./docs/cli/telemetry.md) - Usage tracking.
+- [**Tools API Development**](./docs/core/tools-api.md) - Create custom tools.
 
 ### Troubleshooting & Support
 
-- [**Troubleshooting Guide**](./docs/troubleshooting.md) - Common issues and solutions
-- [**FAQ**](./docs/troubleshooting.md#frequently-asked-questions) - Quick answers
-- Use `/bug` command to report issues directly from the CLI
+- [**Troubleshooting Guide**](./docs/troubleshooting.md) - Common issues and
+  solutions.
+- [**FAQ**](./docs/faq.md) - Frequently asked questions.
+- Use `/bug` command to report issues directly from the CLI.
 
 ### Using MCP Servers
 
-Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with custom tools:
+Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with
+custom tools:
 
 ```text
 > @github List my open pull requests
@@ -713,31 +750,39 @@ Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with cus
 > @database Run a query to find inactive users
 ```
 
-See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup instructions.
+See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup
+instructions.
 
 ## 🤝 Contributing
 
-We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we encourage the community to:
+We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we
+encourage the community to:
 
-- Report bugs and suggest features
-- Improve documentation
-- Submit code improvements
-- Share your MCP servers and extensions
+- Report bugs and suggest features.
+- Improve documentation.
+- Submit code improvements.
+- Share your MCP servers and extensions.
 
-See our [Contributing Guide](./CONTRIBUTING.md) for development setup, coding standards, and how to submit pull requests.
+See our [Contributing Guide](./CONTRIBUTING.md) for development setup, coding
+standards, and how to submit pull requests.
 
-Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11/) for planned features and priorities.
+Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11)
+for planned features and priorities.
 
 ## 📖 Resources
 
-- **[Official Roadmap](./ROADMAP.md)** - See what's coming next
-- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package registry
-- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** - Report bugs or request features
-- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** - Security updates
+- **[Official Roadmap](./ROADMAP.md)** - See what's coming next.
+- **[Changelog](./docs/changelogs/index.md)** - See recent notable updates.
+- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package
+  registry.
+- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** -
+  Report bugs or request features.
+- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** -
+  Security updates.
 
 ### Uninstall
 
-See the [Uninstall Guide](docs/Uninstall.md) for removal instructions.
+See the [Uninstall Guide](docs/cli/uninstall.md) for removal instructions.
 
 ## 📄 Legal
 
