@@ -145,11 +145,8 @@ async function executeParallelTasks(
       console.log(`🔄 ${agent.name} を実行中...`);
 
       const executor = new SubagentExecutor({
-        apiKey: process.env.GOOGLE_GENAI_API_KEY || '',
-        baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-        defaultModel: agent.model || 'gemini-2.5-pro',
-        defaultTemperature: 0.7,
-        defaultMaxTokens: 4096,
+        maxConcurrent: maxConcurrent,
+        timeout: timeout * 1000,
       });
 
       const startTime = Date.now();

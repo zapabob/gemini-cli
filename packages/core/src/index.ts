@@ -131,4 +131,14 @@ export * from './subagents/collaborativeAgent.js';
 export * from './subagents/enhancedCollaborativeAgent.js';
 export * from './subagents/mainAgentInterface.js';
 export * from './subagents/types.js';
+export * from './subagents/yamlAgentLoader.js';
 export * from './services/loadBalancerService.js';
+
+// Export session utilities
+export { SESSION_FILE_PREFIX } from './utils/sessionUtils.js';
+
+// Export extension utilities
+export { ExtensionUpdateEvent, logExtensionUpdateEvent } from './utils/extensionUtils.js';
+
+// Export flicker detection
+export { recordFlickerFrame } from './utils/flickerDetector.js';

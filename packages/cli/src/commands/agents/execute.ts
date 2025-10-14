@@ -54,13 +54,7 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
     console.log(`🔧 専門分野: ${agentDefinition.specialty}`);
 
     // サブエージェントエグゼキュータを作成して実行
-    const executor = new SubagentExecutor({
-      apiKey: process.env.GOOGLE_GENAI_API_KEY || '',
-      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      defaultModel: agentDefinition.model || 'gemini-2.5-pro',
-      defaultTemperature: 0.7,
-      defaultMaxTokens: 4096,
-    });
+    const executor = new SubagentExecutor();
 
     // シンプルな実行（実際の実装ではより詳細なタスク実行ロジックが必要）
     const result = await executor.executeTask({

@@ -254,7 +254,7 @@ class DeepResearchToolInvocation
 
     try {
       // Record telemetry
-      recordFileOperationMetric(this.config, FileOperation.READ);
+      recordFileOperationMetric(this.config, { operation: FileOperation.READ });
 
       const geminiClient = this.config.getGeminiClient();
 
@@ -529,10 +529,11 @@ class DeepResearchToolInvocation
       // Record file operation metric
       recordFileOperationMetric(
         this.config,
-        FileOperation.CREATE,
-        undefined,
-        'text/markdown',
-        '.md',
+        { 
+          operation: FileOperation.CREATE,
+          mimetype: 'text/markdown',
+          extension: '.md'
+        }
       );
 
       console.log(`📄 DeepResearch results saved to: ${filepath}`);

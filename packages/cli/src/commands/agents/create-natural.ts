@@ -37,7 +37,7 @@ export async function createNaturalLanguageAgentCommand(
 
     // Geminiクライアントでプロンプトを解析してサブエージェント情報を抽出
     const geminiClient = new GeminiClient({
-      apiKey: process.env.GOOGLE_GENAI_API_KEY || '',
+      apiKey: process.env['GOOGLE_GENAI_API_KEY'] || '',
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       defaultModel: 'gemini-2.5-pro',
       defaultTemperature: 0.3, // 構造化された応答が必要なので低めに設定
