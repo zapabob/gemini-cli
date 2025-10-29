@@ -1,0 +1,39 @@
+{
+  "name": "gemini-codex-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server that exposes Gemini CLI capabilities for Codex",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "gemini-codex-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "keywords": [
+    "mcp",
+    "gemini",
+    "codex",
+    "server"
+  ],
+  "author": "Gemini CLI Contributors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google/genai": "^1.16.0",
+    "@modelcontextprotocol/sdk": "^1.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "eslint": "^9.24.0",
+    "prettier": "^3.5.3",
+    "tsx": "^4.20.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
