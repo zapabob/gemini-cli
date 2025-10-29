@@ -53,7 +53,7 @@ export async function executeParallelAgentsCommand(
     // 特定のサブエージェントが指定された場合はフィルタリング
     if (argv.agents && argv.agents.length > 0) {
       targetAgents = targetAgents.filter((agent) =>
-        argv.agents.includes(agent.name),
+        (argv.agents as string[]).includes(agent.name),
       );
 
       if (targetAgents.length === 0) {
@@ -145,22 +145,24 @@ async function executeParallelTasks(
       console.log(`🔄 ${agent.name} を実行中...`);
 
       const executor = new SubagentExecutor({
-        maxConcurrent: maxConcurrent,
-        timeout: timeout * 1000,
+        maxConcurrent: 3,
+        timeout: 300000,
       });
 
       const startTime = Date.now();
       const result = await Promise.race([
         executor.executeTask({
+          id: `parallel-${agent.name}-${Date.now()}`,
           task,
           context: '',
+          priority: 'medium',
           specialty: agent.specialty,
           agentName: agent.name,
         }),
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new Error(`タイムアウト: ${options.timeout}ms`)),
-            options.timeout,
+            () => reject(new Error(`タイムアウト: ${300000}ms`)),
+            300000,
           ),
         ),
       ]);

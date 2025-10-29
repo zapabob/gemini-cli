@@ -58,8 +58,10 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
 
     // シンプルな実行（実際の実装ではより詳細なタスク実行ロジックが必要）
     const result = await executor.executeTask({
+      id: `execute-${agentDefinition.name}-${Date.now()}`,
       task: argv.task,
       context: argv.context || '',
+      priority: 'medium',
       specialty: agentDefinition.specialty,
       agentName: agentDefinition.name,
     });
@@ -67,7 +69,7 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
     console.log(`✅ 実行完了`);
     console.log(`📊 実行時間: ${result.executionTime}ms`);
     console.log(`📝 結果:`);
-    console.log(result.result);
+    console.log(result);
   } catch (error) {
     console.error(`❌ サブエージェントの実行に失敗しました:`, error);
     process.exit(1);

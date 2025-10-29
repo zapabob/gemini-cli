@@ -6,29 +6,16 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { Config, ApprovalMode } from '@google/gemini-cli-core';
-
-// これらのクラスは上流リポジトリで削除されたため、暫定実装
-interface MainAgentInterface {
-  initialize(): Promise<void>;
-  executeTask(
-    prompt: string,
-    context: Record<string, unknown>,
-    mode: string,
-    options: Record<string, unknown>,
-  ): Promise<Record<string, unknown>>;
-}
-
-interface MainAgentInterfaceConfig {
-  model?: string;
-  temperature?: number;
-}
-
-class GeminiClient {
-  constructor(_config: Record<string, unknown>) {
-    // 暫定実装
-  }
-}
+import type {
+  MainAgentInterfaceConfig,
+  CollaborationMetrics,
+  CollaborativeTaskResult} from '@google/gemini-cli-core';
+import {
+  Config,
+  ApprovalMode,
+  MainAgentInterface,
+  GeminiClient
+} from '@google/gemini-cli-core';
 
 // MainAgentInterfaceを使用
 import fs from 'node:fs';
@@ -53,6 +40,8 @@ export class NaturalLanguageCommand {
       mode: string;
       timeout: string;
       context: Record<string, unknown>;
+      output?: string;
+      verbose?: boolean;
     },
   ): Promise<void> {
     try {
@@ -68,7 +57,7 @@ export class NaturalLanguageCommand {
 
       // 自然言語プロンプトの実行
       const startTime = Date.now();
-      const result = await this.mainAgent.executeTask(
+      const result: CollaborativeTaskResult = await this.mainAgent.executeTask(
         prompt,
         options.context,
         options.mode,
@@ -96,9 +85,10 @@ export class NaturalLanguageCommand {
   /**
    * 設定の初期化
    */
-  private async initializeConfig(
-    options: Record<string, unknown>,
-  ): Promise<MainAgentInterfaceConfig> {
+  private async initializeConfig(options: {
+    timeout: string;
+    output?: string;
+  }): Promise<MainAgentInterfaceConfig> {
     // Gemini APIキーの取得
     const apiKey = process.env['GEMINI_API_KEY'];
     if (!apiKey) {
@@ -108,6 +98,7 @@ export class NaturalLanguageCommand {
     // Geminiクライアントの初期化
     const geminiClient = new GeminiClient({
       apiKey,
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       defaultModel: 'models/gemini-2.5-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096,
@@ -142,7 +133,7 @@ export class NaturalLanguageCommand {
     });
 
     // 出力ディレクトリの作成
-    const outputPath = path.resolve(options.output);
+    const outputPath = path.resolve(options.output as string);
     if (!fs.existsSync(outputPath)) {
       fs.mkdirSync(outputPath, { recursive: true });
     }
@@ -166,9 +157,14 @@ export class NaturalLanguageCommand {
    * 結果の表示
    */
   private displayResult(
-    result: Record<string, unknown>,
+    result: CollaborativeTaskResult,
     executionTime: number,
-    options: Record<string, unknown>,
+    options: {
+      mode: string;
+      timeout: string;
+      context: Record<string, unknown>;
+      output?: string;
+    },
   ): void {
     console.log('\n📊 実行結果:');
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -177,15 +173,12 @@ export class NaturalLanguageCommand {
     console.log(`⏱️  実行時間: ${executionTime}ms`);
 
     if (result.collaborationMetrics) {
+      const metrics = result.collaborationMetrics;
+      console.log(`👥 使用サブエージェント数: ${metrics.subagentsUsed || 0}`);
       console.log(
-        `👥 使用サブエージェント数: ${result.collaborationMetrics.subagentsUsed || 0}`,
+        `📈 成功ステップ数: ${metrics.successfulSteps || 0}/${metrics.totalSteps || 0}`,
       );
-      console.log(
-        `📈 成功ステップ数: ${result.collaborationMetrics.successfulSteps || 0}/${result.collaborationMetrics.totalSteps || 0}`,
-      );
-      console.log(
-        `⚡ 平均応答時間: ${result.collaborationMetrics.averageResponseTime || 0}ms`,
-      );
+      console.log(`⚡ 平均応答時間: ${metrics.averageResponseTime || 0}ms`);
     }
 
     if (result.finalResult) {
@@ -221,7 +214,7 @@ export class NaturalLanguageCommand {
    * 結果の保存
    */
   private async saveResult(
-    result: Record<string, unknown>,
+    result: CollaborativeTaskResult,
     prompt: string,
     outputPath: string,
   ): Promise<void> {
@@ -246,12 +239,15 @@ ${prompt}
 ## 協調メトリクス
 ${
   result.collaborationMetrics
-    ? `
-- 使用サブエージェント数: ${result.collaborationMetrics.subagentsUsed || 0}
-- 成功ステップ数: ${result.collaborationMetrics.successfulSteps || 0}/${result.collaborationMetrics.totalSteps || 0}
-- 平均応答時間: ${result.collaborationMetrics.averageResponseTime || 0}ms
-- 総トークン使用量: ${result.collaborationMetrics.totalTokensUsed || 0}
-`
+    ? (() => {
+        const metrics = result.collaborationMetrics as CollaborationMetrics;
+        return `
+- 使用サブエージェント数: ${metrics.subagentsUsed || 0}
+- 成功ステップ数: ${metrics.successfulSteps || 0}/${metrics.totalSteps || 0}
+- 平均応答時間: ${metrics.averageResponseTime || 0}ms
+- 総トークン使用量: ${metrics.totalTokensUsed || 0}
+`;
+      })()
     : 'なし'
 }
 
@@ -283,7 +279,8 @@ ${result.error ? `## エラー\n${result.error}` : ''}
       .command(
         '$0 <prompt>',
         '自然言語プロンプトで並列作業を自律的に分担する',
-        (yargs) => yargs
+        (yargs) =>
+          yargs
             .positional('prompt', {
               describe: '自然言語プロンプト',
               type: 'string',
@@ -330,9 +327,12 @@ ${result.error ? `## エラー\n${result.error}` : ''}
             .alias('h', 'help'),
       ).argv;
 
-    await this.execute(
-      (argv as Record<string, unknown>).prompt as string,
-      argv as Record<string, unknown>,
-    );
+    await this.execute(argv.prompt as string, {
+      mode: argv.mode as string,
+      timeout: argv.timeout as string,
+      context: (argv.context as Record<string, unknown>) || {},
+      output: argv.output as string,
+      verbose: argv.verbose as boolean,
+    });
   }
 }

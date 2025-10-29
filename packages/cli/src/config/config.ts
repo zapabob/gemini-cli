@@ -16,7 +16,8 @@ import type {
   OutputFormat,
   GeminiCLIExtension,
 } from '@google/gemini-cli-core';
-import { MCPServerConfig ,
+import {
+  MCPServerConfig,
   Config,
   loadServerHierarchicalMemory,
   setGeminiMdFilename as setServerGeminiMdFilename,
@@ -358,7 +359,9 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
   }
 
   // Register agents subcommands
-  yargsInstance.command('agents', 'サブエージェントの管理', async (yargs) => agentsCommand(await yargs.argv));
+  yargsInstance.command('agents', 'サブエージェントの管理', async () =>
+    agentsCommand([]),
+  );
 
   yargsInstance
     .version(await getCliVersion()) // This will enable the --version flag based on package.json

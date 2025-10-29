@@ -134,11 +134,38 @@ export * from './subagents/types.js';
 export * from './subagents/yamlAgentLoader.js';
 export * from './services/loadBalancerService.js';
 
+// Export specific subagent classes and functions
+export { SubagentRegistry, SubagentExecutor } from './subagents/executor.js';
+export { YamlAgentLoader } from './subagents/yamlAgentLoader.js';
+export { LoadBalancerService } from './services/loadBalancerService.js';
+export {
+  readLoadBalancerConfig,
+  writeLoadBalancerConfig,
+  addLoadBalancerEndpoint,
+  removeLoadBalancerEndpoint,
+  updateLoadBalancerEndpoint,
+  updateLoadBalancerAlgorithm,
+  resetLoadBalancerConfig,
+  createDefaultEndpoint,
+} from './config/loadBalancer.js';
+export {
+  Subagent,
+  SubagentSpecialty,
+  getSubagentsBySpecialty,
+} from './config/subagents.js';
+export {
+  MainAgentInterface,
+  MainAgentInterfaceConfig,
+} from './subagents/mainAgentInterface.js';
+
 // Export session utilities
 export { SESSION_FILE_PREFIX } from './utils/sessionUtils.js';
 
 // Export extension utilities
-export { ExtensionUpdateEvent, logExtensionUpdateEvent } from './utils/extensionUtils.js';
+export {
+  ExtensionUpdateEvent,
+  logExtensionUpdateEvent,
+} from './utils/extensionUtils.js';
 
 // Export flicker detection
-export { recordFlickerFrame } from './utils/flickerDetector.js';
+export { recordFlickerFrame, FlickerFrame } from './utils/flickerDetector.js';

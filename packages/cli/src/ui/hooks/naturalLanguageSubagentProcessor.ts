@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// これらの機能は上流リポジトリで削除されたため、無効化
-// import {
-//   getSubagentsBySpecialty,
-//   SubagentExecutor,
-//   Subagent,
-//   SubagentSpecialty
-// } from '@google/gemini-cli-core';
+import type {
+  Subagent,
+  SubagentSpecialty} from '@google/gemini-cli-core';
+import {
+  getSubagentsBySpecialty,
+  SubagentExecutor
+} from '@google/gemini-cli-core';
 
 /**
  * 高度な自然言語プロンプト解釈システム

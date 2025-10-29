@@ -9,15 +9,15 @@ import type {
   SlashCommand,
   CommandKind,
 } from './types.js';
-// これらの機能は上流リポジトリで削除されたため、無効化
-// import {
-//   readLoadBalancerConfig,
-//   addLoadBalancerEndpoint,
-//   removeLoadBalancerEndpoint,
-//   updateLoadBalancerAlgorithm,
-//   resetLoadBalancerConfig,
-//   createDefaultEndpoint,
-//   LoadBalancerService } from '@google/gemini-cli-core';
+import {
+  readLoadBalancerConfig,
+  addLoadBalancerEndpoint,
+  removeLoadBalancerEndpoint,
+  updateLoadBalancerAlgorithm,
+  resetLoadBalancerConfig,
+  createDefaultEndpoint,
+  LoadBalancerService,
+} from '@google/gemini-cli-core';
 
 /**
  * ロードバランサーコマンドのメイン処理

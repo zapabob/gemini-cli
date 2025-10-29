@@ -279,6 +279,9 @@ export interface ConfigParameters {
   codebaseInvestigatorSettings?: CodebaseInvestigatorSettings;
   continueOnFailedApiCall?: boolean;
   enableShellOutputEfficiency?: boolean;
+  apiKey?: string;
+  baseUrl?: string;
+  defaultModel?: string;
 }
 
 export class Config {
@@ -327,6 +330,9 @@ export class Config {
   private readonly cwd: string;
   private readonly bugCommand: BugCommandSettings | undefined;
   private model: string;
+  private readonly apiKey: string | undefined;
+  private readonly baseUrl: string | undefined;
+  private readonly defaultModel: string | undefined;
   private readonly extensionContextFilePaths: string[];
   private readonly noBrowser: boolean;
   private readonly folderTrust: boolean;
@@ -429,6 +435,9 @@ export class Config {
     this.fileDiscoveryService = params.fileDiscoveryService ?? null;
     this.bugCommand = params.bugCommand;
     this.model = params.model;
+    this.apiKey = params.apiKey;
+    this.baseUrl = params.baseUrl;
+    this.defaultModel = params.defaultModel;
     this.extensionContextFilePaths = params.extensionContextFilePaths ?? [];
     this.maxSessionTurns = params.maxSessionTurns ?? -1;
     this.experimentalZedIntegration =
@@ -594,6 +603,18 @@ export class Config {
 
   getModel(): string {
     return this.model;
+  }
+
+  getApiKey(): string | undefined {
+    return this.apiKey;
+  }
+
+  getBaseUrl(): string | undefined {
+    return this.baseUrl;
+  }
+
+  getDefaultModel(): string | undefined {
+    return this.defaultModel;
   }
 
   setModel(newModel: string): void {
