@@ -753,6 +753,12 @@ custom tools:
 See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup
 instructions.
 
+> 💡 **Use Gemini with Codex:** The repository includes a ready-to-run MCP server
+> for Codex in [`mcp-servers/gemini-codex-mcp`](./mcp-servers/gemini-codex-mcp).
+> Build it with `npm run build` and launch it via `npx gemini-codex-mcp` to make
+> Gemini available to Codex (and other MCP clients) through the
+> `gemini_generate_text` tool.
+
 ## 🤝 Contributing
 
 We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we
