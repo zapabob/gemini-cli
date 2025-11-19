@@ -113,7 +113,7 @@ export class SubagentExecutor {
       options.geminiClient ||
       new GeminiClient({
         apiKey: process.env['GEMINI_API_KEY'] || 'mock-api-key',
-        defaultModel: 'models/gemini-2.5-flash',
+        defaultModel: 'models/gemini-3.0-flash',
         defaultTemperature: 0.7,
         defaultMaxTokens: 4096,
       });

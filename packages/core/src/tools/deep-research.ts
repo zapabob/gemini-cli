@@ -421,7 +421,7 @@ class DeepResearchToolInvocation
           [{ role: 'user', parts: [{ text: levelPrompt }] }],
           { tools: [{ googleSearch: {} }] },
           signal,
-          'gemini-2.5-flash-exp',
+          'gemini-3.0-flash-exp',
         );
 
         const responseText = getResponseText(response);

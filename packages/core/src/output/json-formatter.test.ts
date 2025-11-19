@@ -52,7 +52,7 @@ describe('JsonFormatter', () => {
     const response = 'This is a test response.';
     const stats: SessionMetrics = {
       models: {
-        'gemini-2.5-pro': {
+        'gemini-3.0-pro': {
           api: {
             totalRequests: 2,
             totalErrors: 0,
@@ -67,7 +67,7 @@ describe('JsonFormatter', () => {
             tool: 0,
           },
         },
-        'gemini-2.5-flash': {
+        'gemini-3.0-flash': {
           api: {
             totalRequests: 2,
             totalErrors: 0,

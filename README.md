@@ -15,7 +15,7 @@ most direct path from your prompt to our model.
 
 ### Core Features
 - **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
-- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
+- **🧠 Powerful Gemini 3.0 Pro**: Access to 1M token context window
 - **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
 - **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
 - **💻 Terminal-first**: Designed for developers who live in the command line
@@ -290,7 +290,7 @@ jobs:
 =======
 - **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
   account.
-- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window.
+- **🧠 Powerful Gemini 3.0 Pro**: Access to 1M token context window.
 - **🔧 Built-in tools**: Google Search grounding, file operations, shell
   commands, web fetching.
 - **🔌 Extensible**: MCP (Model Context Protocol) support for custom
@@ -399,7 +399,7 @@ You are now ready to use the Gemini CLI!
 
 ### Use a Gemini API key:
 
-The Gemini API provides a free tier with 100 requests per day using Gemini 2.5 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
+The Gemini API provides a free tier with 100 requests per day using Gemini 3.0 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
 
 1. Generate a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key:
@@ -412,7 +412,7 @@ The Gemini API provides a free tier with 100 requests per day using Gemini 2.5 P
 
 ### Use a Vertex AI API key:
 
-The Vertex AI API provides a free tier using express mode for Gemini 2.5 Pro, control over which model you use, and access to higher rate limits with a billing account:
+The Vertex AI API provides a free tier using express mode for Gemini 3.0 Pro, control over which model you use, and access to higher rate limits with a billing account:
 
 1. Generate a key from [Google Cloud](https://console.cloud.google.com/apis/credentials).
 2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true:
@@ -534,7 +534,7 @@ for details)
 **Benefits:**
 
 - **Free tier**: 60 requests/min and 1,000 requests/day
-- **Gemini 2.5 Pro** with 1M token context window
+- **Gemini 3.0 Pro** with 1M token context window
 - **No API key management** - just sign in with your Google account
 - **Automatic updates** to latest models
 
@@ -558,7 +558,7 @@ gemini
 
 **Benefits:**
 
-- **Free tier**: 100 requests/day with Gemini 2.5 Pro
+- **Free tier**: 100 requests/day with Gemini 3.0 Pro
 - **Model selection**: Choose specific Gemini models
 - **Usage-based billing**: Upgrade for higher limits when needed
 
@@ -607,7 +607,7 @@ gemini --include-directories ../lib,../docs
 #### Use specific model
 
 ```bash
-gemini -m gemini-2.5-flash
+gemini -m gemini-3.0-flash
 ```
 
 #### Non-interactive mode for scripts

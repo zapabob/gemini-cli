@@ -22,14 +22,14 @@ describe('ProQuotaDialog', () => {
   it('should render with correct title and options', () => {
     const { lastFrame } = render(
       <ProQuotaDialog
-        failedModel="gemini-2.5-pro"
-        fallbackModel="gemini-2.5-flash"
+        failedModel="gemini-3.0-pro"
+        fallbackModel="gemini-3.0-flash"
         onChoice={() => {}}
       />,
     );
 
     const output = lastFrame();
-    expect(output).toContain('Pro quota limit reached for gemini-2.5-pro.');
+    expect(output).toContain('Pro quota limit reached for gemini-3.0-pro.');
 
     // Check that RadioButtonSelect was called with the correct items
     expect(RadioButtonSelect).toHaveBeenCalledWith(
@@ -41,7 +41,7 @@ describe('ProQuotaDialog', () => {
             key: 'auth',
           },
           {
-            label: `Continue with gemini-2.5-flash`,
+            label: `Continue with gemini-3.0-flash`,
             value: 'continue',
             key: 'continue',
           },
@@ -55,8 +55,8 @@ describe('ProQuotaDialog', () => {
     const mockOnChoice = vi.fn();
     render(
       <ProQuotaDialog
-        failedModel="gemini-2.5-pro"
-        fallbackModel="gemini-2.5-flash"
+        failedModel="gemini-3.0-pro"
+        fallbackModel="gemini-3.0-flash"
         onChoice={mockOnChoice}
       />,
     );
@@ -74,8 +74,8 @@ describe('ProQuotaDialog', () => {
     const mockOnChoice = vi.fn();
     render(
       <ProQuotaDialog
-        failedModel="gemini-2.5-pro"
-        fallbackModel="gemini-2.5-flash"
+        failedModel="gemini-3.0-pro"
+        fallbackModel="gemini-3.0-flash"
         onChoice={mockOnChoice}
       />,
     );
