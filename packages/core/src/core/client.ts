@@ -54,14 +54,22 @@ import type { RoutingContext } from '../routing/routingStrategy.js';
 import { uiTelemetryService } from '../telemetry/uiTelemetry.js';
 
 export function isThinkingSupported(model: string) {
-  return model.startsWith('gemini-2.5') || model === DEFAULT_GEMINI_MODEL_AUTO;
+  return (
+    model.startsWith('gemini-3.0') ||
+    model.startsWith('gemini-2.5') ||
+    model === DEFAULT_GEMINI_MODEL_AUTO
+  );
 }
 
 export function isThinkingDefault(model: string) {
-  if (model.startsWith('gemini-2.5-flash-lite')) {
+  if (model.startsWith('gemini-3.0-flash-lite')) {
     return false;
   }
-  return model.startsWith('gemini-2.5') || model === DEFAULT_GEMINI_MODEL_AUTO;
+  return (
+    model.startsWith('gemini-3.0') ||
+    model.startsWith('gemini-2.5') ||
+    model === DEFAULT_GEMINI_MODEL_AUTO
+  );
 }
 
 /**

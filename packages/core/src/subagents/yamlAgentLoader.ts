@@ -80,7 +80,7 @@ export class YamlAgentLoader {
       const definition: SubagentDefinition = {
         name: yamlContent.name,
         description: yamlContent.description,
-        model: yamlContent.model || 'gemini-2.5-pro',
+        model: yamlContent.model || 'gemini-3.0-pro',
         color: yamlContent.color || 'blue',
         specialty: yamlContent.specialty,
         triggers: yamlContent.triggers || [],
@@ -107,7 +107,7 @@ export class YamlAgentLoader {
       name,
       description,
       specialty,
-      model: 'gemini-2.5-pro',
+      model: 'gemini-3.0-pro',
       color: 'blue',
       triggers: [`@${name}`],
       capabilities: [specialty],

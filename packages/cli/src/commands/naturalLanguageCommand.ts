@@ -108,7 +108,7 @@ export class NaturalLanguageCommand {
     // Geminiクライアントの初期化
     const geminiClient = new GeminiClient({
       apiKey,
-      defaultModel: 'models/gemini-2.5-pro',
+      defaultModel: 'models/gemini-3.0-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096,
     });
@@ -119,7 +119,7 @@ export class NaturalLanguageCommand {
       targetDir: process.cwd(),
       cwd: process.cwd(),
       debugMode: false,
-      model: 'models/gemini-2.5-pro',
+      model: 'models/gemini-3.0-pro',
       fullContext: false,
       approvalMode: ApprovalMode.DEFAULT,
       showMemoryUsage: false,

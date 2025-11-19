@@ -255,7 +255,7 @@ notable changes to Gemini CLI.
   ([gif](https://miro.medium.com/v2/resize:fit:2000/format:webp/1*GosBAo2SjMfFffAnzT7ZMg.gif),
   [pr](https://github.com/google-gemini/gemini-cli/pull/6716) by
   [@abhipatel12](https://github.com/abhipatel12))
-- **2.5 Flash Lite support:** You can now use the `gemini-2.5-flash-lite` model
+- **2.5 Flash Lite support:** You can now use the `gemini-3.0-flash-lite` model
   for Gemini CLI via `gemini -m …`.
   ([gif](https://miro.medium.com/v2/resize:fit:2000/format:webp/1*P4SKwnrsyBuULoHrFqsFKQ.gif),
   [pr](https://github.com/google-gemini/gemini-cli/pull/4652) by

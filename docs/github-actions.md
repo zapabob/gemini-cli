@@ -33,7 +33,7 @@ GOOGLE_API_KEY=your_google_api_key_here
 GitHub Actionsのタブから「Gemini CLI Action」を選択し、手動で実行できます：
 
 1. **prompt**: 分析したい内容を指定
-2. **model**: 使用するGeminiモデル（デフォルト: gemini-2.5-pro）
+2. **model**: 使用するGeminiモデル（デフォルト: gemini-3.0-pro）
 3. **max_tokens**: 最大トークン数（デフォルト: 1000）
 4. **temperature**: 温度パラメータ（デフォルト: 0.7）
 
@@ -74,7 +74,7 @@ Pull Requestに自動的にコメントを追加します：
 ## 🤖 Gemini CLI Analysis
 
 **Prompt:** このリポジトリのコードを分析して、主要な機能と改善点を説明して
-**Model:** gemini-2.5-pro
+**Model:** gemini-3.0-pro
 
 ### Analysis Results:
 ```
@@ -99,7 +99,7 @@ Pull Requestに自動的にコメントを追加します：
 | 入力名 | 説明 | デフォルト |
 |--------|------|------------|
 | `prompt` | 分析プロンプト | "このリポジトリのコードを分析して、主要な機能を説明して" |
-| `model` | 使用モデル | "gemini-2.5-pro" |
+| `model` | 使用モデル | "gemini-3.0-pro" |
 | `max_tokens` | 最大トークン数 | "1000" |
 | `temperature` | 温度パラメータ | "0.7" |
 

@@ -39,7 +39,7 @@ export async function createNaturalLanguageAgentCommand(
     const geminiClient = new GeminiClient({
       apiKey: process.env['GOOGLE_GENAI_API_KEY'] || '',
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      defaultModel: 'gemini-2.5-pro',
+      defaultModel: 'gemini-3.0-pro',
       defaultTemperature: 0.3, // 構造化された応答が必要なので低めに設定
       defaultMaxTokens: 2048,
     });
@@ -56,7 +56,7 @@ export async function createNaturalLanguageAgentCommand(
   "specialty": "専門分野（例: code_review, debugging, data_analysisなど）",
   "capabilities": ["機能1", "機能2", "機能3"],
   "triggers": ["トリガーコマンド1", "トリガーコマンド2"],
-  "model": "gemini-2.5-pro"
+  "model": "gemini-3.0-pro"
 }
 
 専門分野の候補:
