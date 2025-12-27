@@ -6,9 +6,31 @@
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
-import YAML from 'yaml';
-import type { SubagentDefinition} from './executor.js';
+import type { SubagentDefinition } from './executor.js';
 import { SubagentRegistry } from './executor.js';
+
+type YamlModule = {
+  parse: <T = unknown>(input: string) => T;
+  stringify: (value: unknown) => string;
+};
+
+let yamlModule: YamlModule | null = null;
+
+async function loadYamlModule(): Promise<YamlModule> {
+  if (yamlModule) {
+    return yamlModule;
+  }
+
+  try {
+    const loaded = (await import('yaml')) as unknown as YamlModule;
+    yamlModule = loaded;
+    return loaded;
+  } catch (error) {
+    throw new Error(
+      `YAML support is required to load subagents. Install the "yaml" package to continue. (Original error: ${error instanceof Error ? error.message : String(error)})`,
+    );
+  }
+}
 
 /**
  * YAMLベースのサブエージェント定義を読み込むローダー
@@ -64,28 +86,54 @@ export class YamlAgentLoader {
 
     try {
       const content = readFileSync(filePath, 'utf-8');
-      const yamlContent = YAML.parse(content);
+      const yaml = await loadYamlModule();
+      const yamlContent = yaml.parse<
+        Partial<SubagentDefinition> & Record<string, unknown>
+      >(content);
+
+      const name =
+        typeof yamlContent.name === 'string' ? yamlContent.name : undefined;
+      const description =
+        typeof yamlContent.description === 'string'
+          ? yamlContent.description
+          : undefined;
+      const specialty =
+        typeof yamlContent.specialty === 'string'
+          ? yamlContent.specialty
+          : undefined;
+      const model =
+        typeof yamlContent.model === 'string'
+          ? yamlContent.model
+          : 'gemini-3.0-pro';
+      const color =
+        typeof yamlContent.color === 'string' ? yamlContent.color : 'blue';
+      const triggers = Array.isArray(yamlContent.triggers)
+        ? yamlContent.triggers.map(String)
+        : [];
+      const capabilities = Array.isArray(yamlContent.capabilities)
+        ? yamlContent.capabilities.map(String)
+        : [];
+      const config =
+        yamlContent.config && typeof yamlContent.config === 'object'
+          ? (yamlContent.config as Record<string, unknown>)
+          : {};
 
       // YAMLの検証と変換
-      if (
-        !yamlContent.name ||
-        !yamlContent.description ||
-        !yamlContent.specialty
-      ) {
+      if (!name || !description || !specialty) {
         throw new Error(
           '必須フィールドが不足しています: name, description, specialty',
         );
       }
 
       const definition: SubagentDefinition = {
-        name: yamlContent.name,
-        description: yamlContent.description,
-        model: yamlContent.model || 'gemini-3.0-pro',
-        color: yamlContent.color || 'blue',
-        specialty: yamlContent.specialty,
-        triggers: yamlContent.triggers || [],
-        capabilities: yamlContent.capabilities || [],
-        config: yamlContent.config || {},
+        name,
+        description,
+        model,
+        color,
+        specialty,
+        triggers,
+        capabilities,
+        config,
       };
 
       return definition;
@@ -103,6 +151,7 @@ export class YamlAgentLoader {
     specialty: string,
     description: string,
   ): Promise<string> {
+    const yaml = await loadYamlModule();
     const definition: SubagentDefinition = {
       name,
       description,
@@ -113,7 +162,7 @@ export class YamlAgentLoader {
       capabilities: [specialty],
     };
 
-    const yamlContent = YAML.stringify(definition);
+    const yamlContent = yaml.stringify(definition);
     const filename = `${name}.yaml`;
     const filePath = join(this.agentsDir, filename);
 

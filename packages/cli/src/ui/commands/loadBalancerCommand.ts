@@ -9,6 +9,16 @@ import type {
   SlashCommand,
   CommandKind,
 } from './types.js';
+import {
+  readLoadBalancerConfig,
+  createDefaultEndpoint,
+  addLoadBalancerEndpoint,
+  removeLoadBalancerEndpoint,
+  updateLoadBalancerAlgorithm,
+  resetLoadBalancerConfig,
+  LoadBalancerService,
+  type LoadBalancerEndpoint,
+} from '@google/gemini-cli-core';
 // これらの機能は上流リポジトリで削除されたため、無効化
 // import {
 //   readLoadBalancerConfig,
@@ -416,7 +426,7 @@ async function handleHealthCheck(): Promise<MessageActionReturn> {
     const stats = loadBalancer.getStats();
 
     const healthStatus = config.endpoints
-      .map((endpoint) => {
+      .map((endpoint: LoadBalancerEndpoint) => {
         const status = endpoint.isActive ? '🟢 正常' : '🔴 異常';
         const lastCheck =
           endpoint.lastHealthCheck > 0

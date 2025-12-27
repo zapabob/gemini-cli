@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { YamlAgentLoader , GeminiClient } from '@google/gemini-cli-core';
+import { YamlAgentLoader, SubagentGeminiClient } from '@google/gemini-cli-core';
 
 /**
  * 自然言語プロンプトからサブエージェントを作成するコマンド
@@ -36,7 +36,7 @@ export async function createNaturalLanguageAgentCommand(
     console.log(`📝 プロンプト: ${prompt}`);
 
     // Geminiクライアントでプロンプトを解析してサブエージェント情報を抽出
-    const geminiClient = new GeminiClient({
+    const geminiClient = new SubagentGeminiClient({
       apiKey: process.env['GOOGLE_GENAI_API_KEY'] || '',
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
       defaultModel: 'gemini-3.0-pro',
@@ -73,21 +73,23 @@ export async function createNaturalLanguageAgentCommand(
 JSONのみを出力してください。説明文は含めないでください。
 `;
 
-    const response = await geminiClient.generateContent([
-      { role: 'user', parts: [{ text: analysisPrompt }] },
-    ]);
+    const response = await geminiClient.generateText({
+      prompt: analysisPrompt,
+      maxTokens: 1024,
+      temperature: 0.3,
+    });
 
-    if (!response.candidates?.[0]?.content?.parts?.[0]?.text) {
+    if (!response.text) {
       throw new Error('Geminiからの応答が不正です');
     }
 
     let analysisResult;
     try {
-      analysisResult = JSON.parse(response.candidates[0].content.parts[0].text);
+      analysisResult = JSON.parse(response.text);
     } catch (_error) {
       console.error(
         'JSONパースエラー:',
-        response.candidates[0].content.parts[0].text,
+        response.text,
       );
       throw new Error('サブエージェント情報の抽出に失敗しました');
     }

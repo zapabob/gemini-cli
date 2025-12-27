@@ -132,6 +132,9 @@ export * from './subagents/enhancedCollaborativeAgent.js';
 export * from './subagents/mainAgentInterface.js';
 export * from './subagents/types.js';
 export * from './subagents/yamlAgentLoader.js';
+export {
+  GeminiClient as SubagentGeminiClient,
+} from './subagents/geminiClient.js';
 export * from './services/loadBalancerService.js';
 
 // Export session utilities
