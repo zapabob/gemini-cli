@@ -11,12 +11,13 @@ import type {
 } from './types.js';
 import {
   readLoadBalancerConfig,
+  createDefaultEndpoint,
   addLoadBalancerEndpoint,
   removeLoadBalancerEndpoint,
   updateLoadBalancerAlgorithm,
   resetLoadBalancerConfig,
-  createDefaultEndpoint,
   LoadBalancerService,
+  type LoadBalancerEndpoint,
 } from '@google/gemini-cli-core';
 
 /**
@@ -416,7 +417,7 @@ async function handleHealthCheck(): Promise<MessageActionReturn> {
     const stats = loadBalancer.getStats();
 
     const healthStatus = config.endpoints
-      .map((endpoint) => {
+      .map((endpoint: LoadBalancerEndpoint) => {
         const status = endpoint.isActive ? '🟢 正常' : '🔴 異常';
         const lastCheck =
           endpoint.lastHealthCheck > 0

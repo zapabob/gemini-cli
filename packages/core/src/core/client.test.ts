@@ -214,8 +214,8 @@ describe('isThinkingSupported', () => {
     expect(isThinkingSupported('gemini-2.5')).toBe(true);
   });
 
-  it('should return true for gemini-2.5-pro', () => {
-    expect(isThinkingSupported('gemini-2.5-pro')).toBe(true);
+  it('should return true for gemini-3.0-pro', () => {
+    expect(isThinkingSupported('gemini-3.0-pro')).toBe(true);
   });
 
   it('should return false for other models', () => {
@@ -225,16 +225,16 @@ describe('isThinkingSupported', () => {
 });
 
 describe('isThinkingDefault', () => {
-  it('should return false for gemini-2.5-flash-lite', () => {
-    expect(isThinkingDefault('gemini-2.5-flash-lite')).toBe(false);
+  it('should return false for gemini-3.0-flash-lite', () => {
+    expect(isThinkingDefault('gemini-3.0-flash-lite')).toBe(false);
   });
 
   it('should return true for gemini-2.5', () => {
     expect(isThinkingDefault('gemini-2.5')).toBe(true);
   });
 
-  it('should return true for gemini-2.5-pro', () => {
-    expect(isThinkingDefault('gemini-2.5-pro')).toBe(true);
+  it('should return true for gemini-3.0-pro', () => {
+    expect(isThinkingDefault('gemini-3.0-pro')).toBe(true);
   });
 
   it('should return false for other models', () => {
@@ -2720,7 +2720,7 @@ ${JSON.stringify(
       const contents = [{ role: 'user', parts: [{ text: 'hello' }] }];
       const generationConfig = { temperature: 0.5 };
       const abortSignal = new AbortController().signal;
-      const requestedModel = 'gemini-2.5-pro'; // A non-flash model
+      const requestedModel = 'gemini-3.0-pro'; // A non-flash model
 
       // Mock config to be in fallback mode
       vi.spyOn(client['config'], 'isInFallbackMode').mockReturnValue(true);

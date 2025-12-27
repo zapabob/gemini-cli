@@ -4,13 +4,43 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type {
-  Subagent,
-  SubagentSpecialty} from '@google/gemini-cli-core';
 import {
-  getSubagentsBySpecialty,
-  SubagentExecutor
+  SubagentExecutor,
+  Subagent,
+  SubagentSpecialty,
+  SubagentRegistry,
 } from '@google/gemini-cli-core';
+
+async function getSubagentsBySpecialty(
+  specialty: SubagentSpecialty | SubagentSpecialty[],
+): Promise<Subagent[]> {
+  const registry = SubagentRegistry.getInstance();
+  const specialties = Array.isArray(specialty) ? specialty : [specialty];
+  return registry
+    .getAllSubagents()
+    .filter((subagent) =>
+      specialties.includes(subagent.specialty as SubagentSpecialty),
+    )
+    .map((definition, index) => ({
+      id: `registry-${index}-${definition.name}`,
+      name: definition.name,
+      description: definition.description,
+      specialty: specialties.includes(definition.specialty as SubagentSpecialty)
+        ? (definition.specialty as SubagentSpecialty)
+        : 'custom',
+      prompt: definition.description,
+      systemPrompt: undefined,
+      maxTokens: 4096,
+      temperature: 0.7,
+      status: 'idle',
+      createdAt: new Date().toISOString(),
+      lastUsed: undefined,
+      taskHistory: [],
+      customTools: [],
+      parentAgentId: undefined,
+      isActive: true,
+    }));
+}
 
 /**
  * 高度な自然言語プロンプト解釈システム

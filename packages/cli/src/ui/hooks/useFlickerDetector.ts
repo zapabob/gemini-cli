@@ -34,7 +34,12 @@ export function useFlickerDetector(
           return;
         }
 
-        recordFlickerFrame(config);
+        recordFlickerFrame({
+          timestamp: Date.now(),
+          duration: measurement.height - terminalHeight,
+          severity: 'medium',
+          component: 'root-ui',
+        });
         appEvents.emit(AppEvent.Flicker);
       }
     }

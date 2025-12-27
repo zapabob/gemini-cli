@@ -210,7 +210,7 @@ describe('useGeminiStream', () => {
       },
       setQuotaErrorOccurred: vi.fn(),
       getQuotaErrorOccurred: vi.fn(() => false),
-      getModel: vi.fn(() => 'gemini-2.5-pro'),
+      getModel: vi.fn(() => 'gemini-3.0-pro'),
       getContentGeneratorConfig: vi
         .fn()
         .mockReturnValue(contentGeneratorConfig),
@@ -1304,7 +1304,7 @@ describe('useGeminiStream', () => {
         getContentGeneratorConfig: vi.fn(() => ({
           authType: mockAuthType,
         })),
-        getModel: vi.fn(() => 'gemini-2.5-pro'),
+        getModel: vi.fn(() => 'gemini-3.0-pro'),
       } as unknown as Config;
 
       const { result } = renderHook(() =>
@@ -1341,8 +1341,8 @@ describe('useGeminiStream', () => {
           'Rate limit exceeded',
           mockAuthType,
           undefined,
-          'gemini-2.5-pro',
-          'gemini-2.5-flash',
+          'gemini-3.0-pro',
+          'gemini-3.0-flash',
         );
       });
     });
@@ -2565,8 +2565,8 @@ describe('useGeminiStream', () => {
         { message: 'Test error' },
         expect.any(String),
         undefined,
-        'gemini-2.5-pro',
-        'gemini-2.5-flash',
+        'gemini-3.0-pro',
+        'gemini-3.0-flash',
       );
     });
   });

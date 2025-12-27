@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -9,109 +9,88 @@ import { hideBin } from 'yargs/helpers';
 import type {
   MainAgentInterfaceConfig,
   CollaborationMetrics,
-  CollaborativeTaskResult} from '@google/gemini-cli-core';
+  CollaborativeTaskResult,
+} from '@google/gemini-cli-core';
 import {
   Config,
   ApprovalMode,
   MainAgentInterface,
-  GeminiClient
+  SubagentGeminiClient,
 } from '@google/gemini-cli-core';
-
-// MainAgentInterfaceを使用
 import fs from 'node:fs';
 import path from 'node:path';
 
-/**
- * 自然言語プロンプト処理コマンド
- */
 export class NaturalLanguageCommand {
   private mainAgent?: MainAgentInterface;
 
-  constructor() {
-    // コンストラクタは空にする
-  }
-
-  /**
-   * コマンド実行
-   */
   private async execute(
     prompt: string,
     options: {
       mode: string;
-      timeout: string;
-      context: Record<string, unknown>;
+      timeout: number;
+      context?: string;
       output?: string;
       verbose?: boolean;
     },
   ): Promise<void> {
     try {
-      console.log('🤖 自然言語プロンプト処理を開始します...');
-      console.log(`📝 プロンプト: ${prompt}`);
-      console.log(`🔧 実行モード: ${options.mode}`);
+      console.log('Starting natural language task...');
+      console.log(`Prompt: ${prompt}`);
+      console.log(`Mode: ${options.mode}`);
 
-      // 設定の初期化
       const config = await this.initializeConfig(options);
-
-      // メインエージェントの初期化
       this.mainAgent = new MainAgentInterface(config);
 
-      // 自然言語プロンプトの実行
       const startTime = Date.now();
       const result: CollaborativeTaskResult = await this.mainAgent.executeTask(
         prompt,
         options.context,
-        options.mode,
+        options.mode as Parameters<MainAgentInterface['executeTask']>[2],
         {
-          timeout: parseInt(options.timeout, 10) * 1000,
+          timeout: options.timeout * 1000,
         },
       );
       const executionTime = Date.now() - startTime;
 
-      // 結果の表示
       this.displayResult(result, executionTime, options);
 
-      // 結果の保存
       if (options.output) {
         await this.saveResult(result, prompt, options.output);
       }
 
-      console.log('✅ 自然言語プロンプト処理が完了しました！');
+      console.log('Natural language task finished.');
     } catch (error) {
-      console.error('❌ エラーが発生しました:', error);
+      console.error('Natural language command failed:', error);
       process.exit(1);
     }
   }
 
-  /**
-   * 設定の初期化
-   */
   private async initializeConfig(options: {
-    timeout: string;
+    timeout: number;
     output?: string;
   }): Promise<MainAgentInterfaceConfig> {
-    // Gemini APIキーの取得
     const apiKey = process.env['GEMINI_API_KEY'];
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY環境変数が設定されていません');
+      throw new Error('GEMINI_API_KEY is not set');
     }
 
-    // Geminiクライアントの初期化
-    const geminiClient = new GeminiClient({
+    const geminiClient = new SubagentGeminiClient({
       apiKey,
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-      defaultModel: 'models/gemini-2.5-pro',
+      defaultModel: 'models/gemini-3.0-pro',
       defaultTemperature: 0.7,
       defaultMaxTokens: 4096,
     });
 
-    // 設定オブジェクトの初期化
     const config = new Config({
       sessionId: 'natural-language-session',
       targetDir: process.cwd(),
       cwd: process.cwd(),
       debugMode: false,
-      model: 'models/gemini-2.5-pro',
-      fullContext: false,
+      model: 'models/gemini-3.0-pro',
+      apiKey,
+      baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
+      defaultModel: 'models/gemini-3.0-pro',
       approvalMode: ApprovalMode.DEFAULT,
       showMemoryUsage: false,
       accessibility: {},
@@ -132,8 +111,7 @@ export class NaturalLanguageCommand {
       summarizeToolOutput: {},
     });
 
-    // 出力ディレクトリの作成
-    const outputPath = path.resolve(options.output as string);
+    const outputPath = path.resolve(options.output ?? './_docs');
     if (!fs.existsSync(outputPath)) {
       fs.mkdirSync(outputPath, { recursive: true });
     }
@@ -146,73 +124,62 @@ export class NaturalLanguageCommand {
       enableNaturalLanguageProcessing: true,
       maxConcurrentSubagents: 5,
       autoAnalysisThreshold: 5,
-      decisionTimeout: parseInt(options.timeout, 10) * 1000,
+      decisionTimeout: options.timeout * 1000,
       enableRealTimeCoordination: true,
       enableCheckpointing: true,
       researchOutputPath: outputPath,
     };
   }
 
-  /**
-   * 結果の表示
-   */
   private displayResult(
     result: CollaborativeTaskResult,
     executionTime: number,
     options: {
       mode: string;
-      timeout: string;
-      context: Record<string, unknown>;
+      timeout: number;
+      context?: string;
       output?: string;
+      verbose?: boolean;
     },
   ): void {
-    console.log('\n📊 実行結果:');
-    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-    console.log(`✅ 成功: ${result.success ? 'はい' : 'いいえ'}`);
-    console.log(`🆔 タスクID: ${result.taskId}`);
-    console.log(`⏱️  実行時間: ${executionTime}ms`);
+    console.log('\nResult:');
+    console.log('------------------------------');
+    console.log(`Success: ${result.success ? 'yes' : 'no'}`);
+    console.log(`Task ID: ${result.taskId}`);
+    console.log(`Execution time: ${executionTime}ms`);
 
     if (result.collaborationMetrics) {
-      const metrics = result.collaborationMetrics;
-      console.log(`👥 使用サブエージェント数: ${metrics.subagentsUsed || 0}`);
+      const metrics = result.collaborationMetrics as CollaborationMetrics;
+      console.log(`Subagents used: ${metrics.subagentsUsed || 0}`);
       console.log(
-        `📈 成功ステップ数: ${metrics.successfulSteps || 0}/${metrics.totalSteps || 0}`,
+        `Steps: ${metrics.successfulSteps || 0}/${metrics.totalSteps || 0}`,
       );
-      console.log(`⚡ 平均応答時間: ${metrics.averageResponseTime || 0}ms`);
+      console.log(`Avg response time: ${metrics.averageResponseTime || 0}ms`);
     }
 
     if (result.finalResult) {
-      console.log(`\n📋 最終結果:`);
-      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.log('\nFinal result:');
+      console.log('------------------------------');
       console.log(result.finalResult.finalResult);
 
-      if (
-        result.finalResult.recommendations &&
-        result.finalResult.recommendations.length > 0
-      ) {
-        console.log(`\n💡 推奨事項:`);
-        result.finalResult.recommendations.forEach(
-          (rec: string, index: number) => {
-            console.log(`${index + 1}. ${rec}`);
-          },
-        );
+      if (result.finalResult.recommendations?.length) {
+        console.log('\nRecommendations:');
+        result.finalResult.recommendations.forEach((rec, index) => {
+          console.log(`${index + 1}. ${rec}`);
+        });
       }
     }
 
     if (result.error) {
-      console.log(`\n❌ エラー: ${result.error}`);
+      console.log(`\nError: ${result.error}`);
     }
 
     if (options.verbose) {
-      console.log(`\n🔍 詳細情報:`);
-      console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      console.log('\nDetails:');
       console.log(JSON.stringify(result, null, 2));
     }
   }
 
-  /**
-   * 結果の保存
-   */
   private async saveResult(
     result: CollaborativeTaskResult,
     prompt: string,
@@ -223,84 +190,50 @@ export class NaturalLanguageCommand {
       const filename = `${timestamp}_natural_language_result_${result.taskId}.md`;
       const filepath = path.join(outputPath, filename);
 
-      const content = `# 自然言語プロンプト処理結果
-
-## 実行日時
-${new Date().toLocaleString('ja-JP')}
-
-## プロンプト
-${prompt}
-
-## 実行結果
-- 成功: ${result.success ? 'はい' : 'いいえ'}
-- タスクID: ${result.taskId}
-- 実行時間: ${result.executionTime}ms
-
-## 協調メトリクス
-${
-  result.collaborationMetrics
-    ? (() => {
-        const metrics = result.collaborationMetrics as CollaborationMetrics;
-        return `
-- 使用サブエージェント数: ${metrics.subagentsUsed || 0}
-- 成功ステップ数: ${metrics.successfulSteps || 0}/${metrics.totalSteps || 0}
-- 平均応答時間: ${metrics.averageResponseTime || 0}ms
-- 総トークン使用量: ${metrics.totalTokensUsed || 0}
-`;
-      })()
-    : 'なし'
-}
-
-## 最終結果
-${result.finalResult ? result.finalResult.finalResult : 'なし'}
-
-## 推奨事項
-${result.finalResult?.recommendations ? result.finalResult.recommendations.map((rec: string, index: number) => `${index + 1}. ${rec}`).join('\n') : 'なし'}
-
-${result.error ? `## エラー\n${result.error}` : ''}
-
----
-*このファイルは自動生成されました*
-`;
+      const content = `# Natural Language Result\n\n` +
+        `## Date\n${new Date().toLocaleString('en-US')}\n\n` +
+        `## Prompt\n${prompt}\n\n` +
+        `## Result\n- Success: ${result.success ? 'yes' : 'no'}\n- Task ID: ${result.taskId}\n- Execution time: ${result.executionTime}ms\n\n` +
+        `## Final Output\n${result.finalResult ? result.finalResult.finalResult : 'N/A'}\n\n` +
+        (result.error ? `## Error\n${result.error}\n\n` : '') +
+        `---\n` +
+        `*Generated automatically*\n`;
 
       await fs.promises.writeFile(filepath, content, 'utf-8');
-      console.log(`📄 結果を保存しました: ${filepath}`);
+      console.log(`Saved result: ${filepath}`);
     } catch (error) {
-      console.error('❌ 結果の保存に失敗しました:', error);
+      console.error('Failed to save result:', error);
     }
   }
 
-  /**
-   * コマンドの実行
-   */
   async run(args: string[]): Promise<void> {
-    const argv = await yargs(hideBin(args))
+    const argv = (await yargs(hideBin(args))
       .usage('$0 <prompt> [options]')
       .command(
         '$0 <prompt>',
-        '自然言語プロンプトで並列作業を自律的に分担する',
+        'Run a natural language prompt with collaborative agents',
         (yargs) =>
           yargs
             .positional('prompt', {
-              describe: '自然言語プロンプト',
+              describe: 'Natural language prompt',
               type: 'string',
               demandOption: true,
             })
             .option('context', {
               alias: 'c',
-              describe: '追加のコンテキスト情報',
+              describe: 'Additional context string',
               type: 'string',
             })
             .option('output', {
               alias: 'o',
-              describe: '出力ファイルのパス',
+              describe: 'Output directory',
               type: 'string',
               default: './_docs',
             })
             .option('mode', {
               alias: 'm',
               describe:
-                '実行モード (auto|natural_language|autonomous|supervisor|manual)',
+                'Execution mode (auto|natural_language|autonomous|supervisor|manual)',
               type: 'string',
               choices: [
                 'auto',
@@ -313,26 +246,33 @@ ${result.error ? `## エラー\n${result.error}` : ''}
             })
             .option('timeout', {
               alias: 't',
-              describe: 'タイムアウト時間（秒）',
+              describe: 'Timeout in seconds',
               type: 'number',
               default: 300,
             })
             .option('verbose', {
               alias: 'v',
-              describe: '詳細なログを出力',
+              describe: 'Enable verbose output',
               type: 'boolean',
               default: false,
             })
             .help()
             .alias('h', 'help'),
-      ).argv;
+      ).argv) as unknown as {
+      prompt: string;
+      mode: string;
+      timeout: number;
+      context?: string;
+      output?: string;
+      verbose?: boolean;
+    };
 
-    await this.execute(argv.prompt as string, {
-      mode: argv.mode as string,
-      timeout: argv.timeout as string,
-      context: (argv.context as Record<string, unknown>) || {},
-      output: argv.output as string,
-      verbose: argv.verbose as boolean,
+    await this.execute(argv.prompt, {
+      mode: argv.mode,
+      timeout: argv.timeout,
+      context: argv.context,
+      output: argv.output,
+      verbose: argv.verbose,
     });
   }
 }

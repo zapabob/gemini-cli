@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
@@ -10,77 +10,70 @@ import {
   YamlAgentLoader,
   SubagentRegistry,
   SubagentExecutor,
+  type Subagent,
+  type SubagentDefinition,
+  type SubagentTask,
+  type SubagentResult,
 } from '@google/gemini-cli-core';
 
-/**
- * サブエージェント並列実行コマンド
- */
 export async function executeParallelAgentsCommand(
   args: string[],
 ): Promise<void> {
   const argv = await yargs(hideBin(args))
     .option('task', {
       type: 'string',
-      description: '実行するタスク',
+      description: 'Task to run',
       demandOption: true,
     })
     .option('agents', {
       type: 'array',
-      description:
-        '実行するサブエージェント名（指定しない場合は全サブエージェント）',
+      description: 'Subagent names to run (default: all)',
       default: [],
     })
     .option('max-concurrent', {
       type: 'number',
-      description: '最大同時実行数',
+      description: 'Max concurrent agents',
       default: 5,
     })
     .option('timeout', {
       type: 'number',
-      description: 'タイムアウト時間（秒）',
+      description: 'Timeout in seconds',
       default: 300,
     })
     .help().argv;
 
   try {
-    // サブエージェントを読み込む
     const loader = new YamlAgentLoader();
     await loader.loadAllAgents();
 
     const registry = SubagentRegistry.getInstance();
     let targetAgents = registry.getAllSubagents();
 
-    // 特定のサブエージェントが指定された場合はフィルタリング
     if (argv.agents && argv.agents.length > 0) {
       targetAgents = targetAgents.filter((agent) =>
         (argv.agents as string[]).includes(agent.name),
       );
 
       if (targetAgents.length === 0) {
-        console.log(
-          `❌ 指定されたサブエージェントが見つかりません: ${argv.agents.join(', ')}`,
-        );
-        console.log(
-          '利用可能なサブエージェントを確認するには: gemini agents list',
-        );
+        console.log(`No matching subagents: ${argv.agents.join(', ')}`);
+        console.log('List subagents: gemini agents list');
         process.exit(1);
       }
     }
 
     if (targetAgents.length === 0) {
-      console.log('❌ 実行可能なサブエージェントがありません');
-      console.log('サブエージェントを作成するには: gemini agents create');
+      console.log('No subagents available.');
+      console.log('Create a subagent: gemini agents create');
       process.exit(1);
     }
 
-    console.log(`🚀 並列実行を開始します`);
-    console.log(`📋 タスク: ${argv.task}`);
-    console.log(`🤖 実行サブエージェント数: ${targetAgents.length}`);
-    console.log(`⚡ 最大同時実行数: ${argv['max-concurrent']}`);
-    console.log(`⏱️ タイムアウト: ${argv.timeout}秒`);
+    console.log('Starting parallel execution');
+    console.log('Task: ' + argv.task);
+    console.log('Subagents: ' + targetAgents.length);
+    console.log('Max concurrent: ' + argv['max-concurrent']);
+    console.log('Timeout (s): ' + argv.timeout);
     console.log('');
 
-    // 並列実行の開始
     const startTime = Date.now();
     const results = await executeParallelTasks(targetAgents, argv.task, {
       maxConcurrent: argv['max-concurrent'],
@@ -89,36 +82,34 @@ export async function executeParallelAgentsCommand(
 
     const executionTime = Date.now() - startTime;
 
-    // 結果の表示
-    console.log(`✅ 並列実行完了`);
-    console.log(`⏱️ 総実行時間: ${executionTime}ms`);
+    console.log('Parallel execution complete.');
+    console.log('Total time (ms): ' + executionTime);
     console.log('');
 
     results.forEach((result, index) => {
       const agent = targetAgents[index];
-      console.log(`🤖 ${agent.name} (${agent.specialty}):`);
-      console.log(`   📊 実行時間: ${result.executionTime}ms`);
-      console.log(`   ✅ 結果: ${result.success ? '成功' : '失敗'}`);
+      console.log('Subagent ' + agent.name + ' (' + agent.specialty + '):');
+      console.log('   execution time (ms): ' + result.executionTime);
+      console.log('   result: ' + (result.success ? 'success' : 'failure'));
       if (result.error) {
-        console.log(`   ❌ エラー: ${result.error}`);
+        console.log('   error: ' + result.error);
       } else {
         console.log(
-          `   📝 出力: ${result.result?.substring(0, 100)}${result.result && result.result.length > 100 ? '...' : ''}`,
+          '   output: ' +
+            (result.result?.substring(0, 100) || '') +
+            (result.result && result.result.length > 100 ? '...' : ''),
         );
       }
       console.log('');
     });
   } catch (error) {
-    console.error(`❌ 並列実行に失敗しました:`, error);
+    console.error('Parallel execution failed:', error);
     process.exit(1);
   }
 }
 
-/**
- * サブエージェントを並列実行する関数
- */
 async function executeParallelTasks(
-  agents: Array<{ name: string; specialty: string; model?: string }>,
+  agents: SubagentDefinition[],
   task: string,
   options: { maxConcurrent: number; timeout: number },
 ): Promise<
@@ -136,39 +127,50 @@ async function executeParallelTasks(
     executionTime: number;
   }> = [];
   const semaphore = new Semaphore(options.maxConcurrent);
+  const subagents = agents.map(createSubagentFromDefinition);
 
-  // すべてのサブエージェントを並列実行
-  const promises = agents.map(async (agent, index) => {
+  const promises = subagents.map(async (subagent, index) => {
     await semaphore.acquire();
 
     try {
-      console.log(`🔄 ${agent.name} を実行中...`);
+      console.log('Running: ' + subagent.name);
 
       const executor = new SubagentExecutor({
         maxConcurrent: 3,
-        timeout: 300000,
+        timeout: options.timeout,
       });
 
       const startTime = Date.now();
-      const result = await Promise.race([
-        executor.executeTask({
-          id: `parallel-${agent.name}-${Date.now()}`,
-          task,
-          context: '',
-          priority: 'medium',
-          specialty: agent.specialty,
-          agentName: agent.name,
-        }),
+      const taskRequest: SubagentTask = {
+        id: `parallel-${subagent.name}-${Date.now()}`,
+        task,
+        context: '',
+        priority: 'medium',
+      };
+      const result = (await Promise.race([
+        executor.executeTask(subagent, taskRequest),
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new Error(`タイムアウト: ${300000}ms`)),
-            300000,
+            () => reject(new Error(`Timeout ${options.timeout}ms`)),
+            options.timeout,
           ),
         ),
-      ]);
+      ])) as SubagentResult;
 
       const executionTime = Date.now() - startTime;
-      results[index] = { ...result, executionTime, success: true };
+      if (result.status === 'success') {
+        results[index] = {
+          success: true,
+          result: result.result,
+          executionTime,
+        };
+      } else {
+        results[index] = {
+          success: false,
+          error: result.error ?? result.result,
+          executionTime,
+        };
+      }
     } catch (error) {
       results[index] = {
         success: false,
@@ -184,9 +186,6 @@ async function executeParallelTasks(
   return results;
 }
 
-/**
- * セマフォの実装（並列実行数を制限）
- */
 class Semaphore {
   private permits: number;
   private waiting: Array<() => void> = [];
@@ -214,4 +213,39 @@ class Semaphore {
       resolve();
     }
   }
+}
+
+function createSubagentFromDefinition(
+  definition: SubagentDefinition,
+): Subagent {
+  const now = new Date().toISOString();
+  const config = definition.config ?? {};
+  const systemPrompt =
+    typeof (config as { systemPrompt?: unknown }).systemPrompt === 'string'
+      ? (config as { systemPrompt: string }).systemPrompt
+      : undefined;
+  const maxTokens =
+    typeof (config as { maxTokens?: unknown }).maxTokens === 'number'
+      ? (config as { maxTokens: number }).maxTokens
+      : 4000;
+  const temperature =
+    typeof (config as { temperature?: unknown }).temperature === 'number'
+      ? (config as { temperature: number }).temperature
+      : 0.7;
+
+  return {
+    id: `yaml-${definition.name}-${Date.now()}`,
+    name: definition.name,
+    description: definition.description,
+    specialty: definition.specialty as Subagent['specialty'],
+    prompt: '',
+    systemPrompt,
+    maxTokens,
+    temperature,
+    status: 'idle',
+    createdAt: now,
+    taskHistory: [],
+    customTools: [],
+    isActive: true,
+  };
 }

@@ -1004,3 +1004,45 @@ gemini mcp remove my-server
 
 This will find and delete the "my-server" entry from the `mcpServers` object in
 the appropriate `settings.json` file based on the scope (`-s, --scope`).
+
+## Gemini Codex MCP server
+
+The repository provides a ready-to-use MCP server implementation for Codex in
+`mcp-servers/gemini-codex-mcp`. It exposes the Gemini CLI's non-interactive
+capabilities through a single `gemini_generate_text` tool that supports
+conversation history, file context, and sampling controls.
+
+### Build and run
+
+```bash
+cd mcp-servers/gemini-codex-mcp
+npm install
+npm run build
+npx gemini-codex-mcp
+```
+
+Set `GOOGLE_API_KEY` (or the Vertex AI variables `GOOGLE_GENAI_USE_VERTEXAI`,
+`GOOGLE_CLOUD_PROJECT`, and `GOOGLE_CLOUD_LOCATION`) before launching the server.
+Optional environment variables include `GEMINI_MODEL` and
+`GEMINI_SYSTEM_INSTRUCTION`.
+
+### Codex configuration example
+
+```json
+{
+  "mcpServers": {
+    "gemini-codex": {
+      "command": "node",
+      "args": [
+        "./mcp-servers/gemini-codex-mcp/dist/index.js"
+      ],
+      "env": {
+        "GOOGLE_API_KEY": "$GOOGLE_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Once configured, Codex can call `gemini_generate_text` to retrieve Gemini
+responses inside your workspace.

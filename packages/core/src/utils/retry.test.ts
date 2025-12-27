@@ -306,7 +306,7 @@ describe('retryWithBackoff', () => {
 
   describe('Flash model fallback for OAuth users', () => {
     it('should trigger fallback for OAuth personal users on TerminalQuotaError', async () => {
-      const fallbackCallback = vi.fn().mockResolvedValue('gemini-2.5-flash');
+      const fallbackCallback = vi.fn().mockResolvedValue('gemini-3.0-flash');
 
       let fallbackOccurred = false;
       const mockFn = vi.fn().mockImplementation(async () => {
