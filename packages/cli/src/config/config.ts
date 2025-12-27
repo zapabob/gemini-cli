@@ -357,8 +357,14 @@ export async function parseArguments(settings: Settings): Promise<CliArgs> {
     yargsInstance.command(extensionsCommand);
   }
 
-  // Register agents subcommands
-  yargsInstance.command('agents', 'サブエージェントの管理', async (yargs) => agentsCommand(await yargs.argv));
+  yargsInstance.command(
+    'agents',
+    'サブエージェントの管理',
+    () => {},
+    async () => {
+      await agentsCommand(process.argv.slice(2));
+    },
+  );
 
   yargsInstance
     .version(await getCliVersion()) // This will enable the --version flag based on package.json

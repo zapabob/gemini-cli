@@ -10,6 +10,9 @@ import {
   YamlAgentLoader,
   SubagentRegistry,
   SubagentExecutor,
+  type Subagent,
+  type SubagentTask,
+  type SubagentSpecialty,
 } from '@google/gemini-cli-core';
 
 /**
@@ -56,13 +59,15 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
     // サブエージェントエグゼキュータを作成して実行
     const executor = new SubagentExecutor();
 
-    // シンプルな実行（実際の実装ではより詳細なタスク実行ロジックが必要）
-    const result = await executor.executeTask({
+    const subagent = toSubagent(agentDefinition);
+    const task: SubagentTask = {
+      id: `${agentDefinition.name}-${Date.now()}`,
       task: argv.task,
       context: argv.context || '',
-      specialty: agentDefinition.specialty,
-      agentName: agentDefinition.name,
-    });
+      priority: 'medium',
+    };
+
+    const result = await executor.executeTask(subagent, task);
 
     console.log(`✅ 実行完了`);
     console.log(`📊 実行時間: ${result.executionTime}ms`);
@@ -72,4 +77,52 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
     console.error(`❌ サブエージェントの実行に失敗しました:`, error);
     process.exit(1);
   }
+}
+
+function toSubagent(agentDefinition: {
+  name: string;
+  description: string;
+  specialty: string;
+}): Subagent {
+  const allowedSpecialties: Set<SubagentSpecialty> = new Set([
+    'code_review',
+    'debugging',
+    'data_analysis',
+    'security_audit',
+    'performance_optimization',
+    'documentation',
+    'testing',
+    'architecture_design',
+    'api_design',
+    'database_optimization',
+    'frontend_development',
+    'backend_development',
+    'devops',
+    'machine_learning',
+    'custom',
+  ]);
+
+  const specialty = allowedSpecialties.has(
+    agentDefinition.specialty as SubagentSpecialty,
+  )
+    ? (agentDefinition.specialty as SubagentSpecialty)
+    : 'custom';
+
+  return {
+    id: `manual-${Date.now()}`,
+    name: agentDefinition.name,
+    description: agentDefinition.description,
+    specialty,
+    prompt: agentDefinition.description,
+    systemPrompt: undefined,
+    maxTokens: 4096,
+    temperature: 0.7,
+    status: 'idle',
+    createdAt: new Date().toISOString(),
+    lastUsed: undefined,
+    taskHistory: [],
+    customTools: [],
+    parentAgentId: undefined,
+    isActive: true,
+  };
 }

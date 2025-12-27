@@ -43,8 +43,10 @@ junit.xml
 packages/*/coverage/
 
 # Generated files
-packages/cli/src/generated/
-packages/core/src/generated/
+packages/cli/src/generated/*
+packages/core/src/generated/*
+!packages/cli/src/generated/git-commit.ts
+!packages/core/src/generated/git-commit.ts
 .integration-tests/
 packages/vscode-ide-companion/*.vsix
 

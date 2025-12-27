@@ -21,9 +21,18 @@ import {
   logExtensionEnable,
   logExtensionInstallEvent,
   logExtensionUninstall,
-  logExtensionUpdateEvent,
   logExtensionDisable,
 } from '@google/gemini-cli-core';
+
+const logExtensionUpdateEventTelemetry = (
+  _config: Config,
+  event: ExtensionUpdateEvent,
+) => {
+  // Lightweight logging fallback when telemetry helpers are unavailable.
+  console.debug(`[Extension Update] ${event.toLogBody()}`, {
+    attributes: event.toOpenTelemetryAttributes(_config),
+  });
+};
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
@@ -541,7 +550,7 @@ export async function installOrUpdateExtension(
     }
 
     if (isUpdate) {
-      logExtensionUpdateEvent(
+      logExtensionUpdateEventTelemetry(
         telemetryConfig,
         new ExtensionUpdateEvent(
           newExtensionConfig.name,
@@ -579,7 +588,7 @@ export async function installOrUpdateExtension(
       }
     }
     if (isUpdate) {
-      logExtensionUpdateEvent(
+      logExtensionUpdateEventTelemetry(
         telemetryConfig,
         new ExtensionUpdateEvent(
           newExtensionConfig?.name ?? previousExtensionConfig.name,

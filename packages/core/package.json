@@ -62,7 +62,8 @@
     "simple-git": "^3.28.0",
     "strip-ansi": "^7.1.0",
     "undici": "^7.10.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "yaml": "^2.8.1"
   },
   "optionalDependencies": {
     "@lydell/node-pty": "1.1.0",
@@ -81,9 +82,11 @@
     "@types/minimatch": "^5.1.2",
     "@types/picomatch": "^4.0.1",
     "@types/ws": "^8.5.10",
+    "mock-fs": "^5.5.0",
     "msw": "^2.3.4",
     "typescript": "^5.3.3",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.1",
+    "@types/mock-fs": "^4.13.4"
   },
   "engines": {
     "node": ">=20"

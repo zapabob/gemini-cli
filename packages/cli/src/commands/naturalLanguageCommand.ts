@@ -4,35 +4,36 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import yargs from 'yargs';
+import yargs, { type ArgumentsCamelCase } from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { Config, ApprovalMode } from '@google/gemini-cli-core';
-
-// これらのクラスは上流リポジトリで削除されたため、暫定実装
-interface MainAgentInterface {
-  initialize(): Promise<void>;
-  executeTask(
-    prompt: string,
-    context: Record<string, unknown>,
-    mode: string,
-    options: Record<string, unknown>,
-  ): Promise<Record<string, unknown>>;
-}
-
-interface MainAgentInterfaceConfig {
-  model?: string;
-  temperature?: number;
-}
-
-class GeminiClient {
-  constructor(_config: Record<string, unknown>) {
-    // 暫定実装
-  }
-}
-
-// MainAgentInterfaceを使用
+import {
+  Config,
+  ApprovalMode,
+  MainAgentInterface,
+  type MainAgentInterfaceConfig,
+  type CollaborativeTaskResult,
+  type TaskExecutionMode,
+} from '@google/gemini-cli-core';
+import { SubagentGeminiClient } from '@google/gemini-cli-core';
 import fs from 'node:fs';
 import path from 'node:path';
+
+type NaturalLanguageOptions = {
+  mode: TaskExecutionMode;
+  timeoutSeconds: number;
+  context?: string;
+  output: string;
+  verbose: boolean;
+};
+
+type NaturalLanguageArgv = {
+  prompt: string;
+  context?: string;
+  output: string;
+  mode: TaskExecutionMode;
+  timeout: number;
+  verbose: boolean;
+};
 
 /**
  * 自然言語プロンプト処理コマンド
@@ -49,11 +50,7 @@ export class NaturalLanguageCommand {
    */
   private async execute(
     prompt: string,
-    options: {
-      mode: string;
-      timeout: string;
-      context: Record<string, unknown>;
-    },
+    options: NaturalLanguageOptions,
   ): Promise<void> {
     try {
       console.log('🤖 自然言語プロンプト処理を開始します...');
@@ -61,7 +58,10 @@ export class NaturalLanguageCommand {
       console.log(`🔧 実行モード: ${options.mode}`);
 
       // 設定の初期化
-      const config = await this.initializeConfig(options);
+      const config = await this.initializeConfig(
+        options.output,
+        options.timeoutSeconds,
+      );
 
       // メインエージェントの初期化
       this.mainAgent = new MainAgentInterface(config);
@@ -73,17 +73,17 @@ export class NaturalLanguageCommand {
         options.context,
         options.mode,
         {
-          timeout: parseInt(options.timeout, 10) * 1000,
+          timeout: options.timeoutSeconds * 1000,
         },
       );
-      const executionTime = Date.now() - startTime;
+      const executionTime = result.executionTime ?? Date.now() - startTime;
 
       // 結果の表示
       this.displayResult(result, executionTime, options);
 
       // 結果の保存
       if (options.output) {
-        await this.saveResult(result, prompt, options.output);
+        await this.saveResult(result, prompt, options.output, executionTime);
       }
 
       console.log('✅ 自然言語プロンプト処理が完了しました！');
@@ -97,7 +97,8 @@ export class NaturalLanguageCommand {
    * 設定の初期化
    */
   private async initializeConfig(
-    options: Record<string, unknown>,
+    outputDir: string,
+    timeoutSeconds: number,
   ): Promise<MainAgentInterfaceConfig> {
     // Gemini APIキーの取得
     const apiKey = process.env['GEMINI_API_KEY'];
@@ -106,7 +107,7 @@ export class NaturalLanguageCommand {
     }
 
     // Geminiクライアントの初期化
-    const geminiClient = new GeminiClient({
+    const geminiClient = new SubagentGeminiClient({
       apiKey,
       defaultModel: 'models/gemini-3.0-pro',
       defaultTemperature: 0.7,
@@ -142,7 +143,7 @@ export class NaturalLanguageCommand {
     });
 
     // 出力ディレクトリの作成
-    const outputPath = path.resolve(options.output);
+    const outputPath = path.resolve(outputDir);
     if (!fs.existsSync(outputPath)) {
       fs.mkdirSync(outputPath, { recursive: true });
     }
@@ -155,7 +156,7 @@ export class NaturalLanguageCommand {
       enableNaturalLanguageProcessing: true,
       maxConcurrentSubagents: 5,
       autoAnalysisThreshold: 5,
-      decisionTimeout: parseInt(options.timeout, 10) * 1000,
+      decisionTimeout: timeoutSeconds * 1000,
       enableRealTimeCoordination: true,
       enableCheckpointing: true,
       researchOutputPath: outputPath,
@@ -166,9 +167,9 @@ export class NaturalLanguageCommand {
    * 結果の表示
    */
   private displayResult(
-    result: Record<string, unknown>,
+    result: CollaborativeTaskResult,
     executionTime: number,
-    options: Record<string, unknown>,
+    options: NaturalLanguageOptions,
   ): void {
     console.log('\n📊 実行結果:');
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -221,9 +222,10 @@ export class NaturalLanguageCommand {
    * 結果の保存
    */
   private async saveResult(
-    result: Record<string, unknown>,
+    result: CollaborativeTaskResult,
     prompt: string,
     outputPath: string,
+    executionTime: number,
   ): Promise<void> {
     try {
       const timestamp = new Date().toISOString().split('T')[0];
@@ -241,7 +243,7 @@ ${prompt}
 ## 実行結果
 - 成功: ${result.success ? 'はい' : 'いいえ'}
 - タスクID: ${result.taskId}
-- 実行時間: ${result.executionTime}ms
+- 実行時間: ${executionTime}ms
 
 ## 協調メトリクス
 ${
@@ -278,7 +280,7 @@ ${result.error ? `## エラー\n${result.error}` : ''}
    * コマンドの実行
    */
   async run(args: string[]): Promise<void> {
-    const argv = await yargs(hideBin(args))
+    const argv = (await yargs(hideBin(args))
       .usage('$0 <prompt> [options]')
       .command(
         '$0 <prompt>',
@@ -326,13 +328,30 @@ ${result.error ? `## エラー\n${result.error}` : ''}
               type: 'boolean',
               default: false,
             })
+            .strict()
             .help()
             .alias('h', 'help'),
-      ).argv;
+      ).argv) as ArgumentsCamelCase<NaturalLanguageArgv>;
 
     await this.execute(
-      (argv as Record<string, unknown>).prompt as string,
-      argv as Record<string, unknown>,
+      argv.prompt,
+      {
+        mode: ([
+          'auto',
+          'natural_language',
+          'autonomous',
+          'supervisor',
+          'manual',
+        ] as TaskExecutionMode[]).includes(
+          argv.mode,
+        )
+          ? argv.mode
+          : 'auto',
+        timeoutSeconds: Number(argv.timeout),
+        context: argv.context,
+        output: argv.output,
+        verbose: Boolean(argv.verbose),
+      },
     );
   }
 }
