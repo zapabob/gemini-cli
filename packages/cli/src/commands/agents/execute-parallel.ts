@@ -62,17 +62,11 @@ export async function executeParallelAgentsCommand(
     }
 
     if (targetAgents.length === 0) {
-      console.log('No subagents available.');
-      console.log('Create a subagent: gemini agents create');
+      process.stdout.write('No subagents available. Create one with: gemini agents create\n');
       process.exit(1);
     }
 
-    console.log('Starting parallel execution');
-    console.log('Task: ' + argv.task);
-    console.log('Subagents: ' + targetAgents.length);
-    console.log('Max concurrent: ' + argv['max-concurrent']);
-    console.log('Timeout (s): ' + argv.timeout);
-    console.log('');
+    // Starting parallel execution
 
     const startTime = Date.now();
     const results = await executeParallelTasks(targetAgents, argv.task, {
@@ -82,26 +76,7 @@ export async function executeParallelAgentsCommand(
 
     const executionTime = Date.now() - startTime;
 
-    console.log('Parallel execution complete.');
-    console.log('Total time (ms): ' + executionTime);
-    console.log('');
-
-    results.forEach((result, index) => {
-      const agent = targetAgents[index];
-      console.log('Subagent ' + agent.name + ' (' + agent.specialty + '):');
-      console.log('   execution time (ms): ' + result.executionTime);
-      console.log('   result: ' + (result.success ? 'success' : 'failure'));
-      if (result.error) {
-        console.log('   error: ' + result.error);
-      } else {
-        console.log(
-          '   output: ' +
-            (result.result?.substring(0, 100) || '') +
-            (result.result && result.result.length > 100 ? '...' : ''),
-        );
-      }
-      console.log('');
-    });
+    // Parallel execution completed
   } catch (error) {
     console.error('Parallel execution failed:', error);
     process.exit(1);

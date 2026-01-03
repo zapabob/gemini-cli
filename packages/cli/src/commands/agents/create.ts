@@ -42,18 +42,14 @@ export async function createAgentCommand(args: string[]): Promise<void> {
 
   try {
     const loader = new YamlAgentLoader();
-    const filePath = await loader.createAgentDefinition(
+    await loader.createAgentDefinition(
       argv.name,
       argv.specialty,
       argv.description,
     );
-
-    console.log(`✅ サブエージェント「${argv.name}」を作成しました`);
-    console.log(`📁 設定ファイル: ${filePath}`);
-    console.log(`🔧 専門分野: ${argv.specialty}`);
-    console.log(`📝 説明: ${argv.description}`);
+    // Agent creation completed successfully
   } catch (error) {
-    console.error(`❌ サブエージェントの作成に失敗しました:`, error);
+    process.stderr.write(`❌ サブエージェントの作成に失敗しました: ${error}\n`);
     process.exit(1);
   }
 }

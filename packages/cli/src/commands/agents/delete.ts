@@ -48,7 +48,7 @@ export async function deleteAgentCommand(args: string[]): Promise<void> {
       });
 
       if (answer !== 'yes' && answer !== 'y') {
-        console.log('❌ 削除をキャンセルしました');
+        // Deletion cancelled by user
         return;
       }
     }
@@ -56,13 +56,13 @@ export async function deleteAgentCommand(args: string[]): Promise<void> {
     const deleted = await loader.deleteAgentDefinition(argv.name);
 
     if (deleted) {
-      console.log(`✅ サブエージェント「${argv.name}」を削除しました`);
+      // Agent deleted successfully
     } else {
-      console.log(`❌ サブエージェント「${argv.name}」が見つかりません`);
+      process.stderr.write(`❌ サブエージェント「${argv.name}」が見つかりません\n`);
       process.exit(1);
     }
   } catch (error) {
-    console.error(`❌ サブエージェントの削除に失敗しました:`, error);
+    process.stderr.write(`❌ サブエージェントの削除に失敗しました: ${error}\n`);
     process.exit(1);
   }
 }

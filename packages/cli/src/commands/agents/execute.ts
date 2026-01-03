@@ -41,13 +41,11 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
     const agentDefinition = registry.getSubagent(argv.name);
 
     if (!agentDefinition) {
-      console.log(`Subagent not found: ${argv.name}`);
-      console.log('List subagents: gemini agents list');
+      process.stderr.write(`Subagent not found: ${argv.name}. Use: gemini agents list\n`);
       process.exit(1);
     }
 
-    console.log('Running subagent: ' + agentDefinition.name);
-    console.log('Task: ' + argv.task);
+    // Running subagent
 
     const executor = new SubagentExecutor();
     const subagent = createSubagentFromDefinition(agentDefinition);
@@ -60,11 +58,9 @@ export async function executeAgentCommand(args: string[]): Promise<void> {
 
     const result = await executor.executeTask(subagent, task);
 
-    console.log('Done.');
-    console.log('Execution time (ms): ' + result.executionTime);
-    console.log(result);
+    // Subagent execution completed successfully
   } catch (error) {
-    console.error('Subagent execution failed:', error);
+    process.stderr.write(`Subagent execution failed: ${error}\n`);
     process.exit(1);
   }
 }
