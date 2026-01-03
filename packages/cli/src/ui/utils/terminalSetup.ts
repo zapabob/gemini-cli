@@ -53,24 +53,20 @@ type SupportedTerminal = 'vscode' | 'cursor' | 'windsurf';
 // Terminal detection
 async function detectTerminal(): Promise<SupportedTerminal | null> {
   const termProgram = process.env['TERM_PROGRAM'];
+  const askpass = process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase() ?? '';
 
-  // Check VS Code and its forks - check forks first to avoid false positives
-  // Check for Cursor-specific indicators
-  if (
-    process.env['CURSOR_TRACE_ID'] ||
-    process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('cursor')
-  ) {
-    return 'cursor';
-  }
-  // Check for Windsurf-specific indicators
-  if (
-    process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('windsurf')
-  ) {
-    return 'windsurf';
-  }
   // Check VS Code last since forks may also set VSCODE env vars
   if (termProgram === 'vscode' || process.env['VSCODE_GIT_IPC_HANDLE']) {
     return 'vscode';
+  }
+
+  // Check for Cursor-specific indicators
+  if (process.env['CURSOR_TRACE_ID'] || askpass.includes('cursor')) {
+    return 'cursor';
+  }
+  // Check for Windsurf-specific indicators
+  if (askpass.includes('windsurf')) {
+    return 'windsurf';
   }
 
   // Check parent process name

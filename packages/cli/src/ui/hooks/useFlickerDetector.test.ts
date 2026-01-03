@@ -7,15 +7,12 @@
 import { renderHook } from '@testing-library/react';
 import { vi, type Mock } from 'vitest';
 import { useFlickerDetector } from './useFlickerDetector.js';
-import { useConfig } from '../contexts/ConfigContext.js';
 import { recordFlickerFrame } from '@google/gemini-cli-core';
-import { type Config } from '@google/gemini-cli-core';
 import { type DOMElement, measureElement } from 'ink';
 import { useUIState } from '../contexts/UIStateContext.js';
 import { appEvents, AppEvent } from '../../utils/events.js';
 
 // Mock dependencies
-vi.mock('../contexts/ConfigContext.js');
 vi.mock('../contexts/UIStateContext.js');
 vi.mock('@google/gemini-cli-core', () => ({
   recordFlickerFrame: vi.fn(),
@@ -37,18 +34,15 @@ vi.mock('../../utils/events.js', () => ({
   },
 }));
 
-const mockUseConfig = useConfig as Mock;
 const mockUseUIState = useUIState as Mock;
 const mockRecordFlickerFrame = recordFlickerFrame as Mock;
 const mockMeasureElement = measureElement as Mock;
 const mockAppEventsEmit = appEvents.emit as Mock;
 
 describe('useFlickerDetector', () => {
-  const mockConfig = {} as Config;
   let mockRef: React.RefObject<DOMElement | null>;
 
   beforeEach(() => {
-    mockUseConfig.mockReturnValue(mockConfig);
     mockRef = { current: { yogaNode: {} } as DOMElement };
     // Default UI state
     mockUseUIState.mockReturnValue({ constrainHeight: true });
@@ -76,7 +70,14 @@ describe('useFlickerDetector', () => {
     mockMeasureElement.mockReturnValue({ width: 80, height: 30 });
     renderHook(() => useFlickerDetector(mockRef, 25));
     expect(mockRecordFlickerFrame).toHaveBeenCalledTimes(1);
-    expect(mockRecordFlickerFrame).toHaveBeenCalledWith(mockConfig);
+    expect(mockRecordFlickerFrame).toHaveBeenCalledWith(
+      expect.objectContaining({
+        component: 'root-ui',
+        duration: 5,
+        severity: 'medium',
+        timestamp: expect.any(Number),
+      }),
+    );
     expect(mockAppEventsEmit).toHaveBeenCalledTimes(1);
     expect(mockAppEventsEmit).toHaveBeenCalledWith(AppEvent.Flicker);
   });

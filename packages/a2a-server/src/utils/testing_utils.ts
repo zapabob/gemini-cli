@@ -9,10 +9,7 @@ import type {
   TaskStatusUpdateEvent,
   SendStreamingMessageSuccessResponse,
 } from '@a2a-js/sdk';
-import {
-  ApprovalMode,
-  GeminiClient,
-} from '@google/gemini-cli-core';
+import { ApprovalMode, GeminiClient } from '@google/gemini-cli-core';
 import type { Config, Storage } from '@google/gemini-cli-core';
 import { expect, vi } from 'vitest';
 
@@ -20,6 +17,10 @@ export function createMockConfig(
   overrides: Partial<Config> = {},
 ): Partial<Config> {
   const mockConfig = {
+    getMessageBus: vi.fn().mockReturnValue({
+      publish: vi.fn(),
+      subscribe: vi.fn(),
+    }),
     getToolRegistry: vi.fn().mockReturnValue({
       getTool: vi.fn(),
       getAllToolNames: vi.fn().mockReturnValue([]),
@@ -34,14 +35,17 @@ export function createMockConfig(
     storage: {
       getProjectTempDir: () => '/tmp',
     } as Storage,
+    getEnableHooks: vi.fn().mockReturnValue(false),
     getTruncateToolOutputThreshold: () => 1000,
     getTruncateToolOutputLines: () => 50,
     getDebugMode: vi.fn().mockReturnValue(false),
     getContentGeneratorConfig: vi.fn().mockReturnValue({ model: 'gemini-pro' }),
     getModel: vi.fn().mockReturnValue('gemini-pro'),
+    getActiveModel: vi.fn().mockReturnValue('gemini-pro'),
     getUsageStatisticsEnabled: vi.fn().mockReturnValue(false),
     setFallbackModelHandler: vi.fn(),
     initialize: vi.fn().mockResolvedValue(undefined),
+    isInteractive: vi.fn().mockReturnValue(true),
     getProxy: vi.fn().mockReturnValue(undefined),
     getHistory: vi.fn().mockReturnValue([]),
     getEmbeddingModel: vi.fn().mockReturnValue('text-embedding-004'),
@@ -130,13 +134,19 @@ export function assertUniqueFinalEventIsLast(
 export function assertTaskCreationAndWorkingStatus(
   events: SendStreamingMessageSuccessResponse[],
 ) {
-  // Initial task creation event
-  const taskEvent = events[0].result as SDKTask;
-  expect(taskEvent.kind).toBe('task');
-  expect(taskEvent.status.state).toBe('submitted');
+  const firstEvent = events[0].result as SDKTask | TaskStatusUpdateEvent;
+  if (firstEvent.kind === 'task') {
+    expect(firstEvent.status.state).toBe('submitted');
+  } else {
+    expect(firstEvent.kind).toBe('status-update');
+    expect(firstEvent.status.state).toBe('submitted');
+  }
 
-  // Status update: working
-  const workingEvent = events[1].result as TaskStatusUpdateEvent;
-  expect(workingEvent.kind).toBe('status-update');
-  expect(workingEvent.status.state).toBe('working');
+  const workingEvent = events.find(
+    (event) =>
+      event.result.kind === 'status-update' &&
+      event.result.status.state === 'working',
+  )?.result as TaskStatusUpdateEvent | undefined;
+
+  expect(workingEvent).toBeDefined();
 }

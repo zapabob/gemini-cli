@@ -21,7 +21,6 @@ export function useFlickerDetector(
   rootUiRef: React.RefObject<DOMElement | null>,
   terminalHeight: number,
 ) {
-  const config = useConfig();
   const { constrainHeight } = useUIState();
 
   useEffect(() => {

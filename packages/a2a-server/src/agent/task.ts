@@ -401,7 +401,8 @@ export class Task {
         status === 'awaiting_approval' ||
         status === 'success' ||
         status === 'error' ||
-        status === 'cancelled',
+        status === 'cancelled' ||
+        (isAwaitingApproval && status === 'validating'),
     );
 
     // 1. Are any pending tool calls awaiting_approval
