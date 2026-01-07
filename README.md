@@ -39,6 +39,9 @@ designed for **production-grade, auditable AI operations**.
 - Custom features preserved via isolated modules
 - Conflict resolution: upstream infra fixes → custom logic preserved
 
+> **📋 [Full patch documentation →](./ZAPABOB_PATCHES.md)** — Detailed breakdown
+> of all unique features
+
 ---
 
 Gemini CLI is an open-source AI agent that brings the power of Gemini directly
