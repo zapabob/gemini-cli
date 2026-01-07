@@ -89,22 +89,75 @@ Defense/Intel 審査で刺さる「節度ある公開物」アピール：
 
 - [x] ESLint: `npm run lint` 正常終了（Exit code: 0）
 - [x] マージコンフリクト: 除去完了
+- [x] ESLint: `npm run lint` 正常終了（Exit code: 0）
+- [x] マージコンフリクト: 除去完了
 - [x] README レンダリング: 正常（表形式、コードブロック）
 
 ---
 
 ## 今後の推奨アクション
 
-1. **GitHubプロフィールのピン留め更新**
-   - gemini-cli を追加（codex, SO8T, AEGISと並べる）
+1.  **変更をコミット＆プッシュ**
 
-2. **CVへの反映**
+    ```bash
+    git add .
+    git commit -m "feat: enhance README for Defense/Intel job application"
+    git push
+    ```
 
-   ```
-   Gemini CLI (Fork, Apache-2.0) — Extended Google's terminal AI agent with
-   DeepResearch, sub-agent supervisor orchestration, load balancing,
-   checkpoint/recovery, and GitHub Actions-based PR review automation.
-   ```
+2.  **GitHubプロフィールのピン留め更新**
+    - gemini-cli を追加（codex, SO8T, AEGISと並べる）
 
-3. **HuggingFace AEGISモデルカードにリンク追加**
-   - Agent/LLMOps側の参照実装として gemini-cli と codex を明記
+3.  **CVへの反映**
+
+    ```
+    Gemini CLI (Fork, Apache-2.0) — Extended Google's terminal AI agent with
+    DeepResearch, sub-agent supervisor orchestration, load balancing,
+    checkpoint/recovery, and GitHub Actions-based PR review automation.
+    ```
+
+4.  **HuggingFace AEGISモデルカードにリンク追加**
+    - Agent/LLMOps側の参照実装として gemini-cli と codex を明記
+
+---
+
+## Phase 2 追加実装 (2026-01-07)
+
+### node_modules 削除
+
+**問題**: `node_modules/.package-lock.json` が git にトラックされていた
+
+**対応**:
+
+```bash
+git rm -r --cached node_modules
+```
+
+### Defense/Intel 向け TL;DR 強化
+
+運用要件ベースの表現に変更：
+
+| 変更前                  | 変更後                                                   |
+| ----------------------- | -------------------------------------------------------- |
+| "feature-enhanced fork" | "designed for production-grade, auditable AI operations" |
+| 機能リスト              | Operational Requirement + Implementation の3列表         |
+| -                       | Defense/Intel Relevant Features セクション追加           |
+| -                       | Upstream diff リンク追加                                 |
+
+### Codex MCP デモ追加
+
+`mcp-servers/gemini-codex-mcp/README.md` に追加：
+
+- Demo 1: Code Review with Audit Trail
+- Demo 2: Threat Model Draft
+- Demo 3: PR Summary for Compliance Review
+- Use Cases テーブル（Security Review, Compliance Summary, Threat Modeling,
+  Documentation QA）
+
+### サンプル出力追加
+
+`examples/sample-outputs/threat-model-output.md`:
+
+- 実際の脅威モデル出力例（JSON形式）
+- STRIDE カテゴリ準拠
+- 検証情報（model, tokens, generation time）

@@ -67,3 +67,20 @@ To add a new example:
 1. Create `XX-example-name.md` with numbered prefix
 2. Include: Purpose, Prerequisites, Commands, Expected Output
 3. Update this README with a link
+
+---
+
+## Sample Outputs
+
+The `sample-outputs/` directory contains real output examples:
+
+- [threat-model-output.md](./sample-outputs/threat-model-output.md) - Threat
+  model generated via Codex MCP
+
+---
+
+## Codex MCP Integration
+
+For cross-tool orchestration with Codex, see:
+
+- [mcp-servers/gemini-codex-mcp/README.md](../mcp-servers/gemini-codex-mcp/README.md)

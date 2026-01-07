@@ -11,22 +11,33 @@
 
 This is a **feature-enhanced fork** of
 [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli),
-maintaining full upstream compatibility while adding production-grade
-capabilities:
+designed for **production-grade, auditable AI operations**.
 
-| Feature                 | Description                                                           |
-| ----------------------- | --------------------------------------------------------------------- |
-| **DeepResearch**        | Multi-level research with source validation and academic filtering    |
-| **Supervisor**          | Natural language parallel implementation with sub-agent orchestration |
-| **Load Balancing**      | Multi-endpoint distribution with circuit breaker and health checks    |
-| **Checkpoint/Recovery** | Power failure protection with automatic session recovery              |
-| **GitHub Actions**      | Automated PR review and code analysis integration                     |
+> **[View upstream diff →](https://github.com/google-gemini/gemini-cli/compare/main...zapabob:gemini-cli:main)**
+
+### Operational Capabilities
+
+| Capability                | Operational Requirement                | Implementation                                   |
+| ------------------------- | -------------------------------------- | ------------------------------------------------ |
+| **DeepResearch**          | Reproducible, citation-backed analysis | Multi-level research with source validation      |
+| **Supervisor**            | Auditable multi-agent orchestration    | Parallel sub-agents with decision logging        |
+| **Load Balancing**        | High availability & fault tolerance    | Circuit breaker, health checks, failover         |
+| **Checkpoint/Recovery**   | Session continuity under interruption  | Auto-save, emergency checkpoint, session restore |
+| **Codex MCP Integration** | Cross-tool orchestration               | MCP server for Gemini ↔ Codex interop           |
+
+### Defense/Intel Relevant Features
+
+- **Air-gapped operation**: Checkpoint/recovery enables offline session
+  continuity
+- **Audit trail**: All tool invocations logged with timestamps
+- **Data sovereignty**: No external transmission beyond configured API
+- **Reproducibility**: Research outputs include full citation chains
 
 ### Upstream Merge Policy
 
 - Weekly sync with `google-gemini/gemini-cli@main`
 - Custom features preserved via isolated modules
-- Conflict resolution prioritizes: upstream infra → custom logic
+- Conflict resolution: upstream infra fixes → custom logic preserved
 
 ---
 
