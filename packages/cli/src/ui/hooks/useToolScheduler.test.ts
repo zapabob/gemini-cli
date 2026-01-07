@@ -50,6 +50,12 @@ const mockToolRegistry = {
   getAllToolNames: vi.fn(() => ['mockTool', 'anotherTool']),
 };
 
+const mockMessageBus = {
+  publish: vi.fn(),
+  subscribe: vi.fn(),
+  unsubscribe: vi.fn(),
+};
+
 const mockConfig = {
   getToolRegistry: vi.fn(() => mockToolRegistry as unknown as ToolRegistry),
   getApprovalMode: vi.fn(() => ApprovalMode.DEFAULT),
@@ -61,7 +67,9 @@ const mockConfig = {
   },
   getTruncateToolOutputThreshold: () => DEFAULT_TRUNCATE_TOOL_OUTPUT_THRESHOLD,
   getTruncateToolOutputLines: () => DEFAULT_TRUNCATE_TOOL_OUTPUT_LINES,
+  getEnableToolOutputTruncation: () => true,
   getAllowedTools: vi.fn(() => []),
+  getActiveModel: () => 'test-model',
   getContentGeneratorConfig: () => ({
     model: 'test-model',
     authType: 'oauth-personal',
@@ -70,6 +78,10 @@ const mockConfig = {
   getUseModelRouter: () => false,
   getGeminiClient: () => null, // No client needed for these tests
   getShellExecutionConfig: () => ({ terminalWidth: 80, terminalHeight: 24 }),
+  getMessageBus: () => mockMessageBus,
+  getEnableHooks: () => false,
+  isInteractive: () => false,
+  getExperiments: () => ({ experimentIds: [], flags: {} }),
 } as unknown as Config;
 
 const mockTool = new MockTool({

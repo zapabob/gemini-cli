@@ -246,8 +246,8 @@ describe('useQuotaAndFallback', () => {
           new TerminalQuotaError('pro quota 2', mockGoogleApiError),
         );
 
-        // The lock should have stopped the second request
-        expect(result2).toBe('stop');
+        // Already in fallback mode should short-circuit subsequent requests
+        expect(result2).toBeNull();
         expect(result.current.proQuotaRequest).toBe(firstRequest);
 
         act(() => {

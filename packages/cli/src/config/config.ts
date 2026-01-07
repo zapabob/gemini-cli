@@ -39,7 +39,7 @@ import { extensionsCommand } from '../commands/extensions.js';
 import { agentsCommand } from '../commands/agents/index.js';
 import type { Settings } from './settings.js';
 
-import { annotateActiveExtensions } from './extension.js';
+import { annotateActiveExtensions, ExtensionStorage } from './extension.js';
 import { getCliVersion } from '../utils/version.js';
 import { loadSandboxConfig } from './sandboxConfig.js';
 import { resolvePath } from '../utils/resolvePath.js';
@@ -47,7 +47,7 @@ import { appEvents } from '../utils/events.js';
 
 import { isWorkspaceTrusted } from './trustedFolders.js';
 import { createPolicyEngineConfig } from './policy.js';
-import type { ExtensionEnablementManager } from './extensions/extensionEnablement.js';
+import { ExtensionEnablementManager } from './extensions/extensionEnablement.js';
 
 // Simple console logger for now - replace with actual logger if available
 const logger = {
@@ -498,16 +498,52 @@ export function isDebugMode(argv: CliArgs): boolean {
 export async function loadCliConfig(
   settings: Settings,
   extensions: GeminiCLIExtension[],
+  sessionId: string,
+  argv: CliArgs,
+  cwd?: string,
+): Promise<Config>;
+export async function loadCliConfig(
+  settings: Settings,
+  extensions: GeminiCLIExtension[],
   extensionEnablementManager: ExtensionEnablementManager,
   sessionId: string,
   argv: CliArgs,
+  cwd?: string,
+): Promise<Config>;
+export async function loadCliConfig(
+  settings: Settings,
+  extensions: GeminiCLIExtension[],
+  extensionEnablementManagerOrSessionId: ExtensionEnablementManager | string,
+  sessionIdOrArgv: string | CliArgs,
+  argvOrCwd?: CliArgs | string,
   cwd: string = process.cwd(),
 ): Promise<Config> {
+  let extensionEnablementManager: ExtensionEnablementManager;
+  let sessionId: string;
+  let argv: CliArgs;
+  let resolvedCwd = cwd;
+
+  if (typeof extensionEnablementManagerOrSessionId === 'string') {
+    sessionId = extensionEnablementManagerOrSessionId;
+    argv = sessionIdOrArgv as CliArgs;
+    resolvedCwd = typeof argvOrCwd === 'string' ? argvOrCwd : process.cwd();
+    extensionEnablementManager = new ExtensionEnablementManager(
+      ExtensionStorage.getUserExtensionsDir(),
+      argv.extensions,
+    );
+  } else {
+    extensionEnablementManager = extensionEnablementManagerOrSessionId;
+    sessionId = sessionIdOrArgv as string;
+    argv = argvOrCwd as CliArgs;
+    resolvedCwd = cwd;
+  }
+
   const debugMode = isDebugMode(argv);
 
   const memoryImportFormat = settings.context?.importFormat || 'tree';
 
-  const ideMode = settings.ide?.enabled ?? false;
+  const ideMode =
+    argv.ideMode ?? argv.ideModeFeature ?? settings.ide?.enabled ?? false;
 
   // Early warn for IDE mode without port to satisfy tests and give immediate feedback
   if (ideMode && !process.env['GEMINI_CLI_IDE_SERVER_PORT']) {
@@ -522,7 +558,7 @@ export async function loadCliConfig(
 
   const allExtensions = annotateActiveExtensions(
     extensions,
-    cwd,
+    resolvedCwd,
     extensionEnablementManager,
   );
 
@@ -545,7 +581,7 @@ export async function loadCliConfig(
     (e) => e.contextFiles,
   );
 
-  const fileService = new FileDiscoveryService(cwd);
+  const fileService = new FileDiscoveryService(resolvedCwd);
 
   const fileFiltering = {
     ...DEFAULT_MEMORY_FILE_FILTERING_OPTIONS,
@@ -559,7 +595,7 @@ export async function loadCliConfig(
   // Call the (now wrapper) loadHierarchicalGeminiMemory which calls the server's version
   const { memoryContent, fileCount, filePaths } =
     await loadHierarchicalGeminiMemory(
-      cwd,
+      resolvedCwd,
       settings.context?.loadMemoryFromIncludeDirectories
         ? includeDirectories
         : [],
@@ -598,6 +634,7 @@ export async function loadCliConfig(
           undefined,
           // httpUrl
           `http://localhost:${port}/mcp`,
+          undefined,
           undefined,
           undefined,
           undefined,
@@ -755,7 +792,7 @@ export async function loadCliConfig(
     sessionId,
     embeddingModel: DEFAULT_GEMINI_EMBEDDING_MODEL,
     sandbox: sandboxConfig,
-    targetDir: cwd,
+    targetDir: resolvedCwd,
     includeDirectories,
     loadMemoryFromIncludeDirectories:
       settings.context?.loadMemoryFromIncludeDirectories || false,
@@ -791,7 +828,7 @@ export async function loadCliConfig(
       process.env['https_proxy'] ||
       process.env['HTTP_PROXY'] ||
       process.env['http_proxy'],
-    cwd,
+    cwd: resolvedCwd,
     fileDiscoveryService: fileService,
     bugCommand: settings.advanced?.bugCommand,
     model: resolvedModel,

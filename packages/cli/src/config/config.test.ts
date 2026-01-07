@@ -51,6 +51,7 @@ vi.mock('fs', async (importOriginal) => {
     pathMod.resolve(pathMod.sep, 'cli', 'path1'),
     pathMod.resolve(pathMod.sep, 'settings', 'path1'),
     pathMod.join(mockHome, 'settings', 'path2'),
+    pathMod.resolve(pathMod.sep, 'mock', 'home', 'user', 'settings', 'path2'),
     pathMod.join(MOCK_CWD2, 'cli', 'path2'),
     pathMod.join(MOCK_CWD2, 'settings', 'path3'),
   ]);
@@ -433,7 +434,7 @@ describe('parseArguments', () => {
     );
 
     expect(mockConsoleError).toHaveBeenCalledWith(
-      expect.stringContaining('不正な値です:'),
+      expect.stringContaining('Invalid values:'),
     );
 
     mockExit.mockRestore();
@@ -1082,7 +1083,7 @@ describe('loadCliConfig telemetry', () => {
     );
 
     expect(mockConsoleError).toHaveBeenCalledWith(
-      expect.stringContaining('不正な値です:'),
+      expect.stringContaining('Invalid values:'),
     );
 
     mockExit.mockRestore();
@@ -2318,26 +2319,38 @@ describe('loadCliConfig with includeDirectories', () => {
 
   afterEach(() => {
     process.argv = originalArgv;
+    delete process.env.GEMINI_CLI_IDE_SERVER_PORT;
+    delete process.env.TERM_PROGRAM;
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 
   it('should combine and resolve paths from settings and CLI arguments', async () => {
     const mockCwd = path.resolve(path.sep, 'home', 'user', 'project');
+    const cliPath1 = path.resolve(path.sep, 'cli', 'path1');
+    const cliPath2 = path.join(mockCwd, 'cli', 'path2');
+    const settingsPath1 = path.resolve(path.sep, 'settings', 'path1');
+    const settingsPath2 = path.resolve(
+      path.sep,
+      'mock',
+      'home',
+      'user',
+      'settings',
+      'path2',
+    );
+    const settingsPath3 = path.join(mockCwd, 'settings', 'path3');
+    vi.spyOn(process, 'cwd').mockReturnValue(mockCwd);
+
     process.argv = [
       'node',
       'script.js',
       '--include-directories',
-      `${path.resolve(path.sep, 'cli', 'path1')},${path.join(mockCwd, 'cli', 'path2')}`,
+      `${cliPath1},${cliPath2}`,
     ];
     const argv = await parseArguments({} as Settings);
     const settings: Settings = {
       context: {
-        includeDirectories: [
-          path.resolve(path.sep, 'settings', 'path1'),
-          path.join(os.homedir(), 'settings', 'path2'),
-          path.join(mockCwd, 'settings', 'path3'),
-        ],
+        includeDirectories: [settingsPath1, settingsPath2, settingsPath3],
       },
     };
     const config = await loadCliConfig(
@@ -2352,11 +2365,11 @@ describe('loadCliConfig with includeDirectories', () => {
     );
     const expected = [
       mockCwd,
-      path.resolve(path.sep, 'cli', 'path1'),
-      path.join(mockCwd, 'cli', 'path2'),
-      path.resolve(path.sep, 'settings', 'path1'),
-      path.join(os.homedir(), 'settings', 'path2'),
-      path.join(mockCwd, 'settings', 'path3'),
+      cliPath1,
+      cliPath2,
+      settingsPath1,
+      settingsPath2,
+      settingsPath3,
     ];
     expect(config.getWorkspaceContext().getDirectories()).toEqual(
       expect.arrayContaining(expected),

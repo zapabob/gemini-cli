@@ -39,6 +39,8 @@ import { SCREEN_READER_USER_PREFIX } from '../textConstants.js';
 import { useShellFocusState } from '../contexts/ShellFocusContext.js';
 import { useUIState } from '../contexts/UIStateContext.js';
 
+const CURSOR_TRAILING_PAD = '\u200b';
+
 /**
  * Returns if the terminal can be trusted to handle paste events atomically
  * rather than potentially sending multiple paste events separated by line
@@ -1001,9 +1003,11 @@ export const InputPrompt: React.FC<InputPromptProps> = ({
                   cursorVisualColAbsolute === cpLen(lineText)
                 ) {
                   if (!currentLineGhost) {
+                    const cursorEnd = showCursor ? chalk.inverse(' ') : ' ';
                     renderedLine.push(
                       <Text key={`cursor-end-${cursorVisualColAbsolute}`}>
-                        {showCursor ? chalk.inverse(' ') : ' '}
+                        {cursorEnd}
+                        {CURSOR_TRAILING_PAD}
                       </Text>,
                     );
                   }
