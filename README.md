@@ -7,6 +7,29 @@
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
+## 🔥 What's New in zapabob Fork (TL;DR)
+
+This is a **feature-enhanced fork** of
+[google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli),
+maintaining full upstream compatibility while adding production-grade
+capabilities:
+
+| Feature                 | Description                                                           |
+| ----------------------- | --------------------------------------------------------------------- |
+| **DeepResearch**        | Multi-level research with source validation and academic filtering    |
+| **Supervisor**          | Natural language parallel implementation with sub-agent orchestration |
+| **Load Balancing**      | Multi-endpoint distribution with circuit breaker and health checks    |
+| **Checkpoint/Recovery** | Power failure protection with automatic session recovery              |
+| **GitHub Actions**      | Automated PR review and code analysis integration                     |
+
+### Upstream Merge Policy
+
+- Weekly sync with `google-gemini/gemini-cli@main`
+- Custom features preserved via isolated modules
+- Conflict resolution prioritizes: upstream infra → custom logic
+
+---
+
 Gemini CLI is an open-source AI agent that brings the power of Gemini directly
 into your terminal. It provides lightweight access to Gemini, giving you the
 most direct path from your prompt to our model.
@@ -14,43 +37,68 @@ most direct path from your prompt to our model.
 ## 🚀 Why Gemini CLI?
 
 ### Core Features
-- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
+
+- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
+  account
 - **🧠 Powerful Gemini 3.0 Pro**: Access to 1M token context window
-- **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
+- **🔧 Built-in tools**: Google Search grounding, file operations, shell
+  commands, web fetching
+- **🔌 Extensible**: MCP (Model Context Protocol) support for custom
+  integrations
 - **💻 Terminal-first**: Designed for developers who live in the command line
 
 ### Advanced Capabilities
+
 - Query and edit large codebases in and beyond Gemini's 1M token context window.
-- Generate new apps from PDFs or sketches, using Gemini's multimodal capabilities.
-- Automate operational tasks, like querying pull requests or handling complex rebases.
-- Integrate with GitHub: Use the [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli) for automated PR reviews, issue triage, and on-demand AI assistance directly in your repositories.
-- Use tools and MCP servers to connect new capabilities, including [media generation with Imagen,
-  Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
-- Ground your queries with the [Google Search](https://ai.google.dev/gemini-api/docs/grounding)
-  tool, built into Gemini.
+- Generate new apps from PDFs or sketches, using Gemini's multimodal
+  capabilities.
+- Automate operational tasks, like querying pull requests or handling complex
+  rebases.
+- Integrate with GitHub: Use the
+  [Gemini CLI GitHub Action](https://github.com/google-github-actions/run-gemini-cli)
+  for automated PR reviews, issue triage, and on-demand AI assistance directly
+  in your repositories.
+- Use tools and MCP servers to connect new capabilities, including
+  [media generation with Imagen, Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+- Ground your queries with the
+  [Google Search](https://ai.google.dev/gemini-api/docs/grounding) tool, built
+  into Gemini.
 
 ### 🆕 Enhanced Features (Custom Extensions) - v0.11.0
-- **🆕 Load Balancing**: Distribute requests across multiple Gemini API endpoints for improved reliability and performance
-- **🆕 Sub-Agents**: Create specialized AI agents for different tasks and coordinate them seamlessly
-- **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and session recovery for uninterrupted workflows
-- **🆕 DeepResearch**: Perform comprehensive multi-level research with source validation and topic exploration
-- **🆕 Supervisor Command**: Natural language parallel implementation with sub-agent coordination
-- **🆕 GitHub Actions Integration**: Automated code analysis and review with PR comments
-- **🆕 Release Preparation System**: Automated deployment preparation and quality assurance
-- **🆕 Continuous Development Platform**: Enhanced development workflow and modular architecture
-- **🆕 Global Installation System**: One-command installation and management with advanced features
-- **🆕 Natural Language CLI**: Intuitive command interface with natural language processing
-- **🆕 Advanced Error Handling**: Comprehensive error classification and recovery systems
+
+- **🆕 Load Balancing**: Distribute requests across multiple Gemini API
+  endpoints for improved reliability and performance
+- **🆕 Sub-Agents**: Create specialized AI agents for different tasks and
+  coordinate them seamlessly
+- **🆕 Power Failure Protection**: Automatic checkpointing, emergency saves, and
+  session recovery for uninterrupted workflows
+- **🆕 DeepResearch**: Perform comprehensive multi-level research with source
+  validation and topic exploration
+- **🆕 Supervisor Command**: Natural language parallel implementation with
+  sub-agent coordination
+- **🆕 GitHub Actions Integration**: Automated code analysis and review with PR
+  comments
+- **🆕 Release Preparation System**: Automated deployment preparation and
+  quality assurance
+- **🆕 Continuous Development Platform**: Enhanced development workflow and
+  modular architecture
+- **🆕 Global Installation System**: One-command installation and management
+  with advanced features
+- **🆕 Natural Language CLI**: Intuitive command interface with natural language
+  processing
+- **🆕 Advanced Error Handling**: Comprehensive error classification and
+  recovery systems
 
 ## 🆕 Latest Features (v0.11.0) - Official Integration Complete
 
-**🆕 Official Integration**: Successfully integrated latest official updates while preserving unique features
-**🆕 Enhanced IDE Integration**: Improved VSCode companion with latest official features
-**🆕 Advanced Configuration**: Unified configuration system with upstream compatibility
-**🆕 Strategic Merge**: Preserved custom features while adopting latest improvements
+**🆕 Official Integration**: Successfully integrated latest official updates
+while preserving unique features **🆕 Enhanced IDE Integration**: Improved
+VSCode companion with latest official features **🆕 Advanced Configuration**:
+Unified configuration system with upstream compatibility **🆕 Strategic Merge**:
+Preserved custom features while adopting latest improvements
 
 ### Global Installation System
+
 One-command installation and management with advanced features:
 
 ```bash
@@ -68,6 +116,7 @@ npm run update:auto
 ```
 
 **Features:**
+
 - One-command global installation and uninstallation
 - Automatic version management and updates
 - Advanced error handling and recovery
@@ -75,6 +124,7 @@ npm run update:auto
 - System information collection for troubleshooting
 
 ### Natural Language CLI
+
 Intuitive command interface with natural language processing:
 
 ```bash
@@ -87,6 +137,7 @@ gemini-natural
 ```
 
 **Features:**
+
 - Natural language command processing
 - Interactive mode with conversational interface
 - Context-aware command interpretation
@@ -94,6 +145,7 @@ gemini-natural
 - Intelligent command suggestions
 
 ### Advanced Error Handling
+
 Comprehensive error classification and recovery systems:
 
 ```bash
@@ -108,6 +160,7 @@ npm run progress:demo
 ```
 
 **Error Categories:**
+
 - Installation Errors (権限、依存関係、ネットワーク)
 - Configuration Errors (設定ファイル、環境変数)
 - Runtime Errors (API制限、メモリ不足)
@@ -119,7 +172,9 @@ npm run progress:demo
 ## 🆕 Enhanced Features
 
 ### Supervisor Command
-Execute parallel implementations using natural language with intelligent sub-agent coordination:
+
+Execute parallel implementations using natural language with intelligent
+sub-agent coordination:
 
 ```bash
 # Simple implementation request
@@ -134,19 +189,24 @@ gemini /supervisor "目標: セキュアな認証システムの実装
 ```
 
 **Features:**
+
 - Natural language goal parsing and analysis
-- Automatic sub-agent generation (DeepResearch Agent, Architecture Planner, Implementation Specialist)
+- Automatic sub-agent generation (DeepResearch Agent, Architecture Planner,
+  Implementation Specialist)
 - Parallel execution coordination with multiple strategies
 - Real-time progress tracking and decision logging
 - Result integration and comprehensive output
 
 **Available Options:**
+
 - **Styles**: autocratic, democratic, laissez-faire
 - **Strategies**: sequential, parallel, hybrid
 - **Custom Sub-agents**: Comma-separated custom agent names
 
 ### Load Balancer
-Distribute your requests across multiple Gemini API endpoints for enhanced reliability and performance:
+
+Distribute your requests across multiple Gemini API endpoints for enhanced
+reliability and performance:
 
 ```bash
 # Configure load balancer endpoints
@@ -161,12 +221,15 @@ gemini /loadbalancer request "Analyze this codebase"
 ```
 
 **Features:**
-- Multiple load balancing algorithms (Round Robin, Least Connections, Weighted, IP Hash)
+
+- Multiple load balancing algorithms (Round Robin, Least Connections, Weighted,
+  IP Hash)
 - Health checks and automatic failover
 - Circuit breaker pattern for fault tolerance
 - Real-time statistics and monitoring
 
 ### Sub-Agents
+
 Create specialized AI agents for different tasks and coordinate them:
 
 ```bash
@@ -179,12 +242,14 @@ gemini /subagents coordinate "Code Reviewer, Documentation Writer" "Review this 
 ```
 
 **Features:**
+
 - Specialized agent creation and management
 - Multi-agent coordination and communication
 - Task delegation and result aggregation
 - Agent performance tracking
 
 ### Power Failure Protection
+
 Never lose your work with advanced protection features:
 
 ```bash
@@ -199,6 +264,7 @@ gemini --checkpointing
 ```
 
 **Protection Features:**
+
 - **Automatic Checkpointing**: Saves every 5 minutes
 - **Emergency Saves**: Automatic saves on interruption
 - **Session Recovery**: Resume from last session
@@ -207,6 +273,7 @@ gemini --checkpointing
 - **Data Integrity**: JSON + Pickle composite storage
 
 ### Release Preparation System
+
 Automated deployment preparation and quality assurance for production releases:
 
 ```bash
@@ -221,6 +288,7 @@ npm run prepare:package
 ```
 
 **Features:**
+
 - Automated build verification and testing
 - Dependency updates and compatibility checks
 - Pre-release quality assurance
@@ -228,6 +296,7 @@ npm run prepare:package
 - Release package preparation
 
 ### Continuous Development Platform
+
 Enhanced development workflow and modular architecture for ongoing development:
 
 ```bash
@@ -239,6 +308,7 @@ npm run typecheck
 ```
 
 **Features:**
+
 - Modular architecture enhancement
 - Improved test framework
 - Optimized development workflow
@@ -246,6 +316,7 @@ npm run typecheck
 - Enhanced build system
 
 ### DeepResearch
+
 Perform comprehensive multi-level research with source validation:
 
 ```bash
@@ -257,6 +328,7 @@ gemini /deepresearch "Machine learning applications" --strategy focused --academ
 ```
 
 **Features:**
+
 - Up to 3-level deep research analysis
 - Maximum 10 sources per level
 - Three research strategies (comprehensive/focused/exploratory)
@@ -266,6 +338,7 @@ gemini /deepresearch "Machine learning applications" --strategy focused --academ
 - Source type exclusion
 
 ### GitHub Actions Integration
+
 Automated code analysis and review with PR comments:
 
 ```yaml
@@ -287,17 +360,6 @@ jobs:
       - name: Analyze Code
         run: gemini analyze --output-format markdown
 ```
-=======
-- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google
-  account.
-- **🧠 Powerful Gemini 3.0 Pro**: Access to 1M token context window.
-- **🔧 Built-in tools**: Google Search grounding, file operations, shell
-  commands, web fetching.
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom
-  integrations.
-- **💻 Terminal-first**: Designed for developers who live in the command line.
-- **🛡️ Open source**: Apache 2.0 licensed.
->>>>>>> upstream/main
 
 ## 📦 Installation
 
@@ -329,20 +391,21 @@ brew install gemini-cli
 
 ### From Source (Advanced)
 
-1. **Prerequisites:** Ensure you have [Node.js version 20](https://nodejs.org/en/download) or higher installed.
+1. **Prerequisites:** Ensure you have
+   [Node.js version 20](https://nodejs.org/en/download) or higher installed.
 2. **Install from source:**
 
    ```bash
    # Clone the repository
    git clone https://github.com/google-gemini/gemini-cli.git
    cd gemini-cli
-   
+
    # Install dependencies
    npm install
-   
+
    # Build the project
    npm run build
-   
+
    # Install globally (NEW: One-command installation)
    npm run install:global
    ```
@@ -352,7 +415,7 @@ brew install gemini-cli
    ```bash
    gemini --version
    # Should output: 0.7.0
-   
+
    # Test natural language CLI
    gemini-natural --version
    ```
@@ -393,38 +456,51 @@ npm run uninstall:global
 ### Common Configuration steps
 
 1. **Pick a color theme**
-2. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
+2. **Authenticate:** When prompted, sign in with your personal Google account.
+   This will grant you up to 60 model requests per minute and 1,000 model
+   requests per day using Gemini.
 
 You are now ready to use the Gemini CLI!
 
 ### Use a Gemini API key:
 
-The Gemini API provides a free tier with 100 requests per day using Gemini 3.0 Pro, control over which model you use, and access to higher rate limits (with a paid plan):
+The Gemini API provides a free tier with 100 requests per day using Gemini 3.0
+Pro, control over which model you use, and access to higher rate limits (with a
+paid plan):
 
-1. Generate a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key:
+1. Generate a key from
+   [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY`
+   with your generated key:
 
    ```bash
    export GEMINI_API_KEY="YOUR_API_KEY"
    ```
 
-3. (Optionally) Upgrade your Gemini API project to a paid plan on the API key page (will automatically unlock Tier 1 rate limits)
+3. (Optionally) Upgrade your Gemini API project to a paid plan on the API key
+   page (will automatically unlock Tier 1 rate limits)
 
 ### Use a Vertex AI API key:
 
-The Vertex AI API provides a free tier using express mode for Gemini 3.0 Pro, control over which model you use, and access to higher rate limits with a billing account:
+The Vertex AI API provides a free tier using express mode for Gemini 3.0 Pro,
+control over which model you use, and access to higher rate limits with a
+billing account:
 
-1. Generate a key from [Google Cloud](https://console.cloud.google.com/apis/credentials).
-2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY` with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true:
+1. Generate a key from
+   [Google Cloud](https://console.cloud.google.com/apis/credentials).
+2. Set it as an environment variable in your terminal. Replace `YOUR_API_KEY`
+   with your generated key and set GOOGLE_GENAI_USE_VERTEXAI to true:
 
    ```bash
    export GOOGLE_API_KEY="YOUR_API_KEY"
    export GOOGLE_GENAI_USE_VERTEXAI=true
    ```
 
-3. (Optionally) Add a billing account on your project to get access to higher usage limits
+3. (Optionally) Add a billing account on your project to get access to higher
+   usage limits
 
-For other authentication methods, including Google Workspace accounts, see the [authentication guide](docs/cli/authentication.md).
+For other authentication methods, including Google Workspace accounts, see the
+[authentication guide](docs/cli/authentication.md).
 
 ## Examples
 
@@ -436,17 +512,7 @@ You can start a project from a new directory:
 cd new-project/
 gemini
 > Write me a Gemini Discord bot that answers questions using a FAQ.md file I will provide
-
-#### Install globally with Homebrew (macOS/Linux)
-
-```bash
-brew install gemini-cli
 ```
-
-#### System Requirements
-
-- Node.js version 20 or higher
-- macOS, Linux, or Windows
 
 ## Release Cadence and Tags
 
@@ -676,7 +742,10 @@ gemini-natural
 
 - Learn how to [contribute to or build from the source](CONTRIBUTING.md).
 - Explore the available **[CLI Commands](docs/cli/commands.md)**.
-- If you encounter any issues, review the **[troubleshooting guide](docs/cli/troubleshooting.md)**.
+- **Try the [Reproducible Examples](./examples/)** - DeepResearch, Supervisor,
+  Checkpoint demos.
+- If you encounter any issues, review the
+  **[troubleshooting guide](docs/cli/troubleshooting.md)**.
 - For more comprehensive documentation, see the [full documentation](docs/).
 - Take a look at some [popular tasks](#popular-tasks) for more inspiration.
 - Check out our **[Official Roadmap](ROADMAP.md)**
@@ -753,11 +822,55 @@ custom tools:
 See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup
 instructions.
 
-> 💡 **Use Gemini with Codex:** The repository includes a ready-to-run MCP server
-> for Codex in [`mcp-servers/gemini-codex-mcp`](./mcp-servers/gemini-codex-mcp).
-> Build it with `npm run build` and launch it via `npx gemini-codex-mcp` to make
-> Gemini available to Codex (and other MCP clients) through the
-> `gemini_generate_text` tool.
+> 💡 **Use Gemini with Codex:** The repository includes a ready-to-run MCP
+> server for Codex in
+> [`mcp-servers/gemini-codex-mcp`](./mcp-servers/gemini-codex-mcp). Build it
+> with `npm run build` and launch it via `npx gemini-codex-mcp` to make Gemini
+> available to Codex (and other MCP clients) through the `gemini_generate_text`
+> tool.
+
+## 🔒 Security & Operations
+
+This section documents security considerations and operational guardrails for
+production use.
+
+### Logging Policy
+
+| Recorded                       | NOT Recorded             |
+| ------------------------------ | ------------------------ |
+| Command history                | API keys and tokens      |
+| Checkpoint states              | Model responses with PII |
+| Session metadata               | External data fetched    |
+| Tool invocations (audit trail) | User credentials         |
+
+### Secrets Management
+
+- Use environment variables for API keys (`GEMINI_API_KEY`, `GOOGLE_API_KEY`)
+- `.gitignore` includes `.env` and credential files by default
+- Pre-commit hooks via Husky prevent accidental secret commits
+- No secrets are logged or transmitted beyond the Gemini API
+
+### Operational Guardrails
+
+- **Confirmation required**: Dangerous operations (file deletion, system
+  commands) require explicit user approval
+- **Approval modes**: `--approval-mode` controls auto-execution behavior
+  (`default`, `auto_edit`, `yolo`)
+- **Privilege separation**: Shell commands run with user permissions only
+- **Circuit breaker**: Load balancer includes automatic failover and health
+  checks
+
+### Air-Gapped / Classified Environments
+
+For disconnected or classified networks:
+
+- Disable external API calls via environment configuration
+- Use checkpoint/recovery for offline session continuity
+- All tool invocations are auditable via local logs
+- Session state stored locally (JSON + metadata)
+
+> **Note**: This CLI is designed for developer productivity. For classified
+> workloads, ensure compliance with your organization's security policies.
 
 ## 🤝 Contributing
 
