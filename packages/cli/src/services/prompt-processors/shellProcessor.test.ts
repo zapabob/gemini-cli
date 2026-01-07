@@ -649,7 +649,7 @@ describe('ShellProcessor', () => {
       });
 
       await expect(processor.process(prompt, context)).rejects.toThrow(
-        `Blocked command: "${expectedResolvedCommand}". Reason: It is forbidden.`,
+        `test-command cannot be run. Blocked command: "${expectedResolvedCommand}". Reason: It is forbidden.`,
       );
     });
   });
