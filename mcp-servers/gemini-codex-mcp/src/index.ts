@@ -55,11 +55,7 @@ class GeminiCodexMCPServer {
   private readonly client: GoogleGenAI;
 
   constructor() {
-    this.server = new Server({
-      name: 'gemini-codex-mcp',
-      version: '0.1.0',
-      capabilities: ['tools'],
-    });
+    this.server = new Server({ name: 'gemini-codex-mcp', version: '0.1.0' });
     this.client = this.createClient();
     this.registerHandlers();
   }
