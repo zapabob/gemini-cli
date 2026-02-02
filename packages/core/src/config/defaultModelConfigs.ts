@@ -59,16 +59,16 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     // ensure these model configs can be used interactively.
     // TODO(joshualitt): Introduce internal base configs for the various models,
     // note: we will have to think carefully about names.
-    'gemini-3-pro-preview': {
+    'gemini-3.0-pro': {
       extends: 'chat-base-3',
       modelConfig: {
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-3.0-pro',
       },
     },
-    'gemini-3-flash-preview': {
+    'gemini-3.0-flash': {
       extends: 'chat-base-3',
       modelConfig: {
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3.0-flash',
       },
     },
     'gemini-2.5-pro': {
@@ -191,12 +191,12 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
     },
     'chat-compression-3-pro': {
       modelConfig: {
-        model: 'gemini-3-pro-preview',
+        model: 'gemini-3.0-pro',
       },
     },
     'chat-compression-3-flash': {
       modelConfig: {
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3.0-flash',
       },
     },
     'chat-compression-2.5-pro': {
