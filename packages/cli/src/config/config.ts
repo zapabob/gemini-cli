@@ -10,8 +10,8 @@ import process from 'node:process';
 import { mcpCommand } from '../commands/mcp.js';
 import { extensionsCommand } from '../commands/extensions.js';
 import { skillsCommand } from '../commands/skills.js';
-import { hooksCommand } from '../commands/hooks.js';import {
-  MCPServerConfig,
+import { hooksCommand } from '../commands/hooks.js';
+import {
   Config,
   setGeminiMdFilename as setServerGeminiMdFilename,
   getCurrentGeminiMdFilename,
@@ -76,7 +76,8 @@ export interface CliArgs {
   listExtensions: boolean | undefined;
   resume: string | typeof RESUME_LATEST | undefined;
   listSessions: boolean | undefined;
-  deleteSession: string | undefined;  includeDirectories: string[] | undefined;
+  deleteSession: string | undefined;
+  includeDirectories: string[] | undefined;
   screenReader: boolean | undefined;
   useWriteTodos: boolean | undefined;
   outputFormat: string | undefined;
@@ -86,6 +87,8 @@ export interface CliArgs {
   rawOutput: boolean | undefined;
   acceptRawOutputRisk: boolean | undefined;
   isCommand: boolean | undefined;
+  ideMode?: boolean;
+  ideModeFeature?: boolean;
 }
 
 export async function parseArguments(
@@ -220,7 +223,8 @@ export async function parseArguments(
         .option('delete-session', {
           type: 'string',
           description:
-            'Delete a session by index number (use --list-sessions to see available sessions).',        })
+            'Delete a session by index number (use --list-sessions to see available sessions).',
+        })
         .option('include-directories', {
           type: 'array',
           string: true,
@@ -331,7 +335,8 @@ export async function parseArguments(
 
   // Handle help and version flags manually since we disabled exitProcess
   if (result['help'] || result['version']) {
-    await runExitCleanup();    process.exit(0);
+    await runExitCleanup();
+    process.exit(0);
   }
 
   // Normalize query args: handle both quoted "@path file" and unquoted @path file
@@ -413,7 +418,8 @@ export async function loadCliConfig(
   argv: CliArgs,
   options: LoadCliConfigOptions = {},
 ): Promise<Config> {
-  const { cwd = process.cwd(), projectHooks } = options;  const debugMode = isDebugMode(argv);
+  const { cwd = process.cwd(), projectHooks } = options;
+  const debugMode = isDebugMode(argv);
 
   const loadedSettings = loadSettings(cwd);
 
@@ -428,6 +434,7 @@ export async function loadCliConfig(
 
   // Early warn for IDE mode without port to satisfy tests and give immediate feedback
   if (ideMode && !process.env['GEMINI_CLI_IDE_SERVER_PORT']) {
+    // eslint-disable-next-line no-console
     console.warn(
       '[WARN]',
       'Could not connect to IDE. Make sure you have the companion VS Code extension installed from the marketplace or via /ide install.',
@@ -483,7 +490,8 @@ export async function loadCliConfig(
     // Call the (now wrapper) loadHierarchicalGeminiMemory which calls the server's version
     const result = await loadServerHierarchicalMemory(
       cwd,
-      settings.context?.loadMemoryFromIncludeDirectories || false        ? includeDirectories
+      settings.context?.loadMemoryFromIncludeDirectories || false
+        ? includeDirectories
         : [],
       debugMode,
       fileService,
@@ -685,7 +693,7 @@ export async function loadCliConfig(
     clientVersion: await getVersion(),
     embeddingModel: DEFAULT_GEMINI_EMBEDDING_MODEL,
     sandbox: sandboxConfig,
-    targetDir: resolvedCwd,
+    targetDir: cwd,
     includeDirectories,
     loadMemoryFromIncludeDirectories:
       settings.context?.loadMemoryFromIncludeDirectories || false,
@@ -738,7 +746,7 @@ export async function loadCliConfig(
       process.env['https_proxy'] ||
       process.env['HTTP_PROXY'] ||
       process.env['http_proxy'],
-    cwd: resolvedCwd,
+    cwd,
     fileDiscoveryService: fileService,
     bugCommand: settings.advanced?.bugCommand,
     model: resolvedModel,

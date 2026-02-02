@@ -1,6 +1,7 @@
 {
   "name": "@google/gemini-cli",
-  "version": "0.28.0-nightly.20260128.adc8e11bb",  "engines": {
+  "version": "0.28.0-nightly.20260128.adc8e11bb",
+  "engines": {
     "node": ">=20.0.0"
   },
   "type": "module",
@@ -14,13 +15,33 @@
     "url": "git+https://github.com/google-gemini/gemini-cli.git"
   },
   "config": {
-    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.28.0-nightly.20260128.adc8e11bb"  },
+    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.28.0-nightly.20260128.adc8e11bb"
+  },
   "scripts": {
     "start": "cross-env node scripts/start.js",
     "start:a2a-server": "CODER_AGENT_PORT=41242 npm run start --workspace @google/gemini-cli-a2a-server",
     "debug": "cross-env DEBUG=1 node --inspect-brk scripts/start.js",
+    "build": "node scripts/build.js",
+    "build:all": "npm run build && npm run build --workspace @google/gemini-cli-sandbox && npm run build --workspace @google/gemini-cli-vscode-ide-companion",
+    "test": "vitest",
+    "test:e2e": "npm run test:e2e --workspaces --if-present",
+    "lint": "node scripts/lint.js",
+    "format": "prettier --write .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "clean": "node scripts/clean.js",
+    "preflight": "npm-run-all clean build lint typecheck test",
+    "pre-commit": "node scripts/pre-commit.js",
+    "bundle": "node scripts/copy_bundle_assets.js"
+  },
+  "dependencies": {
+    "ink": "npm:@jrichman/ink@6.4.8",
+    "latest-version": "^9.0.0",
+    "simple-git": "^3.28.0"
+  },
+  "devDependencies": {
     "@agentclientprotocol/sdk": "^0.12.0",
-    "@octokit/rest": "^22.0.0",    "@types/marked": "^5.0.2",
+    "@octokit/rest": "^22.0.0",
+    "@types/marked": "^5.0.2",
     "@types/mime-types": "^3.0.1",
     "@types/minimatch": "^5.1.2",
     "@types/mock-fs": "^4.13.4",
@@ -63,10 +84,6 @@
     "vitest": "^3.2.4",
     "yaml": "^2.8.1",
     "yargs": "^17.7.2"
-  },
-  "dependencies": {
-    "ink": "npm:@jrichman/ink@6.4.8",
-    "latest-version": "^9.0.0",    "simple-git": "^3.28.0"
   },
   "optionalDependencies": {
     "@lydell/node-pty": "1.1.0",

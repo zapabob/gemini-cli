@@ -8,11 +8,11 @@ import type {
   ToolResult,
   ToolCallConfirmationDetails,
   ToolInvocation,
-  ToolLocation} from './tools.js';
-import {
-  BaseDeclarativeTool,
-  Kind
+  ToolLocation,
 } from './tools.js';
+import { BaseDeclarativeTool, BaseToolInvocation, Kind } from './tools.js';
+import type { MessageBus } from '../confirmation-bus/message-bus.js';
+import { debugLogger } from '../utils/debugLogger.js';
 // import { SchemaValidator } from '../utils/schemaValidator.js';
 import { getErrorMessage } from '../utils/errors.js';
 import type { Config } from '../config/config.js';
@@ -161,6 +161,7 @@ export class DeepResearchTool extends BaseDeclarativeTool<
         },
         required: ['query'],
       },
+      config.getMessageBus(),
       true, // isOutputMarkdown
       true, // canUpdateOutput
     );
@@ -168,8 +169,11 @@ export class DeepResearchTool extends BaseDeclarativeTool<
 
   protected createInvocation(
     params: DeepResearchToolParams,
+    messageBus: MessageBus,
+    _toolName?: string,
+    _toolDisplayName?: string,
   ): ToolInvocation<DeepResearchToolParams, DeepResearchToolResult> {
-    return new DeepResearchToolInvocation(params, this.config);
+    return new DeepResearchToolInvocation(params, this.config, messageBus);
   }
 
   override validateToolParams(params: DeepResearchToolParams): string | null {
@@ -180,23 +184,27 @@ export class DeepResearchTool extends BaseDeclarativeTool<
   }
 }
 
-class DeepResearchToolInvocation
-  implements ToolInvocation<DeepResearchToolParams, DeepResearchToolResult>
-{
+class DeepResearchToolInvocation extends BaseToolInvocation<
+  DeepResearchToolParams,
+  DeepResearchToolResult
+> {
   constructor(
-    readonly params: DeepResearchToolParams,
+    override readonly params: DeepResearchToolParams,
     private readonly config: Config,
-  ) {}
+    override readonly messageBus: MessageBus,
+  ) {
+    super(params, messageBus, 'deep_research', 'Deep Research');
+  }
 
-  getDescription(): string {
+  override getDescription(): string {
     return `Perform deep research on: "${this.params.query}"`;
   }
 
-  toolLocations(): ToolLocation[] {
+  override toolLocations(): ToolLocation[] {
     return [];
   }
 
-  async shouldConfirmExecute(
+  override async shouldConfirmExecute(
     _abortSignal: AbortSignal,
   ): Promise<ToolCallConfirmationDetails | false> {
     // Deep research can be resource-intensive, so we ask for confirmation
@@ -228,7 +236,7 @@ class DeepResearchToolInvocation
   /**
    * Executes the deep research functionality.
    */
-  async execute(
+  override async execute(
     signal: AbortSignal,
     _updateOutput?: (output: string) => void,
   ): Promise<DeepResearchToolResult> {
@@ -418,10 +426,9 @@ class DeepResearchToolInvocation
 
       try {
         const response = await geminiClient.generateContent(
+          { model: 'gemini-3.0-flash-exp' },
           [{ role: 'user', parts: [{ text: levelPrompt }] }],
-          { tools: [{ googleSearch: {} }] },
           signal,
-          'gemini-3.0-flash-exp',
         );
 
         const responseText = getResponseText(response);
@@ -439,7 +446,7 @@ class DeepResearchToolInvocation
           break;
         }
       } catch (error) {
-        console.warn(`Error at research level ${depth}:`, error);
+        debugLogger.warn(`Error at research level ${depth}:`, error);
         throw error; // Re-throw the error so it can be caught by the execute method
       }
     }
@@ -527,19 +534,19 @@ class DeepResearchToolInvocation
       await fs.promises.writeFile(filepath, markdownContent, 'utf-8');
 
       // Record file operation metric
-      recordFileOperationMetric(
-        this.config,
-        { 
-          operation: FileOperation.CREATE,
-          mimetype: 'text/markdown',
-          extension: '.md'
-        }
-      );
+      recordFileOperationMetric(this.config, {
+        operation: FileOperation.CREATE,
+        mimetype: 'text/markdown',
+        extension: '.md',
+      });
 
-      console.log(`📄 DeepResearch results saved to: ${filepath}`);
+      debugLogger.log(`📄 DeepResearch results saved to: ${filepath}`);
       return filepath;
     } catch (error) {
-      console.warn('Failed to save DeepResearch results to markdown:', error);
+      debugLogger.warn(
+        'Failed to save DeepResearch results to markdown:',
+        error,
+      );
       return '';
     }
   }

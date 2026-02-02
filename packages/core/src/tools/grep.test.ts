@@ -182,8 +182,6 @@ describe('GrepTool', () => {
         `File: ${path.join('sub', 'fileC.txt')}`,
       );
       expect(result.llmContent).toContain('L1: another world in sub dir');
-<<<<<<< HEAD
-=======
       expect(result.returnDisplay).toBe('Found 3 matches');
     }, 30000);
 
@@ -214,7 +212,6 @@ describe('GrepTool', () => {
       expect(result.llmContent).toContain('File: ..env');
       expect(result.llmContent).toContain('L1: hello');
       expect(result.llmContent).not.toContain('secret.txt');
->>>>>>> upstream/main
     });
 
     it('should find matches in a specific path', async () => {

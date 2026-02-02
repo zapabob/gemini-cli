@@ -68,3 +68,7 @@ gemini-debug.log
 .gemini-clipboard/
 .eslintcache
 evals/logs/
+
+# User defined ignores
+*.py
+*.txt

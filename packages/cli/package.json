@@ -1,6 +1,7 @@
 {
   "name": "@google/gemini-cli",
-  "version": "0.28.0-nightly.20260128.adc8e11bb",  "description": "Gemini CLI",
+  "version": "0.28.0-nightly.20260128.adc8e11bb",
+  "description": "Gemini CLI",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
     "dist"
   ],
   "config": {
-    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.28.0-nightly.20260128.adc8e11bb"  },
+    "sandboxImageUri": "us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.28.0-nightly.20260128.adc8e11bb"
+  },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.12.0",
     "@google/gemini-cli-core": "file:../core",
@@ -62,7 +64,6 @@
     "tar": "^7.5.2",
     "tinygradient": "^1.1.5",
     "undici": "^7.10.0",
->>>>>>> upstream/main
     "wrap-ansi": "9.0.2",
     "yargs": "^17.7.2",
     "zod": "^3.23.8"
@@ -84,10 +85,9 @@
     "dom-accessibility-api": "^0.5.16",
     "eslint-plugin-license-header": "^0.8.0",
     "ink-testing-library": "^4.0.0",
-<<<<<<< HEAD
     "jsdom": "^26.1.0",
     "lz-string": "^1.5.0",
-=======    "pretty-format": "^30.0.2",
+    "pretty-format": "^30.0.2",
     "react-dom": "^19.2.0",
     "typescript": "^5.3.3",
     "vitest": "^3.1.1"

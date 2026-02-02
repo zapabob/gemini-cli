@@ -56,10 +56,6 @@ type SupportedTerminal = 'vscode' | 'cursor' | 'windsurf' | 'antigravity';
 
 export function getTerminalProgram(): SupportedTerminal | null {
   const termProgram = process.env['TERM_PROGRAM'];
-  const askpass = process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase() ?? '';
-
-<<<<<<< HEAD
-=======
   // Check VS Code and its forks - check forks first to avoid false positives
   // Check for Cursor-specific indicators
   if (
@@ -82,7 +78,6 @@ export function getTerminalProgram(): SupportedTerminal | null {
   ) {
     return 'antigravity';
   }
->>>>>>> upstream/main
   // Check VS Code last since forks may also set VSCODE env vars
   if (termProgram === 'vscode' || process.env['VSCODE_GIT_IPC_HANDLE']) {
     return 'vscode';
@@ -97,6 +92,7 @@ async function detectTerminal(): Promise<SupportedTerminal | null> {
     return envTerminal;
   }
 
+  const askpass = process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase() ?? '';
   // Check for Cursor-specific indicators
   if (process.env['CURSOR_TRACE_ID'] || askpass.includes('cursor')) {
     return 'cursor';

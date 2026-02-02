@@ -8,18 +8,18 @@ import { reportError } from '../utils/errorReporting.js';
 import { ToolRegistry } from '../tools/tool-registry.js';
 import type { AnyDeclarativeTool } from '../tools/tools.js';
 import type { Config } from '../config/config.js';
-import type { ToolCallRequestInfo } from './turn.js';
+import type { ToolCallRequestInfo } from '../scheduler/types.js';
 import { executeToolCall } from './nonInteractiveToolExecutor.js';
 import { getEnvironmentContext } from '../utils/environmentContext.js';
 import type {
   Content,
   Part,
   FunctionCall,
-  GenerateContentConfig,
   FunctionDeclaration,
 } from '@google/genai';
 import { Type } from '@google/genai';
 import { GeminiChat, StreamEventType } from './geminiChat.js';
+import { debugLogger } from '../utils/debugLogger.js';
 
 /**
  * @fileoverview Defines the configuration interfaces for a subagent.
@@ -294,13 +294,16 @@ export class SubAgentScope {
     runConfig: RunConfig,
     options: SubAgentOptions = {},
   ): Promise<SubAgentScope> {
-    const subagentToolRegistry = new ToolRegistry(runtimeContext);
+    const subagentToolRegistry = new ToolRegistry(
+      runtimeContext,
+      runtimeContext.getMessageBus(),
+    );
     if (options.toolConfig) {
       for (const tool of options.toolConfig.tools) {
         if (typeof tool === 'string') {
-          const toolFromRegistry = (
-            await runtimeContext.getToolRegistry()
-          ).getTool(tool);
+          const toolFromRegistry = runtimeContext
+            .getToolRegistry()
+            .getTool(tool);
           if (toolFromRegistry) {
             subagentToolRegistry.registerTool(toolFromRegistry);
           }
@@ -328,7 +331,7 @@ export class SubAgentScope {
           // to provide. Crashing here because `build({})` fails is worse
           // than allowing a potential hang later if an interactive tool is
           // used. This is a best-effort check.
-          console.warn(
+          debugLogger.warn(
             `Cannot check tool "${tool.name}" for interactivity because it requires parameters. Assuming it is safe for non-interactive use.`,
           );
           continue;
@@ -421,18 +424,12 @@ export class SubAgentScope {
         }
 
         const promptId = `${this.runtimeContext.getSessionId()}#${this.subagentId}#${turnCounter++}`;
-        const messageParams = {
-          message: currentMessages[0]?.parts || [],
-          config: {
-            abortSignal: abortController.signal,
-            tools: [{ functionDeclarations: toolsList }],
-          },
-        };
 
         const responseStream = await chat.sendMessageStream(
-          this.modelConfig.model,
-          messageParams,
+          { model: this.modelConfig.model },
+          currentMessages[0]?.parts || [],
           promptId,
+          abortController.signal,
         );
 
         const functionCalls: FunctionCall[] = [];
@@ -499,12 +496,11 @@ export class SubAgentScope {
             this.output.terminate_reason = SubagentTerminateMode.GOAL;
             break;
           }
-
           const nudgeMessage = `You have stopped calling tools but have not emitted the following required variables: ${remainingVars.join(
             ', ',
           )}. Please use the 'self.emitvalue' tool to emit them now, or continue working if necessary.`;
 
-          console.debug(nudgeMessage);
+          debugLogger.debug(nudgeMessage);
 
           currentMessages = [
             {
@@ -515,7 +511,7 @@ export class SubAgentScope {
         }
       }
     } catch (error) {
-      console.error('Error during subagent execution:', error);
+      debugLogger.error('Error during subagent execution:', error);
       this.output.terminate_reason = SubagentTerminateMode.ERROR;
       throw error;
     }
@@ -560,7 +556,7 @@ export class SubAgentScope {
       const requestInfo: ToolCallRequestInfo = {
         callId,
         name: functionCall.name as string,
-        args: (functionCall.args ?? {}) as Record<string, unknown>,
+        args: functionCall.args ?? {},
         isClientInitiated: true,
         prompt_id: promptId,
       };
@@ -588,7 +584,7 @@ export class SubAgentScope {
       }
 
       if (toolResponse.error) {
-        console.error(
+        debugLogger.error(
           `Error executing tool ${functionCall.name}: ${toolResponse.resultDisplay || toolResponse.error.message}`,
         );
       }
@@ -635,20 +631,32 @@ export class SubAgentScope {
       : undefined;
 
     try {
-      const generationConfig: GenerateContentConfig = {
-        temperature: this.modelConfig.temp,
-        topP: this.modelConfig.top_p,
-      };
-
-      if (systemInstruction) {
-        generationConfig.systemInstruction = systemInstruction;
+      const tools: FunctionDeclaration[] = [];
+      if (this.toolConfig) {
+        const toolsToLoad: string[] = [];
+        for (const tool of this.toolConfig.tools) {
+          if (typeof tool === 'string') {
+            toolsToLoad.push(tool);
+          } else if (typeof tool === 'object' && 'schema' in tool) {
+            tools.push(tool.schema);
+          } else {
+            tools.push(tool);
+          }
+        }
+        tools.push(
+          ...this.toolRegistry.getFunctionDeclarationsFiltered(toolsToLoad),
+        );
+      }
+      if (this.outputConfig && this.outputConfig.outputs) {
+        tools.push(...this.getScopeLocalFuncDefs());
       }
 
       this.runtimeContext.setModel(this.modelConfig.model);
 
       return new GeminiChat(
         this.runtimeContext,
-        generationConfig,
+        systemInstruction,
+        [{ functionDeclarations: tools }],
         start_history,
       );
     } catch (error) {

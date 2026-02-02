@@ -103,7 +103,7 @@ export interface QuitActionReturn {
 }
 
 /**
-<<<<<<< HEAD
+/**
  * The return type for a command action that results in a simple message
  * being displayed to the user.
  */
@@ -114,8 +114,6 @@ export interface MessageActionReturn {
 }
 
 /**
-=======
->>>>>>> upstream/main
  * The return type for a command action that needs to open a dialog.
  */
 export interface OpenDialogActionReturn {

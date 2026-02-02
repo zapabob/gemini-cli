@@ -12,7 +12,6 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
-// eslint-disable-next-line import/no-internal-modules
 import mime from 'mime/lite';
 import {
   isWithinRoot,
@@ -32,6 +31,8 @@ vi.mock('mime', () => ({
   default: { getType: vi.fn() },
   getType: vi.fn(),
 }));
+
+const mockMimeGetType = vi.mocked(mime.getType);
 
 describe('fileUtils', () => {
   let tempRootDir: string;
@@ -654,7 +655,6 @@ describe('fileUtils', () => {
       expect(await detectFileType('image.icon.svg')).toBe('svg');
     });
 
-<<<<<<< HEAD
     it('should detect pdf type by extension', async () => {
       vi.mocked(mime.getType).mockReturnValueOnce('application/pdf');
       expect(await detectFileType('file.pdf')).toBe('pdf');
@@ -678,9 +678,6 @@ describe('fileUtils', () => {
       vi.mocked(mime.getType).mockReturnValueOnce('application/octet-stream'); // Common for .exe
       expect(await detectFileType('app.exe')).toBe('binary');
     });
-
-=======
->>>>>>> upstream/main
     it('should use isBinaryFile for unknown extensions and detect as binary', async () => {
       vi.mocked(mime.getType).mockReturnValueOnce('application/octet-stream'); // Unknown mime type
       // Create a file that isBinaryFile will identify as binary

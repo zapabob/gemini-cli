@@ -45,6 +45,12 @@ function getPlatformArch() {
       shellcheck: 'darwin.aarch64',
     };
   }
+  if (platform === 'win32' && arch === 'x64') {
+    return {
+      actionlint: 'windows_amd64',
+      shellcheck: 'windows_amd64',
+    };
+  }
   throw new Error(`Unsupported platform/architecture: ${platform}/${arch}`);
 }
 
@@ -77,7 +83,10 @@ const yamllintCheck =
 const LINTERS = {
   actionlint: {
     check: 'command -v actionlint',
-    installer: `
+    installer:
+      process.platform === 'win32'
+        ? 'echo "Please install actionlint manually on Windows."'
+        : `
       mkdir -p "${TEMP_DIR}/actionlint"
       curl -sSLo "${TEMP_DIR}/.actionlint.tgz" "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_${platformArch.actionlint}.tar.gz"
       tar -xzf "${TEMP_DIR}/.actionlint.tgz" -C "${TEMP_DIR}/actionlint"
@@ -93,7 +102,10 @@ const LINTERS = {
   },
   shellcheck: {
     check: 'command -v shellcheck',
-    installer: `
+    installer:
+      process.platform === 'win32'
+        ? 'echo "Please install shellcheck manually on Windows."'
+        : `
       mkdir -p "${TEMP_DIR}/shellcheck"
       curl -sSLo "${TEMP_DIR}/.shellcheck.txz" "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.${platformArch.shellcheck}.tar.xz"
       tar -xf "${TEMP_DIR}/.shellcheck.txz" -C "${TEMP_DIR}/shellcheck" --strip-components=1
@@ -113,7 +125,7 @@ const LINTERS = {
   yamllint: {
     check: yamllintCheck,
     installer: `
-    python3 -m venv "${PYTHON_VENV_PATH}" && \
+    ${process.platform === 'win32' ? 'python' : 'python3'} -m venv "${PYTHON_VENV_PATH}" && \
     "${pythonVenvPythonPath}" -m pip install --upgrade pip && \
     "${pythonVenvPythonPath}" -m pip install "yamllint==${YAMLLINT_VERSION}" --index-url https://pypi.org/simple
   `,
