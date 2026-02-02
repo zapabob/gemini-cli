@@ -72,3 +72,4 @@ evals/logs/
 # User defined ignores
 *.py
 *.txt
+*.tar.gz
