@@ -1,10 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`PrepareLabel > creates centered window around match when collapsed 1`] = `
-"...ry/long/path/that/keeps/going/cd
-/very/long/path/that/keeps/going/search-here/and/then/some/more/components//and/then/some/more/compo
-nents//and/..."
-`;
+"...ry/long/path/that/keeps/going/cd_/very/long/path/that/keeps/going/search-here/and/then/some/more/
+components//and/then/some/more/components//and/..."`;
 
 exports[`PrepareLabel > highlights matched substring when expanded (text only visible) 1`] = `"run: git commit -m "feat: add search""`;
 

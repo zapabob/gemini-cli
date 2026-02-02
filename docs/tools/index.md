@@ -82,14 +82,17 @@ Gemini CLI's built-in tools can be broadly categorized as follows:
   from URLs.
 - **[Web Search Tool](./web-search.md) (`google_web_search`):** For searching
   the web.
-- **[Multi-File Read Tool](./multi-file.md) (`read_many_files`):** A specialized
-  tool for reading content from multiple files or directories.
 - **[Memory Tool](./memory.md) (`save_memory`):** For saving and recalling
   information across sessions.
+- **[Todo Tool](./todos.md) (`write_todos`):** For managing subtasks of complex
+  requests.
 
 Additionally, these tools incorporate:
 
 - **[MCP servers](./mcp-server.md)**: MCP servers act as a bridge between the
   Gemini model and your local environment or other services like APIs.
+- **[Agent Skills](../cli/skills.md)**: On-demand expertise packages that are
+  activated via the `activate_skill` tool to provide specialized guidance and
+  resources.
 - **[Sandboxing](../cli/sandbox.md)**: Sandboxing isolates the model and its
   changes from your environment to reduce potential risk.

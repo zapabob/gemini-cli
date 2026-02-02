@@ -4,14 +4,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import yargs from 'yargs';
+import {
+  vi,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  type Mock,
+} from 'vitest';
+import yargs, { type Argv } from 'yargs';
 import { SettingScope, type LoadedSettings } from '../../config/settings.js';
 import { removeCommand } from './remove.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { GEMINI_DIR } from '@google/gemini-cli-core';
+import { GEMINI_DIR, debugLogger } from '@google/gemini-cli-core';
 
 vi.mock('fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('fs/promises')>();
@@ -22,10 +30,14 @@ vi.mock('fs/promises', async (importOriginal) => {
   };
 });
 
+vi.mock('../utils.js', () => ({
+  exitCli: vi.fn(),
+}));
+
 describe('mcp remove command', () => {
   describe('unit tests with mocks', () => {
-    let parser: yargs.Argv;
-    let mockSetValue: vi.Mock;
+    let parser: Argv;
+    let mockSetValue: Mock;
     let mockSettings: Record<string, unknown>;
 
     beforeEach(async () => {
@@ -46,7 +58,9 @@ describe('mcp remove command', () => {
       ).mockReturnValue({
         forScope: () => ({ settings: mockSettings }),
         setValue: mockSetValue,
-      } as Partial<LoadedSettings> as LoadedSettings);
+        workspace: { path: '/path/to/project' },
+        user: { path: '/home/user' },
+      } as unknown as LoadedSettings);
 
       const yargsInstance = yargs([]).command(removeCommand);
       parser = yargsInstance;
@@ -63,13 +77,16 @@ describe('mcp remove command', () => {
     });
 
     it('should show a message if server not found', async () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const debugLogSpy = vi
+        .spyOn(debugLogger, 'log')
+        .mockImplementation(() => {});
       await parser.parseAsync('remove non-existent-server');
 
       expect(mockSetValue).not.toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(debugLogSpy).toHaveBeenCalledWith(
         'Server "non-existent-server" not found in project settings.',
       );
+      debugLogSpy.mockRestore();
     });
   });
 
@@ -77,7 +94,7 @@ describe('mcp remove command', () => {
     let tempDir: string;
     let settingsDir: string;
     let settingsPath: string;
-    let parser: yargs.Argv;
+    let parser: Argv;
     let cwdSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
@@ -117,18 +134,20 @@ describe('mcp remove command', () => {
       }`;
       fs.writeFileSync(settingsPath, originalContent, 'utf-8');
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const debugLogSpy = vi
+        .spyOn(debugLogger, 'log')
+        .mockImplementation(() => {});
       await parser.parseAsync('remove server-to-remove');
 
       const updatedContent = fs.readFileSync(settingsPath, 'utf-8');
       expect(updatedContent).toContain('"server-to-keep"');
       expect(updatedContent).not.toContain('"server-to-remove"');
 
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(debugLogSpy).toHaveBeenCalledWith(
         'Server "server-to-remove" removed from project settings.',
       );
 
-      consoleSpy.mockRestore();
+      debugLogSpy.mockRestore();
     });
 
     it('should preserve comments when removing a server', async () => {
@@ -148,7 +167,9 @@ describe('mcp remove command', () => {
       }`;
       fs.writeFileSync(settingsPath, originalContent, 'utf-8');
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const debugLogSpy = vi
+        .spyOn(debugLogger, 'log')
+        .mockImplementation(() => {});
       await parser.parseAsync('remove oldServer');
 
       const updatedContent = fs.readFileSync(settingsPath, 'utf-8');
@@ -157,7 +178,7 @@ describe('mcp remove command', () => {
       expect(updatedContent).not.toContain('"oldServer"');
       expect(updatedContent).toContain('// Server to remove');
 
-      consoleSpy.mockRestore();
+      debugLogSpy.mockRestore();
     });
 
     it('should handle removing the only server', async () => {
@@ -171,7 +192,9 @@ describe('mcp remove command', () => {
       }`;
       fs.writeFileSync(settingsPath, originalContent, 'utf-8');
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const debugLogSpy = vi
+        .spyOn(debugLogger, 'log')
+        .mockImplementation(() => {});
       await parser.parseAsync('remove only-server');
 
       const updatedContent = fs.readFileSync(settingsPath, 'utf-8');
@@ -179,7 +202,7 @@ describe('mcp remove command', () => {
       expect(updatedContent).not.toContain('"only-server"');
       expect(updatedContent).toMatch(/"mcpServers"\s*:\s*\{\s*\}/);
 
-      consoleSpy.mockRestore();
+      debugLogSpy.mockRestore();
     });
 
     it('should preserve other settings when removing a server', async () => {
@@ -205,7 +228,9 @@ describe('mcp remove command', () => {
       }`;
       fs.writeFileSync(settingsPath, originalContent, 'utf-8');
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const debugLogSpy = vi
+        .spyOn(debugLogger, 'log')
+        .mockImplementation(() => {});
       await parser.parseAsync('remove server1');
 
       const updatedContent = fs.readFileSync(settingsPath, 'utf-8');
@@ -216,7 +241,7 @@ describe('mcp remove command', () => {
       expect(updatedContent).toContain('"theme": "dark"');
       expect(updatedContent).not.toContain('"server1"');
 
-      consoleSpy.mockRestore();
+      debugLogSpy.mockRestore();
     });
   });
 });

@@ -8,12 +8,18 @@ import type { Config } from '@google/gemini-cli-core';
 import {
   OutputFormat,
   JsonFormatter,
+  StreamJsonFormatter,
+  JsonStreamEventType,
+  uiTelemetryService,
   parseAndFormatApiError,
   FatalTurnLimitedError,
   FatalCancellationError,
   FatalToolExecutionError,
   isFatalToolError,
+  debugLogger,
+  coreEvents,
 } from '@google/gemini-cli-core';
+import { runSyncCleanup } from './cleanup.js';
 
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
@@ -58,6 +64,7 @@ function getNumericExitCode(errorCode: string | number): number {
 /**
  * Handles errors consistently for both JSON and text output formats.
  * In JSON mode, outputs formatted JSON error and exits.
+ * In streaming JSON mode, emits a result event with error status.
  * In text mode, outputs error message and re-throws.
  */
 export function handleError(
@@ -70,19 +77,38 @@ export function handleError(
     config.getContentGeneratorConfig()?.authType,
   );
 
-  if (config.getOutputFormat() === OutputFormat.JSON) {
+  if (config.getOutputFormat() === OutputFormat.STREAM_JSON) {
+    const streamFormatter = new StreamJsonFormatter();
+    const errorCode = customErrorCode ?? extractErrorCode(error);
+    const metrics = uiTelemetryService.getMetrics();
+
+    streamFormatter.emitEvent({
+      type: JsonStreamEventType.RESULT,
+      timestamp: new Date().toISOString(),
+      status: 'error',
+      error: {
+        type: error instanceof Error ? error.constructor.name : 'Error',
+        message: errorMessage,
+      },
+      stats: streamFormatter.convertToStreamStats(metrics, 0),
+    });
+
+    runSyncCleanup();
+    process.exit(getNumericExitCode(errorCode));
+  } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const errorCode = customErrorCode ?? extractErrorCode(error);
 
     const formattedError = formatter.formatError(
       error instanceof Error ? error : new Error(getErrorMessage(error)),
       errorCode,
+      config.getSessionId(),
     );
 
-    console.error(formattedError);
+    coreEvents.emitFeedback('error', formattedError);
+    runSyncCleanup();
     process.exit(getNumericExitCode(errorCode));
   } else {
-    console.error(errorMessage);
     throw error;
   }
 }
@@ -110,21 +136,36 @@ export function handleToolError(
 
   if (isFatal) {
     const toolExecutionError = new FatalToolExecutionError(errorMessage);
-    if (config.getOutputFormat() === OutputFormat.JSON) {
+    if (config.getOutputFormat() === OutputFormat.STREAM_JSON) {
+      const streamFormatter = new StreamJsonFormatter();
+      const metrics = uiTelemetryService.getMetrics();
+      streamFormatter.emitEvent({
+        type: JsonStreamEventType.RESULT,
+        timestamp: new Date().toISOString(),
+        status: 'error',
+        error: {
+          type: errorType ?? 'FatalToolExecutionError',
+          message: toolExecutionError.message,
+        },
+        stats: streamFormatter.convertToStreamStats(metrics, 0),
+      });
+    } else if (config.getOutputFormat() === OutputFormat.JSON) {
       const formatter = new JsonFormatter();
       const formattedError = formatter.formatError(
         toolExecutionError,
         errorType ?? toolExecutionError.exitCode,
+        config.getSessionId(),
       );
-      console.error(formattedError);
+      coreEvents.emitFeedback('error', formattedError);
     } else {
-      console.error(errorMessage);
+      coreEvents.emitFeedback('error', errorMessage);
     }
+    runSyncCleanup();
     process.exit(toolExecutionError.exitCode);
   }
 
   // Non-fatal: log and continue
-  console.error(errorMessage);
+  debugLogger.warn(errorMessage);
 }
 
 /**
@@ -133,17 +174,35 @@ export function handleToolError(
 export function handleCancellationError(config: Config): never {
   const cancellationError = new FatalCancellationError('Operation cancelled.');
 
-  if (config.getOutputFormat() === OutputFormat.JSON) {
+  if (config.getOutputFormat() === OutputFormat.STREAM_JSON) {
+    const streamFormatter = new StreamJsonFormatter();
+    const metrics = uiTelemetryService.getMetrics();
+    streamFormatter.emitEvent({
+      type: JsonStreamEventType.RESULT,
+      timestamp: new Date().toISOString(),
+      status: 'error',
+      error: {
+        type: 'FatalCancellationError',
+        message: cancellationError.message,
+      },
+      stats: streamFormatter.convertToStreamStats(metrics, 0),
+    });
+    runSyncCleanup();
+    process.exit(cancellationError.exitCode);
+  } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const formattedError = formatter.formatError(
       cancellationError,
       cancellationError.exitCode,
+      config.getSessionId(),
     );
 
-    console.error(formattedError);
+    coreEvents.emitFeedback('error', formattedError);
+    runSyncCleanup();
     process.exit(cancellationError.exitCode);
   } else {
-    console.error(cancellationError.message);
+    coreEvents.emitFeedback('error', cancellationError.message);
+    runSyncCleanup();
     process.exit(cancellationError.exitCode);
   }
 }
@@ -156,17 +215,35 @@ export function handleMaxTurnsExceededError(config: Config): never {
     'Reached max session turns for this session. Increase the number of turns by specifying maxSessionTurns in settings.json.',
   );
 
-  if (config.getOutputFormat() === OutputFormat.JSON) {
+  if (config.getOutputFormat() === OutputFormat.STREAM_JSON) {
+    const streamFormatter = new StreamJsonFormatter();
+    const metrics = uiTelemetryService.getMetrics();
+    streamFormatter.emitEvent({
+      type: JsonStreamEventType.RESULT,
+      timestamp: new Date().toISOString(),
+      status: 'error',
+      error: {
+        type: 'FatalTurnLimitedError',
+        message: maxTurnsError.message,
+      },
+      stats: streamFormatter.convertToStreamStats(metrics, 0),
+    });
+    runSyncCleanup();
+    process.exit(maxTurnsError.exitCode);
+  } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const formattedError = formatter.formatError(
       maxTurnsError,
       maxTurnsError.exitCode,
+      config.getSessionId(),
     );
 
-    console.error(formattedError);
+    coreEvents.emitFeedback('error', formattedError);
+    runSyncCleanup();
     process.exit(maxTurnsError.exitCode);
   } else {
-    console.error(maxTurnsError.message);
+    coreEvents.emitFeedback('error', maxTurnsError.message);
+    runSyncCleanup();
     process.exit(maxTurnsError.exitCode);
   }
 }

@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { render } from 'ink-testing-library';
+import { render } from '../../test-utils/render.js';
 import { Text } from 'ink';
 import { Composer } from './Composer.js';
 import { UIStateContext, type UIState } from '../contexts/UIStateContext.js';
@@ -19,11 +19,12 @@ import { SettingsContext } from '../contexts/SettingsContext.js';
 vi.mock('../contexts/VimModeContext.js', () => ({
   useVimMode: vi.fn(() => ({
     vimEnabled: false,
-    vimMode: 'NORMAL',
+    vimMode: 'INSERT',
   })),
 }));
 import { ApprovalMode } from '@google/gemini-cli-core';
 import { StreamingState } from '../types.js';
+import { mergeSettings } from '../../config/settings.js';
 
 // Mock child components
 vi.mock('./LoadingIndicator.js', () => ({
@@ -36,8 +37,12 @@ vi.mock('./ContextSummaryDisplay.js', () => ({
   ContextSummaryDisplay: () => <Text>ContextSummaryDisplay</Text>,
 }));
 
-vi.mock('./AutoAcceptIndicator.js', () => ({
-  AutoAcceptIndicator: () => <Text>AutoAcceptIndicator</Text>,
+vi.mock('./HookStatusDisplay.js', () => ({
+  HookStatusDisplay: () => <Text>HookStatusDisplay</Text>,
+}));
+
+vi.mock('./ApprovalModeIndicator.js', () => ({
+  ApprovalModeIndicator: () => <Text>ApprovalModeIndicator</Text>,
 }));
 
 vi.mock('./ShellModeIndicator.js', () => ({
@@ -49,7 +54,9 @@ vi.mock('./DetailedMessagesDisplay.js', () => ({
 }));
 
 vi.mock('./InputPrompt.js', () => ({
-  InputPrompt: () => <Text>InputPrompt</Text>,
+  InputPrompt: ({ placeholder }: { placeholder?: string }) => (
+    <Text>InputPrompt: {placeholder}</Text>
+  ),
   calculatePromptWidths: vi.fn(() => ({
     inputWidth: 80,
     suggestionsWidth: 40,
@@ -90,12 +97,12 @@ const createMockUIState = (overrides: Partial<UIState> = {}): UIState =>
   ({
     streamingState: null,
     contextFileNames: [],
-    showAutoAcceptIndicator: ApprovalMode.DEFAULT,
+    showApprovalModeIndicator: ApprovalMode.DEFAULT,
     messageQueue: [],
     showErrorDetails: false,
     constrainHeight: false,
     isInputActive: true,
-    buffer: '',
+    buffer: { text: '' },
     inputWidth: 80,
     suggestionsWidth: 40,
     userMessages: [],
@@ -111,8 +118,9 @@ const createMockUIState = (overrides: Partial<UIState> = {}): UIState =>
     showEscapePrompt: false,
     ideContextState: null,
     geminiMdFileCount: 0,
-    showToolDescriptions: false,
+    renderMarkdown: true,
     filteredConsoleMessages: [],
+    history: [],
     sessionStats: {
       lastPromptTokenCount: 0,
       sessionTokenCount: 0,
@@ -124,6 +132,9 @@ const createMockUIState = (overrides: Partial<UIState> = {}): UIState =>
     errorCount: 0,
     nightly: false,
     isTrustedFolder: true,
+    activeHooks: [],
+    isBackgroundShellVisible: false,
+    embeddedShellFocused: false,
     ...overrides,
   }) as UIState;
 
@@ -143,17 +154,34 @@ const createMockConfig = (overrides = {}) => ({
   getDebugMode: vi.fn(() => false),
   getAccessibility: vi.fn(() => ({})),
   getMcpServers: vi.fn(() => ({})),
-  getBlockedMcpServers: vi.fn(() => []),
+  getToolRegistry: () => ({
+    getTool: vi.fn(),
+  }),
+  getSkillManager: () => ({
+    getSkills: () => [],
+    getDisplayableSkills: () => [],
+  }),
+  getMcpClientManager: () => ({
+    getMcpServers: () => ({}),
+    getBlockedMcpServers: () => [],
+  }),
   ...overrides,
 });
 
-const createMockSettings = (merged = {}) => ({
-  merged: {
-    hideFooter: false,
-    showMemoryUsage: false,
-    ...merged,
-  },
-});
+const createMockSettings = (merged = {}) => {
+  const defaultMergedSettings = mergeSettings({}, {}, {}, {}, true);
+  return {
+    merged: {
+      ...defaultMergedSettings,
+      ui: {
+        ...defaultMergedSettings.ui,
+        hideFooter: false,
+        showMemoryUsage: false,
+        ...merged,
+      },
+    },
+  };
+};
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const renderComposer = (
@@ -259,7 +287,7 @@ describe('Composer', () => {
         thought: { subject: 'Hidden', description: 'Should not show' },
       });
       const config = createMockConfig({
-        getAccessibility: vi.fn(() => ({ disableLoadingPhrases: true })),
+        getAccessibility: vi.fn(() => ({ enableLoadingPhrases: false })),
       });
 
       const { lastFrame } = renderComposer(uiState, undefined, config);
@@ -283,6 +311,32 @@ describe('Composer', () => {
       const output = lastFrame();
       expect(output).toContain('LoadingIndicator');
       expect(output).not.toContain('Should not show during confirmation');
+    });
+
+    it('renders LoadingIndicator when embedded shell is focused but background shell is visible', () => {
+      const uiState = createMockUIState({
+        streamingState: StreamingState.Responding,
+        embeddedShellFocused: true,
+        isBackgroundShellVisible: true,
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      const output = lastFrame();
+      expect(output).toContain('LoadingIndicator');
+    });
+
+    it('does NOT render LoadingIndicator when embedded shell is focused and background shell is NOT visible', () => {
+      const uiState = createMockUIState({
+        streamingState: StreamingState.Responding,
+        embeddedShellFocused: true,
+        isBackgroundShellVisible: false,
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      const output = lastFrame();
+      expect(output).not.toContain('LoadingIndicator');
     });
   });
 
@@ -331,6 +385,17 @@ describe('Composer', () => {
       expect(lastFrame()).toContain('ContextSummaryDisplay');
     });
 
+    it('renders HookStatusDisplay instead of ContextSummaryDisplay with active hooks', () => {
+      const uiState = createMockUIState({
+        activeHooks: [{ name: 'test-hook', eventName: 'before-agent' }],
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      expect(lastFrame()).toContain('HookStatusDisplay');
+      expect(lastFrame()).not.toContain('ContextSummaryDisplay');
+    });
+
     it('shows Ctrl+C exit prompt when ctrlCPressedOnce is true', () => {
       const uiState = createMockUIState({
         ctrlCPressedOnce: true,
@@ -354,11 +419,12 @@ describe('Composer', () => {
     it('shows escape prompt when showEscapePrompt is true', () => {
       const uiState = createMockUIState({
         showEscapePrompt: true,
+        history: [{ id: 1, type: 'user', text: 'test' }],
       });
 
       const { lastFrame } = renderComposer(uiState);
 
-      expect(lastFrame()).toContain('Press Esc again to clear');
+      expect(lastFrame()).toContain('Press Esc again to rewind');
     });
   });
 
@@ -383,15 +449,15 @@ describe('Composer', () => {
       expect(lastFrame()).not.toContain('InputPrompt');
     });
 
-    it('shows AutoAcceptIndicator when approval mode is not default and shell mode is inactive', () => {
+    it('shows ApprovalModeIndicator when approval mode is not default and shell mode is inactive', () => {
       const uiState = createMockUIState({
-        showAutoAcceptIndicator: ApprovalMode.YOLO,
+        showApprovalModeIndicator: ApprovalMode.YOLO,
         shellModeActive: false,
       });
 
       const { lastFrame } = renderComposer(uiState);
 
-      expect(lastFrame()).toContain('AutoAcceptIndicator');
+      expect(lastFrame()).toContain('ApprovalModeIndicator');
     });
 
     it('shows ShellModeIndicator when shell mode is active', () => {
@@ -402,6 +468,26 @@ describe('Composer', () => {
       const { lastFrame } = renderComposer(uiState);
 
       expect(lastFrame()).toContain('ShellModeIndicator');
+    });
+
+    it('shows RawMarkdownIndicator when renderMarkdown is false', () => {
+      const uiState = createMockUIState({
+        renderMarkdown: false,
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      expect(lastFrame()).toContain('raw markdown mode');
+    });
+
+    it('does not show RawMarkdownIndicator when renderMarkdown is true', () => {
+      const uiState = createMockUIState({
+        renderMarkdown: true,
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      expect(lastFrame()).not.toContain('raw markdown mode');
     });
   });
 
@@ -429,6 +515,42 @@ describe('Composer', () => {
       const { lastFrame } = renderComposer(uiState);
 
       expect(lastFrame()).not.toContain('DetailedMessagesDisplay');
+    });
+  });
+
+  describe('Vim Mode Placeholders', () => {
+    it('shows correct placeholder in INSERT mode', async () => {
+      const uiState = createMockUIState({ isInputActive: true });
+      const { useVimMode } = await import('../contexts/VimModeContext.js');
+      vi.mocked(useVimMode).mockReturnValue({
+        vimEnabled: true,
+        vimMode: 'INSERT',
+        toggleVimEnabled: vi.fn(),
+        setVimMode: vi.fn(),
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      expect(lastFrame()).toContain(
+        "InputPrompt:   Press 'Esc' for NORMAL mode.",
+      );
+    });
+
+    it('shows correct placeholder in NORMAL mode', async () => {
+      const uiState = createMockUIState({ isInputActive: true });
+      const { useVimMode } = await import('../contexts/VimModeContext.js');
+      vi.mocked(useVimMode).mockReturnValue({
+        vimEnabled: true,
+        vimMode: 'NORMAL',
+        toggleVimEnabled: vi.fn(),
+        setVimMode: vi.fn(),
+      });
+
+      const { lastFrame } = renderComposer(uiState);
+
+      expect(lastFrame()).toContain(
+        "InputPrompt:   Press 'i' for INSERT mode.",
+      );
     });
   });
 });

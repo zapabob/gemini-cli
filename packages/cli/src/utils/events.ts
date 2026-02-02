@@ -8,9 +8,16 @@ import { EventEmitter } from 'node:events';
 
 export enum AppEvent {
   OpenDebugConsole = 'open-debug-console',
-  LogError = 'log-error',
-  OauthDisplayMessage = 'oauth-display-message',
   Flicker = 'flicker',
+  SelectionWarning = 'selection-warning',
+  PasteTimeout = 'paste-timeout',
 }
 
-export const appEvents = new EventEmitter();
+export interface AppEvents {
+  [AppEvent.OpenDebugConsole]: never[];
+  [AppEvent.Flicker]: never[];
+  [AppEvent.SelectionWarning]: never[];
+  [AppEvent.PasteTimeout]: never[];
+}
+
+export const appEvents = new EventEmitter<AppEvents>();

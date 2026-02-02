@@ -10,10 +10,14 @@ import { Box, Text } from 'ink';
 import type { IndividualToolCallDisplay } from '../../types.js';
 import { ToolCallStatus } from '../../types.js';
 import { ToolMessage } from './ToolMessage.js';
+import { ShellToolMessage } from './ShellToolMessage.js';
 import { ToolConfirmationMessage } from './ToolConfirmationMessage.js';
 import { theme } from '../../semantic-colors.js';
-import { SHELL_COMMAND_NAME, SHELL_NAME } from '../../constants.js';
 import { useConfig } from '../../contexts/ConfigContext.js';
+import { isShellTool, isThisShellFocused } from './ToolShared.js';
+import { ASK_USER_DISPLAY_NAME } from '@google/gemini-cli-core';
+import { ShowMoreLines } from '../ShowMoreLines.js';
+import { useUIState } from '../../contexts/UIStateContext.js';
 
 interface ToolGroupMessageProps {
   groupId: number;
@@ -24,58 +28,110 @@ interface ToolGroupMessageProps {
   activeShellPtyId?: number | null;
   embeddedShellFocused?: boolean;
   onShellInputSubmit?: (input: string) => void;
+  borderTop?: boolean;
+  borderBottom?: boolean;
 }
+
+// Helper to identify Ask User tools that are in progress (have their own dialog UI)
+const isAskUserInProgress = (t: IndividualToolCallDisplay): boolean =>
+  t.name === ASK_USER_DISPLAY_NAME &&
+  [
+    ToolCallStatus.Pending,
+    ToolCallStatus.Executing,
+    ToolCallStatus.Confirming,
+  ].includes(t.status);
 
 // Main component renders the border and maps the tools using ToolMessage
 export const ToolGroupMessage: React.FC<ToolGroupMessageProps> = ({
-  toolCalls,
+  toolCalls: allToolCalls,
   availableTerminalHeight,
   terminalWidth,
   isFocused = true,
   activeShellPtyId,
   embeddedShellFocused,
+  borderTop: borderTopOverride,
+  borderBottom: borderBottomOverride,
 }) => {
-  const isEmbeddedShellFocused =
-    embeddedShellFocused &&
-    toolCalls.some(
-      (t) =>
-        t.ptyId === activeShellPtyId && t.status === ToolCallStatus.Executing,
-    );
-
-  const hasPending = !toolCalls.every(
-    (t) => t.status === ToolCallStatus.Success,
+  // Filter out in-progress Ask User tools (they have their own AskUserDialog UI)
+  const toolCalls = useMemo(
+    () => allToolCalls.filter((t) => !isAskUserInProgress(t)),
+    [allToolCalls],
   );
 
   const config = useConfig();
-  const isShellCommand = toolCalls.some(
-    (t) => t.name === SHELL_COMMAND_NAME || t.name === SHELL_NAME,
+  const { constrainHeight } = useUIState();
+
+  const isEventDriven = config.isEventDrivenSchedulerEnabled();
+
+  // If Event-Driven Scheduler is enabled, we HIDE tools that are still in
+  // pre-execution states (Confirming, Pending) from the History log.
+  // They live in the Global Queue or wait for their turn.
+  const visibleToolCalls = useMemo(() => {
+    if (!isEventDriven) {
+      return toolCalls;
+    }
+    // Only show tools that are actually running or finished.
+    // We explicitly exclude Pending and Confirming to ensure they only
+    // appear in the Global Queue until they are approved and start executing.
+    return toolCalls.filter(
+      (t) =>
+        t.status !== ToolCallStatus.Pending &&
+        t.status !== ToolCallStatus.Confirming,
+    );
+  }, [toolCalls, isEventDriven]);
+
+  const isEmbeddedShellFocused = visibleToolCalls.some((t) =>
+    isThisShellFocused(
+      t.name,
+      t.status,
+      t.ptyId,
+      activeShellPtyId,
+      embeddedShellFocused,
+    ),
   );
+
+  const hasPending = !visibleToolCalls.every(
+    (t) => t.status === ToolCallStatus.Success,
+  );
+
+  const isShellCommand = toolCalls.some((t) => isShellTool(t.name));
   const borderColor =
-    isShellCommand || isEmbeddedShellFocused
+    (isShellCommand && hasPending) || isEmbeddedShellFocused
       ? theme.ui.symbol
       : hasPending
         ? theme.status.warning
         : theme.border.default;
 
-  const staticHeight = /* border */ 2 + /* marginBottom */ 1;
-  // This is a bit of a magic number, but it accounts for the border and
-  // marginLeft.
-  const innerWidth = terminalWidth - 4;
+  const borderDimColor =
+    hasPending && (!isShellCommand || !isEmbeddedShellFocused);
 
-  // only prompt for tool approval on the first 'confirming' tool in the list
-  // note, after the CTA, this automatically moves over to the next 'confirming' tool
+  const staticHeight = /* border */ 2 + /* marginBottom */ 1;
+
+  // Inline confirmations are ONLY used when the Global Queue is disabled.
   const toolAwaitingApproval = useMemo(
-    () => toolCalls.find((tc) => tc.status === ToolCallStatus.Confirming),
-    [toolCalls],
+    () =>
+      isEventDriven
+        ? undefined
+        : toolCalls.find((tc) => tc.status === ToolCallStatus.Confirming),
+    [toolCalls, isEventDriven],
   );
 
+  // If all tools are filtered out (e.g., in-progress AskUser tools, confirming tools
+  // in event-driven mode), only render if we need to close a border from previous
+  // tool groups. borderBottomOverride=true means we must render the closing border;
+  // undefined or false means there's nothing to display.
+  if (visibleToolCalls.length === 0 && borderBottomOverride !== true) {
+    return null;
+  }
+
   let countToolCallsWithResults = 0;
-  for (const tool of toolCalls) {
+  for (const tool of visibleToolCalls) {
     if (tool.resultDisplay !== undefined && tool.resultDisplay !== '') {
       countToolCallsWithResults++;
     }
   }
-  const countOneLineToolCalls = toolCalls.length - countToolCallsWithResults;
+  const countOneLineToolCalls =
+    visibleToolCalls.length - countToolCallsWithResults;
   const availableTerminalHeightPerToolMessage = availableTerminalHeight
     ? Math.max(
         Math.floor(
@@ -87,9 +143,11 @@ export const ToolGroupMessage: React.FC<ToolGroupMessageProps> = ({
     : undefined;
 
   return (
+    // This box doesn't have a border even though it conceptually does because
+    // we need to allow the sticky headers to render the borders themselves so
+    // that the top border can be sticky.
     <Box
       flexDirection="column"
-      borderStyle="round"
       /*
         This width constraint is highly important and protects us from an Ink rendering bug.
         Since the ToolGroup can typically change rendering states frequently, it can cause
@@ -97,56 +155,107 @@ export const ToolGroupMessage: React.FC<ToolGroupMessageProps> = ({
         cause tearing.
       */
       width={terminalWidth}
-      borderDimColor={
-        hasPending && (!isShellCommand || !isEmbeddedShellFocused)
-      }
-      borderColor={borderColor}
-      gap={1}
     >
-      {toolCalls.map((tool) => {
+      {visibleToolCalls.map((tool, index) => {
         const isConfirming = toolAwaitingApproval?.callId === tool.callId;
+        const isFirst = index === 0;
+        const isShellToolCall = isShellTool(tool.name);
+
+        const commonProps = {
+          ...tool,
+          availableTerminalHeight: availableTerminalHeightPerToolMessage,
+          terminalWidth,
+          emphasis: isConfirming
+            ? ('high' as const)
+            : toolAwaitingApproval
+              ? ('low' as const)
+              : ('medium' as const),
+          isFirst:
+            borderTopOverride !== undefined
+              ? borderTopOverride && isFirst
+              : isFirst,
+          borderColor,
+          borderDimColor,
+        };
+
         return (
-          <Box key={tool.callId} flexDirection="column" minHeight={1}>
-            <Box flexDirection="row" alignItems="center">
-              <ToolMessage
-                {...tool}
-                availableTerminalHeight={availableTerminalHeightPerToolMessage}
-                terminalWidth={innerWidth}
-                emphasis={
-                  isConfirming
-                    ? 'high'
-                    : toolAwaitingApproval
-                      ? 'low'
-                      : 'medium'
-                }
+          <Box
+            key={tool.callId}
+            flexDirection="column"
+            minHeight={1}
+            width={terminalWidth}
+          >
+            {isShellToolCall ? (
+              <ShellToolMessage
+                {...commonProps}
                 activeShellPtyId={activeShellPtyId}
                 embeddedShellFocused={embeddedShellFocused}
                 config={config}
               />
-            </Box>
-            {tool.status === ToolCallStatus.Confirming &&
-              isConfirming &&
-              tool.confirmationDetails && (
-                <ToolConfirmationMessage
-                  confirmationDetails={tool.confirmationDetails}
-                  config={config}
-                  isFocused={isFocused}
-                  availableTerminalHeight={
-                    availableTerminalHeightPerToolMessage
-                  }
-                  terminalWidth={innerWidth}
-                />
-              )}
-            {tool.outputFile && (
-              <Box marginX={1}>
-                <Text color={theme.text.primary}>
-                  Output too long and was saved to: {tool.outputFile}
-                </Text>
-              </Box>
+            ) : (
+              <ToolMessage {...commonProps} />
             )}
+            <Box
+              borderLeft={true}
+              borderRight={true}
+              borderTop={false}
+              borderBottom={false}
+              borderColor={borderColor}
+              borderDimColor={borderDimColor}
+              flexDirection="column"
+              borderStyle="round"
+              paddingLeft={1}
+              paddingRight={1}
+            >
+              {tool.status === ToolCallStatus.Confirming &&
+                isConfirming &&
+                tool.confirmationDetails && (
+                  <ToolConfirmationMessage
+                    callId={tool.callId}
+                    confirmationDetails={tool.confirmationDetails}
+                    config={config}
+                    isFocused={isFocused}
+                    availableTerminalHeight={
+                      availableTerminalHeightPerToolMessage
+                    }
+                    terminalWidth={terminalWidth - 4}
+                  />
+                )}
+              {tool.outputFile && (
+                <Box>
+                  <Text color={theme.text.primary}>
+                    Output too long and was saved to: {tool.outputFile}
+                  </Text>
+                </Box>
+              )}
+            </Box>
           </Box>
         );
       })}
+      {
+        /*
+              We have to keep the bottom border separate so it doesn't get
+              drawn over by the sticky header directly inside it.
+             */
+        (visibleToolCalls.length > 0 || borderBottomOverride !== undefined) && (
+          <Box
+            height={0}
+            width={terminalWidth}
+            borderLeft={true}
+            borderRight={true}
+            borderTop={false}
+            borderBottom={borderBottomOverride ?? true}
+            borderColor={borderColor}
+            borderDimColor={borderDimColor}
+            borderStyle="round"
+          />
+        )
+      }
+      {(borderBottomOverride ?? true) && visibleToolCalls.length > 0 && (
+        <Box paddingX={1}>
+          <ShowMoreLines constrainHeight={constrainHeight} />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -11,13 +11,14 @@
 .gemini/*
 !.gemini/config.yaml
 !.gemini/commands/
+!.gemini/skills/
+!.gemini/settings.json
 
 # Note: .gemini-clipboard/ is NOT in gitignore so Gemini can access pasted images
 
 # Dependency directory
 node_modules
 bower_components
-package-lock.json
 
 # Editors
 .idea
@@ -54,9 +55,16 @@ packages/core/src/generated/*
 !packages/core/src/generated/git-commit.ts
 .integration-tests/
 packages/vscode-ide-companion/*.vsix
+packages/cli/download-ripgrep*/
 
 # GHA credentials
 gha-creds-*.json
 
 # Log files
 patch_output.log
+gemini-debug.log
+
+.genkit
+.gemini-clipboard/
+.eslintcache
+evals/logs/

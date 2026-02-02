@@ -23,10 +23,12 @@ export function createNonInteractiveUI(): CommandContext['ui'] {
     toggleCorgiMode: () => {},
     toggleDebugProfiler: () => {},
     toggleVimEnabled: async () => false,
-    setGeminiMdFileCount: (_count) => {},
     reloadCommands: () => {},
+    openAgentConfigDialog: () => {},
     extensionsUpdateState: new Map(),
     dispatchExtensionStateUpdate: (_action: ExtensionUpdateAction) => {},
     addConfirmUpdateExtensionRequest: (_request) => {},
+    removeComponent: () => {},
+    toggleBackgroundShell: () => {},
   };
 }
