@@ -26,13 +26,15 @@ import {
 } from './models.js';
 
 describe('getDisplayString', () => {
-  it('should return Auto (Gemini 3) for preview auto model', () => {
-    expect(getDisplayString(PREVIEW_GEMINI_MODEL_AUTO)).toBe('Auto (Gemini 3)');
+  it('should return Auto (Gemini 2.5) for preview auto model', () => {
+    expect(getDisplayString(PREVIEW_GEMINI_MODEL_AUTO)).toBe(
+      'Auto (Gemini 2.5)',
+    );
   });
 
-  it('should return Auto (Gemini 2.5) for default auto model', () => {
+  it('should return Auto (Gemini 3.0) for default auto model', () => {
     expect(getDisplayString(DEFAULT_GEMINI_MODEL_AUTO)).toBe(
-      'Auto (Gemini 2.5)',
+      'Auto (Gemini 3.0)',
     );
   });
 
@@ -64,7 +66,7 @@ describe('getDisplayString', () => {
 
 describe('supportsMultimodalFunctionResponse', () => {
   it('should return true for gemini-3 model', () => {
-    expect(supportsMultimodalFunctionResponse('gemini-3-pro')).toBe(true);
+    expect(supportsMultimodalFunctionResponse('gemini-3.0-pro')).toBe(true);
   });
 
   it('should return false for gemini-2 models', () => {
@@ -80,12 +82,12 @@ describe('supportsMultimodalFunctionResponse', () => {
 
 describe('resolveModel', () => {
   describe('delegation logic', () => {
-    it('should return the Preview Pro model when auto-gemini-3 is requested', () => {
+    it('should return the Preview Pro model when auto-gemini-2.5 is requested', () => {
       const model = resolveModel(PREVIEW_GEMINI_MODEL_AUTO, false);
       expect(model).toBe(PREVIEW_GEMINI_MODEL);
     });
 
-    it('should return the Default Pro model when auto-gemini-2.5 is requested', () => {
+    it('should return the Default Pro model when auto-gemini-3.0 is requested', () => {
       const model = resolveModel(DEFAULT_GEMINI_MODEL_AUTO, false);
       expect(model).toBe(DEFAULT_GEMINI_MODEL);
     });
@@ -165,7 +167,7 @@ describe('isGemini2Model', () => {
   });
 
   it('should return false for gemini-3-pro', () => {
-    expect(isGemini2Model('gemini-3-pro')).toBe(false);
+    expect(isGemini2Model('gemini-3.0-pro')).toBe(false);
   });
 
   it('should return false for arbitrary strings', () => {
@@ -178,11 +180,11 @@ describe('isAutoModel', () => {
     expect(isAutoModel(GEMINI_MODEL_ALIAS_AUTO)).toBe(true);
   });
 
-  it('should return true for "auto-gemini-3"', () => {
+  it('should return true for "auto-gemini-2.5"', () => {
     expect(isAutoModel(PREVIEW_GEMINI_MODEL_AUTO)).toBe(true);
   });
 
-  it('should return true for "auto-gemini-2.5"', () => {
+  it('should return true for "auto-gemini-3.0"', () => {
     expect(isAutoModel(DEFAULT_GEMINI_MODEL_AUTO)).toBe(true);
   });
 

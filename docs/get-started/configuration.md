@@ -380,16 +380,16 @@ their corresponding top-level category object in your `settings.json` file.
           }
         }
       },
-      "gemini-3-pro-preview": {
+      "gemini-3.0-pro": {
         "extends": "chat-base-3",
         "modelConfig": {
-          "model": "gemini-3-pro-preview"
+          "model": "gemini-3.0-pro"
         }
       },
-      "gemini-3-flash-preview": {
+      "gemini-3.0-flash": {
         "extends": "chat-base-3",
         "modelConfig": {
-          "model": "gemini-3-flash-preview"
+          "model": "gemini-3.0-flash"
         }
       },
       "gemini-2.5-pro": {
@@ -518,12 +518,12 @@ their corresponding top-level category object in your `settings.json` file.
       },
       "chat-compression-3-pro": {
         "modelConfig": {
-          "model": "gemini-3-pro-preview"
+          "model": "gemini-3.0-pro"
         }
       },
       "chat-compression-3-flash": {
         "modelConfig": {
-          "model": "gemini-3-flash-preview"
+          "model": "gemini-3.0-flash"
         }
       },
       "chat-compression-2.5-pro": {
@@ -1160,7 +1160,7 @@ the `advanced.excludedEnvVars` setting in your `settings.json` file.
 - **`GEMINI_MODEL`**:
   - Specifies the default Gemini model to use.
   - Overrides the hardcoded default
-  - Example: `export GEMINI_MODEL="gemini-3-flash-preview"`- **`GOOGLE_API_KEY`**:
+  - Example: `export GEMINI_MODEL="gemini-3.0-flash"`- **`GOOGLE_API_KEY`**:
   - Your Google Cloud API key.
   - Required for using Vertex AI in express mode.
   - Ensure you have the necessary permissions.
@@ -1308,7 +1308,7 @@ for that specific session.
 
 - **`--model <model_name>`** (**`-m <model_name>`**):
   - Specifies the Gemini model to use for this session.
-  - Example: `npm start -- --model gemini-3-pro-preview`
+  - Example: `npm start -- --model gemini-3.0-pro`
 - **`--prompt <your_prompt>`** (**`-p <your_prompt>`**):
   - Used to pass a prompt directly to the command. This invokes Gemini CLI in a
     non-interactive mode.
