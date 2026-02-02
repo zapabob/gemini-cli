@@ -1,5 +1,6 @@
 # Config for the Gemini Pull Request Review Bot.
 # https://github.com/marketplace/gemini-code-assist
+model: 'gemini-1.5-pro-latest'
 have_fun: false
 code_review:
   disable: false

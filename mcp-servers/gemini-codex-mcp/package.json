@@ -24,7 +24,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@google/genai": "^1.16.0",
-    "@modelcontextprotocol/sdk": "^1.15.1"
+    "@modelcontextprotocol/sdk": "^1.25.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

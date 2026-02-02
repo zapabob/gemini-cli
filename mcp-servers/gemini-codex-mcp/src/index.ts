@@ -9,10 +9,18 @@
 import { promises as fs } from 'node:fs';
 import { resolve, isAbsolute } from 'node:path';
 
-import { GoogleGenAI, type GenerateContentConfig, type Content, type Part } from '@google/genai';
+import {
+  GoogleGenAI,
+  type GenerateContentConfig,
+  type Content,
+  type Part,
+} from '@google/genai';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 
 interface HistoryMessage {
   role: string;
@@ -47,7 +55,11 @@ class GeminiCodexMCPServer {
   private readonly client: GoogleGenAI;
 
   constructor() {
-    this.server = new Server({ name: 'gemini-codex-mcp', version: '0.1.0' });
+    this.server = new Server({
+      name: 'gemini-codex-mcp',
+      version: '0.1.0',
+      capabilities: ['tools'],
+    });
     this.client = this.createClient();
     this.registerHandlers();
   }
@@ -103,7 +115,8 @@ class GeminiCodexMCPServer {
               },
               systemInstruction: {
                 type: 'string',
-                description: 'Optional system instruction to steer the model response.',
+                description:
+                  'Optional system instruction to steer the model response.',
               },
               system: {
                 type: 'string',
@@ -144,7 +157,8 @@ class GeminiCodexMCPServer {
                   properties: {
                     role: {
                       type: 'string',
-                      description: 'Message role: user, assistant, model, or system.',
+                      description:
+                        'Message role: user, assistant, model, or system.',
                       enum: ['user', 'assistant', 'model', 'system'],
                     },
                     content: {
@@ -171,11 +185,13 @@ class GeminiCodexMCPServer {
                         },
                         label: {
                           type: 'string',
-                          description: 'Optional label displayed before the file contents.',
+                          description:
+                            'Optional label displayed before the file contents.',
                         },
                         encoding: {
                           type: 'string',
-                          description: 'File encoding (only utf-8 is supported).',
+                          description:
+                            'File encoding (only utf-8 is supported).',
                           enum: ['utf-8', 'utf8'],
                         },
                       },
@@ -185,7 +201,8 @@ class GeminiCodexMCPServer {
               },
               workingDirectory: {
                 type: 'string',
-                description: 'Base directory for resolving relative file paths.',
+                description:
+                  'Base directory for resolving relative file paths.',
               },
               responseFormat: {
                 type: 'string',
@@ -201,7 +218,8 @@ class GeminiCodexMCPServer {
                     items: { type: 'string' },
                   },
                 ],
-                description: 'Additional context strings prepended before the prompt.',
+                description:
+                  'Additional context strings prepended before the prompt.',
               },
             },
             required: ['prompt'],
@@ -223,10 +241,15 @@ class GeminiCodexMCPServer {
   private async handleGenerateText(args: GenerateTextArguments) {
     const prompt = this.normalizeString(args.prompt);
     if (!prompt) {
-      throw new Error('The prompt field is required and must be a non-empty string.');
+      throw new Error(
+        'The prompt field is required and must be a non-empty string.',
+      );
     }
 
-    const model = this.normalizeString(args.model) || process.env.GEMINI_MODEL || 'gemini-2.0-flash-001';
+    const model =
+      this.normalizeString(args.model) ||
+      process.env.GEMINI_MODEL ||
+      'gemini-2.0-flash-001';
 
     const systemInstruction =
       this.normalizeString(args.systemInstruction) ||
@@ -251,8 +274,7 @@ class GeminiCodexMCPServer {
       try {
         const json = responseText ? JSON.parse(responseText) : {};
         const content: Array<
-          | { type: 'json'; json: unknown }
-          | { type: 'text'; text: string }
+          { type: 'json'; json: unknown } | { type: 'text'; text: string }
         > = [{ type: 'json', json }];
         if (usageText) {
           content.push({ type: 'text', text: usageText });
@@ -297,7 +319,9 @@ class GeminiCodexMCPServer {
     };
   }
 
-  private buildGenerationConfig(args: GenerateTextArguments & { systemInstruction?: string | null }): GenerateContentConfig {
+  private buildGenerationConfig(
+    args: GenerateTextArguments & { systemInstruction?: string | null },
+  ): GenerateContentConfig {
     const config: GenerateContentConfig = {};
 
     if (args.systemInstruction) {
@@ -339,7 +363,9 @@ class GeminiCodexMCPServer {
     return config;
   }
 
-  private async buildContents(args: GenerateTextArguments & { prompt: string }): Promise<Content[]> {
+  private async buildContents(
+    args: GenerateTextArguments & { prompt: string },
+  ): Promise<Content[]> {
     const contents: Content[] = [];
 
     const history = Array.isArray(args.history)
@@ -355,11 +381,17 @@ class GeminiCodexMCPServer {
       if (!text || !role) {
         continue;
       }
-      contents.push({ role: this.mapRole(role), parts: [this.toTextPart(text)] });
+      contents.push({
+        role: this.mapRole(role),
+        parts: [this.toTextPart(text)],
+      });
     }
 
     const additionalContext = this.collectContext(args.context);
-    const fileSections = await this.loadFileSections(args.files, args.workingDirectory);
+    const fileSections = await this.loadFileSections(
+      args.files,
+      args.workingDirectory,
+    );
 
     const userParts: Part[] = [];
     for (const section of [...additionalContext, ...fileSections]) {
@@ -381,13 +413,19 @@ class GeminiCodexMCPServer {
     }
     if (Array.isArray(context)) {
       return context
-        .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+        .filter(
+          (item): item is string =>
+            typeof item === 'string' && item.trim().length > 0,
+        )
         .map((item) => item);
     }
     return [];
   }
 
-  private async loadFileSections(files: unknown, workingDirectory: unknown): Promise<string[]> {
+  private async loadFileSections(
+    files: unknown,
+    workingDirectory: unknown,
+  ): Promise<string[]> {
     if (!files) {
       return [];
     }
@@ -428,7 +466,9 @@ class GeminiCodexMCPServer {
         );
       }
 
-      sections.push(`File: ${descriptor.label ?? descriptor.path}\n${fileContent}`);
+      sections.push(
+        `File: ${descriptor.label ?? descriptor.path}\n${fileContent}`,
+      );
     }
 
     return sections;
@@ -449,7 +489,9 @@ class GeminiCodexMCPServer {
     if (normalized === 'utf8' || normalized === 'utf-8') {
       return 'utf8';
     }
-    throw new Error(`Unsupported encoding "${value}". Only utf-8 is supported.`);
+    throw new Error(
+      `Unsupported encoding "${value}". Only utf-8 is supported.`,
+    );
   }
 
   private toTextPart(text: string): Part {
@@ -530,9 +572,7 @@ class GeminiCodexMCPServer {
   }
 }
 
-new GeminiCodexMCPServer()
-  .start()
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : error);
-    process.exit(1);
-  });
+new GeminiCodexMCPServer().start().catch((error) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+});
