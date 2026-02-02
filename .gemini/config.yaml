@@ -27,3 +27,6 @@ mcpServers:
       - web_search
       - document_analysis
       - research_report_generation
+
+general:
+  previewFeatures: true

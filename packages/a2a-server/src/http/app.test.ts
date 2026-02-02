@@ -565,10 +565,7 @@ describe('E2E Tests', () => {
     expect(eventStream).toEqual(expect.arrayContaining(expectedFlow));
 
     assertUniqueFinalEventIsLast(events);
-<<<<<<< HEAD
     expect(events.length).toBe(7);
-=======
->>>>>>> upstream/main
   });
 
   it('should handle tool calls that do not require approval', async () => {
