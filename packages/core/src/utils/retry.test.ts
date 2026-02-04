@@ -293,13 +293,9 @@ describe('retryWithBackoff', () => {
 
     // Check that the delays are not exactly the same due to jitter
     // This is a probabilistic test, but with +/-30% jitter, it's highly likely they differ.
-    if (firstDelaySet.length > 0 && secondDelaySet.length > 0) {
-      // Check the first delay of each set
-      expect(firstDelaySet[0]).not.toBe(secondDelaySet[0]);
-    } else {
-      // If somehow no delays were captured (e.g. test setup issue), fail explicitly
-      throw new Error('Delays were not captured for jitter test');
-    }
+    expect(firstDelaySet.length).toBeGreaterThan(0);
+    expect(secondDelaySet.length).toBeGreaterThan(0);
+    expect(firstDelaySet[0]).not.toBe(secondDelaySet[0]);
 
     // Ensure delays are within the expected jitter range [70, 130] for initialDelayMs = 100
     [...firstDelaySet, ...secondDelaySet].forEach((d) => {
@@ -505,7 +501,7 @@ describe('retryWithBackoff', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
   it('should trigger fallback for OAuth personal users on persistent 500 errors', async () => {
-    const fallbackCallback = vi.fn().mockResolvedValue('gemini-2.5-flash');
+    const fallbackCallback = vi.fn().mockResolvedValue('gemini-3.0-flash');
 
     let fallbackOccurred = false;
     const mockFn = vi.fn().mockImplementation(async () => {

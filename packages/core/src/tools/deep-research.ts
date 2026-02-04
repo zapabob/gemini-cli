@@ -426,7 +426,7 @@ class DeepResearchToolInvocation extends BaseToolInvocation<
 
       try {
         const response = await geminiClient.generateContent(
-          { model: 'gemini-3.0-flash-exp' },
+          { model: 'gemini-1.5-flash' },
           [{ role: 'user', parts: [{ text: levelPrompt }] }],
           signal,
         );

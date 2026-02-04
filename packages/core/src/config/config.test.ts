@@ -287,9 +287,8 @@ describe('Server Config (config.ts)', () => {
         // interactive defaults to false
       });
 
-      const { McpClientManager } = await import(
-        '../tools/mcp-client-manager.js'
-      );
+      const { McpClientManager } =
+        await import('../tools/mcp-client-manager.js');
       let mcpStarted = false;
 
       (McpClientManager as unknown as Mock).mockImplementation(() => ({
@@ -313,9 +312,8 @@ describe('Server Config (config.ts)', () => {
         interactive: true,
       });
 
-      const { McpClientManager } = await import(
-        '../tools/mcp-client-manager.js'
-      );
+      const { McpClientManager } =
+        await import('../tools/mcp-client-manager.js');
       let mcpStarted = false;
 
       (McpClientManager as unknown as Mock).mockImplementation(() => ({
@@ -1732,7 +1730,7 @@ describe('Config getHooks', () => {
       const service = config.getModelAvailabilityService();
       const spy = vi.spyOn(service, 'reset');
 
-      const proModel = 'gemini-2.5-pro';
+      const proModel = 'gemini-3.0-pro';
       config.setModel(proModel);
 
       expect(config.getModel()).toBe(proModel);

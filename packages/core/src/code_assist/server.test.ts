@@ -591,7 +591,7 @@ describe('CodeAssistServer', () => {
     const mockResponse = {
       buckets: [
         {
-          modelId: 'gemini-2.5-pro',
+          modelId: 'gemini-3.0-pro',
           tokenType: 'REQUESTS',
           remainingFraction: 0.75,
           resetTime: '2025-10-22T16:01:15Z',

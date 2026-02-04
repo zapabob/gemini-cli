@@ -515,46 +515,49 @@ describe('Gemini Client (client.ts)', () => {
         expect(client['chat']).toBe(mockOriginalChat);
       });
 
-      it.skip('will not attempt to compress context after a failure', async () => {
-        const { client } = setup({
-          originalTokenCount: 100,
-          newTokenCount: 200,
-          compressionStatus:
-            CompressionStatus.COMPRESSION_FAILED_INFLATED_TOKEN_COUNT,
-        });
+      it.todo(
+        'will not attempt to compress context after a failure',
+        async () => {
+          const { client } = setup({
+            originalTokenCount: 100,
+            newTokenCount: 200,
+            compressionStatus:
+              CompressionStatus.COMPRESSION_FAILED_INFLATED_TOKEN_COUNT,
+          });
 
-        await client.tryCompressChat('prompt-id-4', false); // This fails and sets hasFailedCompressionAttempt = true
+          await client.tryCompressChat('prompt-id-4', false); // This fails and sets hasFailedCompressionAttempt = true
 
-        // Mock the next call to return NOOP
-        vi.mocked(
-          ChatCompressionService.prototype.compress,
-        ).mockResolvedValueOnce({
-          newHistory: null,
-          info: {
-            originalTokenCount: 0,
-            newTokenCount: 0,
-            compressionStatus: CompressionStatus.NOOP,
-          },
-        });
+          // Mock the next call to return NOOP
+          vi.mocked(
+            ChatCompressionService.prototype.compress,
+          ).mockResolvedValueOnce({
+            newHistory: null,
+            info: {
+              originalTokenCount: 0,
+              newTokenCount: 0,
+              compressionStatus: CompressionStatus.NOOP,
+            },
+          });
 
-        // This call should now be a NOOP
-        const result = await client.tryCompressChat('prompt-id-5', false);
+          // This call should now be a NOOP
+          const result = await client.tryCompressChat('prompt-id-5', false);
 
-        expect(result.compressionStatus).toBe(CompressionStatus.NOOP);
-        expect(ChatCompressionService.prototype.compress).toHaveBeenCalledTimes(
-          2,
-        );
-        expect(
-          ChatCompressionService.prototype.compress,
-        ).toHaveBeenLastCalledWith(
-          expect.anything(),
-          'prompt-id-5',
-          false,
-          expect.anything(),
-          expect.anything(),
-          true, // hasFailedCompressionAttempt
-        );
-      });
+          expect(result.compressionStatus).toBe(CompressionStatus.NOOP);
+          expect(
+            ChatCompressionService.prototype.compress,
+          ).toHaveBeenCalledTimes(2);
+          expect(
+            ChatCompressionService.prototype.compress,
+          ).toHaveBeenLastCalledWith(
+            expect.anything(),
+            'prompt-id-5',
+            false,
+            expect.anything(),
+            expect.anything(),
+            true, // hasFailedCompressionAttempt
+          );
+        },
+      );
     });
     it('should correctly latch hasFailedCompressionAttempt flag', async () => {
       // 1. Setup: Call setup() from this test file
@@ -1817,8 +1820,8 @@ ${JSON.stringify(
           model: 'fallback-model',
           reason: 'test',
         });
-        vi.mocked(mockConfig.getModel).mockReturnValue('gemini-2.5-flash');
-        coreEvents.emitModelChanged('gemini-2.5-flash');
+        vi.mocked(mockConfig.getModel).mockReturnValue('gemini-3.0-flash');
+        coreEvents.emitModelChanged('gemini-3.0-flash');
 
         stream = client.sendMessageStream(
           [{ text: 'Continue' }],
@@ -2183,21 +2186,18 @@ ${JSON.stringify(
             addHistory: (typeof vi)['fn'];
           };
 
-          if (shouldSendContext) {
-            expect(mockChat.addHistory).toHaveBeenCalledWith(
+          const ideContextMatcher = expect.objectContaining({
+            parts: expect.arrayContaining([
               expect.objectContaining({
-                parts: expect.arrayContaining([
-                  expect.objectContaining({
-                    text: expect.stringContaining(
-                      "Here is a summary of changes in the user's editor context",
-                    ),
-                  }),
-                ]),
+                text: expect.stringContaining(
+                  "Here is a summary of changes in the user's editor context",
+                ),
               }),
-            );
-          } else {
-            expect(mockChat.addHistory).not.toHaveBeenCalled();
-          }
+            ]),
+          });
+
+          const expectedCalls = shouldSendContext ? [[ideContextMatcher]] : [];
+          expect(mockChat.addHistory.mock.calls).toEqual(expectedCalls);
         },
       );
 
@@ -2881,7 +2881,7 @@ ${JSON.stringify(
       const abortSignal = new AbortController().signal;
 
       await client.generateContent(
-        { model: 'test-model' },
+        { model: 'gemini-3.0-pro' },
         contents,
         abortSignal,
       );

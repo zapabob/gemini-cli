@@ -195,7 +195,7 @@ describe('classifyGoogleError', () => {
               quotaId: 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier',
               quotaDimensions: {
                 location: 'global',
-                model: 'gemini-2.5-pro',
+                model: 'gemini-3.0-pro',
               },
               quotaValue: '2',
             },
@@ -234,7 +234,7 @@ describe('classifyGoogleError', () => {
           domain: 'cloudcode-pa.googleapis.com',
           metadata: {
             uiMessage: 'true',
-            model: 'gemini-2.5-pro',
+            model: 'gemini-3.0-pro',
             quotaResetDelay: '539.477544ms',
             quotaResetTimeStamp: '2025-10-20T19:14:08Z',
           },
@@ -265,7 +265,7 @@ describe('classifyGoogleError', () => {
           domain: 'cloudcode-pa.googleapis.com',
           metadata: {
             uiMessage: 'true',
-            model: 'gemini-2.5-pro',
+            model: 'gemini-3.0-pro',
             quotaResetDelay: '539.477544ms',
             quotaResetTimeStamp: '2025-10-20T19:14:08Z',
           },
@@ -323,9 +323,7 @@ describe('classifyGoogleError', () => {
     const originalError = new Error();
     const result = classifyGoogleError(originalError);
     expect(result).toBeInstanceOf(RetryableQuotaError);
-    if (result instanceof RetryableQuotaError) {
-      expect(result.retryDelayMs).toBeUndefined();
-    }
+    expect((result as RetryableQuotaError).retryDelayMs).toBeUndefined();
   });
 
   it('should classify nested JSON string 404 error as ModelNotFoundError', () => {
@@ -364,15 +362,13 @@ describe('classifyGoogleError', () => {
     const result = classifyGoogleError(errorWithEmptyDetails);
 
     expect(result).toBeInstanceOf(RetryableQuotaError);
-    if (result instanceof RetryableQuotaError) {
-      expect(result.retryDelayMs).toBe(5000);
-      // The cause should be the parsed GoogleApiError
-      expect(result.cause).toEqual({
-        code: 429,
-        message: 'Resource exhausted. Please retry in 5s',
-        details: [],
-      });
-    }
+    expect((result as RetryableQuotaError).retryDelayMs).toBe(5000);
+    // The cause should be the parsed GoogleApiError
+    expect((result as RetryableQuotaError).cause).toEqual({
+      code: 429,
+      message: 'Resource exhausted. Please retry in 5s',
+      details: [],
+    });
   });
 
   it('should return RetryableQuotaError without delay time for generic 429 without specific message', () => {
@@ -384,9 +380,7 @@ describe('classifyGoogleError', () => {
     const result = classifyGoogleError(generic429);
 
     expect(result).toBeInstanceOf(RetryableQuotaError);
-    if (result instanceof RetryableQuotaError) {
-      expect(result.retryDelayMs).toBeUndefined();
-    }
+    expect((result as RetryableQuotaError).retryDelayMs).toBeUndefined();
   });
 
   it('should return RetryableQuotaError without delay time for 429 with empty details and no regex match', () => {
@@ -401,9 +395,7 @@ describe('classifyGoogleError', () => {
     const result = classifyGoogleError(errorWithEmptyDetails);
 
     expect(result).toBeInstanceOf(RetryableQuotaError);
-    if (result instanceof RetryableQuotaError) {
-      expect(result.retryDelayMs).toBeUndefined();
-    }
+    expect((result as RetryableQuotaError).retryDelayMs).toBeUndefined();
   });
 
   it('should return RetryableQuotaError without delay time for 429 with some detail', () => {
@@ -427,9 +419,7 @@ describe('classifyGoogleError', () => {
     const result = classifyGoogleError(errorWithEmptyDetails);
 
     expect(result).toBeInstanceOf(RetryableQuotaError);
-    if (result instanceof RetryableQuotaError) {
-      expect(result.retryDelayMs).toBeUndefined();
-    }
+    expect((result as RetryableQuotaError).retryDelayMs).toBeUndefined();
   });
 
   it('should return ValidationRequiredError for 403 with VALIDATION_REQUIRED from cloudcode-pa domain', () => {

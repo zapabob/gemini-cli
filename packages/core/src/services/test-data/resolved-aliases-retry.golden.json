@@ -61,8 +61,8 @@
       "topK": 64
     }
   },
-  "gemini-2.5-pro": {
-    "model": "gemini-2.5-pro",
+  "gemini-3.0-pro": {
+    "model": "gemini-3.0-pro",
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
@@ -73,8 +73,8 @@
       "topK": 64
     }
   },
-  "gemini-2.5-flash": {
-    "model": "gemini-2.5-flash",
+  "gemini-3.0-flash": {
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
@@ -85,8 +85,8 @@
       "topK": 64
     }
   },
-  "gemini-2.5-flash-lite": {
-    "model": "gemini-2.5-flash-lite",
+  "gemini-3.0-flash-lite": {
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 1,
       "topP": 0.95,
@@ -97,15 +97,15 @@
       "topK": 64
     }
   },
-  "gemini-2.5-flash-base": {
-    "model": "gemini-2.5-flash",
+  "gemini-3.0-flash-base": {
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
     }
   },
   "classifier": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -116,7 +116,7 @@
     }
   },
   "prompt-completion": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 0.3,
       "topP": 1,
@@ -127,7 +127,7 @@
     }
   },
   "edit-corrector": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -137,7 +137,7 @@
     }
   },
   "summarizer-default": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -145,7 +145,7 @@
     }
   },
   "summarizer-shell": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -153,7 +153,7 @@
     }
   },
   "web-search": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -165,7 +165,7 @@
     }
   },
   "web-fetch": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1,
@@ -177,35 +177,35 @@
     }
   },
   "web-fetch-fallback": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
     }
   },
   "loop-detection": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
     }
   },
   "loop-detection-double-check": {
-    "model": "gemini-2.5-pro",
+    "model": "gemini-3.0-pro",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
     }
   },
   "llm-edit-fixer": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
     }
   },
   "next-speaker-checker": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {
       "temperature": 0,
       "topP": 1
@@ -220,19 +220,19 @@
     "generateContentConfig": {}
   },
   "chat-compression-2.5-pro": {
-    "model": "gemini-2.5-pro",
+    "model": "gemini-3.0-pro",
     "generateContentConfig": {}
   },
   "chat-compression-2.5-flash": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.0-flash",
     "generateContentConfig": {}
   },
   "chat-compression-2.5-flash-lite": {
-    "model": "gemini-2.5-flash-lite",
+    "model": "gemini-3.0-flash-lite",
     "generateContentConfig": {}
   },
   "chat-compression-default": {
-    "model": "gemini-2.5-pro",
+    "model": "gemini-3.0-pro",
     "generateContentConfig": {}
   }
 }

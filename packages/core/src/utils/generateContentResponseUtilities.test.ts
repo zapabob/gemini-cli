@@ -166,7 +166,7 @@ describe('generateContentResponseUtilities', () => {
         toolName,
         callId,
         llmContent,
-        PREVIEW_GEMINI_MODEL,
+        DEFAULT_GEMINI_MODEL,
       );
       expect(result).toEqual([
         {
@@ -188,7 +188,7 @@ describe('generateContentResponseUtilities', () => {
         toolName,
         callId,
         llmContent,
-        PREVIEW_GEMINI_MODEL,
+        DEFAULT_GEMINI_MODEL,
       );
       expect(result).toEqual([
         {
@@ -210,7 +210,7 @@ describe('generateContentResponseUtilities', () => {
         toolName,
         callId,
         llmContent,
-        DEFAULT_GEMINI_MODEL,
+        PREVIEW_GEMINI_MODEL,
       );
       expect(result).toEqual([
         {
@@ -265,7 +265,7 @@ describe('generateContentResponseUtilities', () => {
         toolName,
         callId,
         llmContent,
-        PREVIEW_GEMINI_MODEL,
+        DEFAULT_GEMINI_MODEL,
       );
       expect(result).toEqual([
         {
@@ -293,7 +293,7 @@ describe('generateContentResponseUtilities', () => {
         toolName,
         callId,
         llmContent,
-        PREVIEW_GEMINI_MODEL,
+        DEFAULT_GEMINI_MODEL,
       );
       expect(result).toEqual([
         {

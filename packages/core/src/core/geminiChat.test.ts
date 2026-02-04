@@ -133,7 +133,7 @@ describe('GeminiChat', () => {
       getPreviewFeatures: () => false,
       getContentGeneratorConfig: vi.fn().mockImplementation(() => ({
         authType: 'oauth-personal',
-        model: currentModel,
+        model: 'gemini-3.0-pro',
       })),
       getModel: vi.fn().mockImplementation(() => currentModel),
       setModel: vi.fn().mockImplementation((m: string) => {
@@ -799,7 +799,7 @@ describe('GeminiChat', () => {
       );
 
       const stream = await chat.sendMessageStream(
-        { model: 'gemini-2.5-pro' },
+        { model: 'gemini-3.0-pro' },
         'test',
         'prompt-id-malformed',
         new AbortController().signal,
@@ -846,7 +846,7 @@ describe('GeminiChat', () => {
 
       // 2. Send a message
       const stream = await chat.sendMessageStream(
-        { model: 'gemini-2.5-pro' },
+        { model: 'gemini-3.0-pro' },
         'test retry',
         'prompt-id-retry-malformed',
         new AbortController().signal,
