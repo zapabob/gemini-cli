@@ -1,6 +1,6 @@
-# Latest stable release: v0.26.0
+# Latest stable release: v0.29.0
 
-Released: January 27, 2026
+Released: February 5, 2026
 
 For most users, our latest stable release is the recommended release. Install
 the latest stable version with:

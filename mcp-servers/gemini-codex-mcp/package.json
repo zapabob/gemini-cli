@@ -1,6 +1,6 @@
 {
   "name": "gemini-codex-mcp-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server that exposes Gemini CLI capabilities for Codex",
   "type": "module",
   "main": "dist/index.js",

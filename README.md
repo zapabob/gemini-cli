@@ -15,7 +15,7 @@
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
-## 🔥 What's New in zapabob Fork (TL;DR) / 特徴 (要約)
+## 🔥 What's New in zapabob Fork (v0.29.0) / 特徴 (要約)
 
 This is a **feature-enhanced fork** of
 [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli),
