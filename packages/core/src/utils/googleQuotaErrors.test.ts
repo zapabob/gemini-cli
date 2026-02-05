@@ -350,6 +350,28 @@ describe('classifyGoogleError', () => {
     expect((classified as ModelNotFoundError).code).toBe(404);
   });
 
+  it('should classify "limit: 0" error as TerminalQuotaError with project settings guidance', () => {
+    const errorWithLimitZero = {
+      error: {
+        code: 429,
+        message:
+          'Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0',
+        details: [],
+      },
+    };
+
+    vi.spyOn(errorParser, 'parseGoogleApiError').mockReturnValue(
+      errorWithLimitZero.error,
+    );
+    const result = classifyGoogleError(errorWithLimitZero);
+
+    expect(result).toBeInstanceOf(TerminalQuotaError);
+    expect((result as TerminalQuotaError).message).toContain(
+      'Google AI Studio project needs activation',
+    );
+    expect((result as TerminalQuotaError).projectSettingsRequired).toBe(true);
+  });
+
   it('should fallback to string parsing for retry delays when details array is empty', () => {
     const errorWithEmptyDetails = {
       error: {

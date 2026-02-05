@@ -72,13 +72,13 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
       },
     },
     'gemini-3-pro-preview': {
-      extends: 'chat-base-2.5',
+      extends: 'chat-base-3',
       modelConfig: {
         model: 'gemini-3-pro-preview',
       },
     },
     'gemini-3-flash-preview': {
-      extends: 'chat-base-2.5',
+      extends: 'chat-base-3',
       modelConfig: {
         model: 'gemini-3-flash-preview',
       },

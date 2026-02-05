@@ -19,17 +19,20 @@ import { getErrorStatus, ModelNotFoundError } from './httpErrors.js';
  */
 export class TerminalQuotaError extends Error {
   retryDelayMs?: number;
+  projectSettingsRequired?: boolean;
 
   constructor(
     message: string,
     override readonly cause: GoogleApiError,
     retryDelaySeconds?: number,
+    projectSettingsRequired?: boolean,
   ) {
     super(message);
     this.name = 'TerminalQuotaError';
     this.retryDelayMs = retryDelaySeconds
       ? retryDelaySeconds * 1000
       : undefined;
+    this.projectSettingsRequired = projectSettingsRequired;
   }
 }
 
@@ -211,6 +214,20 @@ export function classifyGoogleError(error: unknown): unknown {
     const errorMessage =
       googleApiError?.message ||
       (error instanceof Error ? error.message : String(error));
+    const isLimitZero = errorMessage.includes('limit: 0');
+    if (isLimitZero) {
+      return new TerminalQuotaError(
+        `Quota exhausted (limit: 0). This usually means your Google AI Studio project needs activation or a new project is required. Visit https://aistudio.google.com/ to check your project quota and billing settings.`,
+        googleApiError ?? {
+          code: 429,
+          message: errorMessage,
+          details: [],
+        },
+        undefined,
+        true,
+      );
+    }
+
     const match = errorMessage.match(/Please retry in ([0-9.]+(?:ms|s))/);
     if (match?.[1]) {
       const retryDelaySeconds = parseDurationInSeconds(match[1]);
