@@ -90,8 +90,9 @@ export function ProQuotaDialog({
   };
 
   // Helper to highlight simple slash commands in the message
-  const renderMessage = (msg: string) => {
-    const parts = msg.split(/(\s+)/);
+  const renderMessage = (msg: string | unknown) => {
+    const msgStr = typeof msg === 'string' ? msg : JSON.stringify(msg);
+    const parts = msgStr.split(/(\s+)/);
     return (
       <Text>
         {parts.map((part, index) => {

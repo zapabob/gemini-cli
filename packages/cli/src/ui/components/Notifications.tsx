@@ -86,7 +86,15 @@ export const Notifications = () => {
           disappear on next run.
         </Text>
       )}
-      {updateInfo && <UpdateNotification message={updateInfo.message} />}
+      {updateInfo && (
+        <UpdateNotification
+          message={
+            typeof updateInfo.message === 'string'
+              ? updateInfo.message
+              : JSON.stringify(updateInfo.message)
+          }
+        />
+      )}
       {showStartupWarnings && (
         <Box
           borderStyle="round"
@@ -110,7 +118,10 @@ export const Notifications = () => {
           marginBottom={1}
         >
           <Text color={theme.status.error}>
-            Initialization Error: {initError}
+            Initialization Error:{' '}
+            {typeof initError === 'string'
+              ? initError
+              : JSON.stringify(initError)}
           </Text>
           <Text color={theme.status.error}>
             {' '}

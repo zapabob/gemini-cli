@@ -68,13 +68,28 @@ export const NewAgentsNotification = ({
             padding={1}
           >
             {displayAgents.map((agent) => (
-              <Box key={agent.name}>
+              <Box
+                key={
+                  typeof agent.name === 'string'
+                    ? agent.name
+                    : String(agent.name)
+                }
+              >
                 <Box flexShrink={0}>
                   <Text bold color={theme.text.primary}>
-                    - {agent.name}:{' '}
+                    -{' '}
+                    {typeof agent.name === 'string'
+                      ? agent.name
+                      : JSON.stringify(agent.name)}
+                    :{' '}
                   </Text>
                 </Box>
-                <Text color={theme.text.secondary}> {agent.description}</Text>
+                <Text color={theme.text.secondary}>
+                  {' '}
+                  {typeof agent.description === 'string'
+                    ? agent.description
+                    : JSON.stringify(agent.description)}
+                </Text>
               </Box>
             ))}
             {remaining > 0 && (
