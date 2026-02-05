@@ -1,0 +1,30 @@
+﻿src/core/subagent.ts(11,15): error TS2459: Module '"./turn.js"' declares 'ToolCallRequestInfo' locally, but it is not exported.
+src/core/subagent.ts(12,33): error TS2307: Cannot find module './nonInteractiveToolExecutor.js' or its corresponding type declarations.
+src/core/subagent.ts(297,34): error TS2554: Expected 2 arguments, but got 1.
+src/core/subagent.ts(432,43): error TS2554: Expected 4-5 arguments, but got 3.
+src/core/subagent.ts(651,9): error TS2345: Argument of type 'GenerateContentConfig' is not assignable to parameter of type 'string'.
+src/tools/deep-research.ts(164,7): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'MessageBus'.
+src/tools/deep-research.ts(424,11): error TS2554: Expected 3 arguments, but got 4.
+src/utils/errorReporting.test.ts(9,8): error TS2300: Duplicate identifier 'os'.
+src/utils/errorReporting.test.ts(11,10): error TS2300: Duplicate identifier 'reportError'.
+src/utils/errorReporting.test.ts(16,13): error TS2300: Duplicate identifier 'os'.
+src/utils/errorReporting.test.ts(36,10): error TS2300: Duplicate identifier 'reportError'.
+src/utils/errorReporting.test.ts(42,28): error TS2304: Cannot find name 'SpyInstance'.
+src/utils/errorReporting.test.ts(54,3): error TS2552: Cannot find name '_afterEach'. Did you mean 'afterEach'?
+src/utils/errorReporting.test.ts(63,43): error TS2304: Cannot find name 'context'.
+src/utils/errorReporting.test.ts(63,52): error TS2304: Cannot find name 'type'.
+src/utils/errorReporting.test.ts(63,58): error TS2554: Expected 2-4 arguments, but got 5.
+src/utils/errorReporting.test.ts(66,45): error TS2304: Cannot find name 'expectedReportPath'.
+src/utils/errorReporting.test.ts(71,7): error TS18004: No value exists in scope for the shorthand property 'context'. Either declare one or provide an initializer.
+src/utils/errorReporting.test.ts(76,51): error TS2304: Cannot find name 'expectedReportPath'.
+src/utils/errorReporting.test.ts(78,5): error TS2304: Cannot find name 'consoleErrorSpy'.
+src/utils/errorReporting.test.ts(86,51): error TS2304: Cannot find name 'expectedReportPath'.
+src/utils/errorReporting.test.ts(88,5): error TS2304: Cannot find name 'consoleErrorSpy'.
+src/utils/errorReporting.test.ts(96,51): error TS2304: Cannot find name 'expectedReportPath'.
+src/utils/errorReporting.test.ts(98,5): error TS2304: Cannot find name 'consoleErrorSpy'.
+src/utils/errorReporting.test.ts(108,58): error TS2304: Cannot find name 'nonExistentDir'.
+src/utils/errorReporting.test.ts(108,58): error TS2554: Expected 2-4 arguments, but got 5.
+src/utils/errorReporting.test.ts(141,7): error TS2304: Cannot find name 'stringifyError'.
+src/utils/errorReporting.test.ts(153,74): error TS2304: Cannot find name 'expectedMinimalReportPath'.
+src/utils/errorReporting.test.ts(164,45): error TS2304: Cannot find name 'expectedReportPath'.
+src/utils/errorReporting.test.ts(172,51): error TS2304: Cannot find name 'expectedReportPath'.

@@ -1,0 +1,650 @@
+﻿src/commands/naturalLanguageCommand.ts(109,7): error TS2353: Object literal may only specify known properties, and 'extensions' does not exist in type 'ConfigParameters'.
+src/commands/skills/install.ts(8,28): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/commands/skills/list.ts(33,43): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/commands/skills/list.ts(36,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/commands/skills/list.ts(36,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/config/config.test.ts(710,19): error TS2339: Property 'getCustomIgnoreFilePaths' does not exist on type 'Config'.
+src/config/config.test.ts(711,38): error TS2339: Property 'customIgnoreFilePaths' does not exist on type 'FileFilteringOptions'.
+src/config/config.test.ts(1584,24): error TS4111: Property 'GEMINI_CLI_IDE_SERVER_PORT' comes from an index signature, so it must be accessed with ['GEMINI_CLI_IDE_SERVER_PORT'].
+src/config/config.test.ts(1585,24): error TS4111: Property 'TERM_PROGRAM' comes from an index signature, so it must be accessed with ['TERM_PROGRAM'].
+src/config/config.test.ts(1639,24): error TS2554: Expected 1 arguments, but got 0.
+src/config/config.test.ts(1640,17): error TS4111: Property 'TERM_PROGRAM' comes from an index signature, so it must be accessed with ['TERM_PROGRAM'].
+src/config/config.test.ts(1641,17): error TS4111: Property 'GEMINI_CLI_IDE_SERVER_PORT' comes from an index signature, so it must be accessed with ['GEMINI_CLI_IDE_SERVER_PORT'].
+src/config/config.test.ts(1643,40): error TS2345: Argument of type 'InferSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeStrategy...' is not assignable to parameter of type 'InferMergedSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeSt...'.
+  Types of property 'mcpServers' are incompatible.
+    Type 'Record<string, MCPServerConfig> | undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+      Type 'undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+src/config/config.test.ts(1646,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1647,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1648,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1649,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1657,24): error TS2554: Expected 1 arguments, but got 0.
+src/config/config.test.ts(1658,17): error TS4111: Property 'TERM_PROGRAM' comes from an index signature, so it must be accessed with ['TERM_PROGRAM'].
+src/config/config.test.ts(1660,25): error TS2345: Argument of type 'InferSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeStrategy...' is not assignable to parameter of type 'InferMergedSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeSt...'.
+  Types of property 'mcpServers' are incompatible.
+    Type 'Record<string, MCPServerConfig> | undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+      Type 'undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+src/config/config.test.ts(1674,24): error TS2554: Expected 1 arguments, but got 0.
+src/config/config.test.ts(1675,17): error TS4111: Property 'TERM_PROGRAM' comes from an index signature, so it must be accessed with ['TERM_PROGRAM'].
+src/config/config.test.ts(1676,17): error TS4111: Property 'GEMINI_CLI_IDE_SERVER_PORT' comes from an index signature, so it must be accessed with ['GEMINI_CLI_IDE_SERVER_PORT'].
+src/config/config.test.ts(1689,40): error TS2345: Argument of type 'InferSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeStrategy...' is not assignable to parameter of type 'InferMergedSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeSt...'.
+  Types of property 'mcpServers' are incompatible.
+    Type 'Record<string, MCPServerConfig> | undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+      Type 'undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+src/config/config.test.ts(1697,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1698,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1709,24): error TS2554: Expected 1 arguments, but got 0.
+src/config/config.test.ts(1722,40): error TS2345: Argument of type 'InferSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeStrategy...' is not assignable to parameter of type 'InferMergedSettings<{ readonly mcpServers: { readonly type: "object"; readonly label: "MCP Servers"; readonly category: "Advanced"; readonly requiresRestart: true; readonly default: Record<string, MCPServerConfig>; readonly description: "Configuration for MCP servers."; readonly showInDialog: false; readonly mergeSt...'.
+  Types of property 'mcpServers' are incompatible.
+    Type 'Record<string, MCPServerConfig> | undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+      Type 'undefined' is not assignable to type 'Record<string, MCPServerConfig>'.
+src/config/config.test.ts(1727,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(1728,12): error TS18048: 'mcpServers' is possibly 'undefined'.
+src/config/config.test.ts(2351,69): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/config.test.ts(2488,71): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/config.test.ts(2534,24): error TS2551: Property 'getFileFilteringEnableFuzzySearch' does not exist on type 'Config'. Did you mean 'getFileFilteringDisableFuzzySearch'?
+src/config/config.test.ts(2539,24): error TS2551: Property 'getFileFilteringEnableFuzzySearch' does not exist on type 'Config'. Did you mean 'getFileFilteringDisableFuzzySearch'?
+src/config/config.test.ts(3132,19): error TS2339: Property 'getMcpEnabled' does not exist on type 'Config'.
+src/config/config.test.ts(3151,19): error TS2339: Property 'getMcpEnabled' does not exist on type 'Config'.
+src/config/config.test.ts(3170,19): error TS2339: Property 'getMcpEnabled' does not exist on type 'Config'.
+src/config/config.ts(41,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getAdminErrorMessage'. Did you mean 'getErrorMessage'?
+src/config/config.ts(427,10): error TS2339: Property 'ideMode' does not exist on type 'CliArgs'.
+src/config/config.ts(427,26): error TS2339: Property 'ideModeFeature' does not exist on type 'CliArgs'.
+src/config/config.ts(471,19): error TS2352: Conversion of type 'CoreEventEmitter' to type 'EventEmitter<ExtensionEvents>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  The types returned by 'eventNames()' are incompatible between these types.
+    Type 'CoreEvent[]' is not comparable to type '("extensionsStarting" | "extensionsStopping")[]'.
+      Type 'CoreEvent' is not comparable to type '"extensionsStarting" | "extensionsStopping"'.
+        Type 'CoreEvent.ExternalEditorClosed' is not comparable to type '"extensionsStarting" | "extensionsStopping"'.
+src/config/config.ts(525,37): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/config.ts(611,25): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/config.ts(685,5): error TS2353: Object literal may only specify known properties, and 'clientVersion' does not exist in type 'ConfigParameters'.
+src/config/config.ts(688,16): error TS2304: Cannot find name 'resolvedCwd'.
+src/config/config.ts(741,10): error TS2304: Cannot find name 'resolvedCwd'.
+src/config/extension-manager-agents.test.ts(33,35): error TS2339: Property 'loadAgentsFromDirectory' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/config/extension-manager-agents.test.ts(34,29): error TS2339: Property 'loadSkillsFromDir' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/config/extension-manager-agents.test.ts(100,22): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-agents.test.ts(101,22): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-agents.test.ts(102,22): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-agents.test.ts(135,22): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(35,37): error TS2339: Property 'loadAgentsFromDirectory' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/config/extension-manager-hydration.test.ts(36,31): error TS2339: Property 'loadSkillsFromDir' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/config/extension-manager-hydration.test.ts(123,22): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(124,22): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(173,22): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(174,29): error TS2339: Property 'agents' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(251,53): error TS2339: Property 'env' does not exist on type 'CommandHookConfig'.
+src/config/extension-manager-hydration.test.ts(293,22): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-hydration.test.ts(316,30): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager-scope.test.ts(14,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadAgentsFromDirectory'.
+src/config/extension-manager-scope.test.ts(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadSkillsFromDir'.
+src/config/extension-manager-scope.test.ts(125,21): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager-scope.test.ts(126,21): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager-scope.test.ts(163,21): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager-scope.test.ts(164,21): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager-scope.test.ts(199,21): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager-skills.test.ts(39,7): error TS2339: Property 'loadSkillsFromDir' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/config/extension-manager.ts(40,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadSkillsFromDir'.
+src/config/extension-manager.ts(41,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadAgentsFromDirectory'.
+src/config/extension-manager.ts(42,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/config/extension-manager.ts(111,7): error TS2353: Object literal may only specify known properties, and 'clientVersion' does not exist in type 'ConfigParameters'.
+src/config/extension-manager.ts(288,42): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(495,19): error TS2339: Property 'themes' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(496,70): error TS2339: Property 'themes' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(502,19): error TS2339: Property 'themes' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(503,72): error TS2339: Property 'themes' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(658,13): error TS2353: Object literal may only specify known properties, and 'scope' does not exist in type 'ResolvedExtensionSetting'.
+src/config/extension-manager.ts(716,24): error TS2339: Property 'env' does not exist on type 'CommandHookConfig'.
+src/config/extension-manager.ts(716,40): error TS2339: Property 'env' does not exist on type 'CommandHookConfig'.
+src/config/extension-manager.ts(727,28): error TS7006: Parameter 'skill' implicitly has an 'any' type.
+src/config/extension-manager.ts(734,60): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/config/extension-manager.ts(761,9): error TS2353: Object literal may only specify known properties, and 'skills' does not exist in type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(926,19): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(926,39): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(928,17): error TS2339: Property 'skills' does not exist on type 'GeminiCLIExtension'.
+src/config/extension-manager.ts(928,33): error TS7006: Parameter 'skill' implicitly has an 'any' type.
+src/config/extension-manager.ts(937,21): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager.ts(938,27): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager.ts(939,23): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension-manager.ts(940,36): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/config/extension.test.ts(26,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadAgentsFromDirectory'.
+src/config/extension.test.ts(27,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadSkillsFromDir'.
+src/config/extension.ts(10,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/config/extensions/consent.test.ts(21,28): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/config/extensions/consent.ts(9,28): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/config/extensions/storage.ts(14,19): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/config/policy-engine.integration.test.ts(287,22): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/policy-engine.integration.test.ts(324,22): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/policy-engine.integration.test.ts(358,22): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/policy-engine.integration.test.ts(413,22): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/config/settings.ts(18,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/config/settings.ts(19,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'FetchAdminControlsResponse'.
+src/config/settings.ts(346,16): error TS2339: Property 'emitSettingsChanged' does not exist on type 'CoreEventEmitter'.
+src/config/settingsSchema.ts(20,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'AgentOverride'.
+src/config/settingsSchema.ts(21,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/config/trustedFolders.ts(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/core/auth.test.ts(11,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationRequiredError'.
+src/core/auth.ts(11,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationRequiredError'.
+src/deferred.ts(10,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getAdminErrorMessage'. Did you mean 'getErrorMessage'?
+src/gemini.tsx(68,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationCancelledError'.
+src/gemini.tsx(69,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationRequiredError'.
+src/gemini.tsx(70,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'FetchAdminControlsResponse'.
+src/gemini.tsx(433,45): error TS2339: Property 'getRemoteAdminSettings' does not exist on type 'Config'.
+src/gemini.tsx(530,37): error TS2339: Property 'fireSessionEndEvent' does not exist on type 'HookSystem'.
+src/gemini.tsx(687,39): error TS2339: Property 'fireSessionStartEvent' does not exist on type 'HookSystem'.
+src/gemini.tsx(704,37): error TS2339: Property 'fireSessionEndEvent' does not exist on type 'HookSystem'.
+src/gemini.tsx(819,16): error TS2339: Property 'setRemoteAdminSettings' does not exist on type 'Config'.
+src/gemini.tsx(832,16): error TS2339: Property 'setRemoteAdminSettings' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(1983,33): error TS2339: Property 'AgentExecutionStopped' does not exist on type 'typeof GeminiEventType'.
+src/nonInteractiveCli.test.ts(1984,11): error TS2322: Type '{ reason: "Stopped by hook"; }' is not assignable to type 'string'.
+src/nonInteractiveCli.test.ts(2008,33): error TS2339: Property 'AgentExecutionBlocked' does not exist on type 'typeof GeminiEventType'.
+src/nonInteractiveCli.test.ts(2009,11): error TS2322: Type '{ reason: "Blocked by hook"; }' is not assignable to type 'string'.
+src/nonInteractiveCli.test.ts(2059,28): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2085,28): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2086,28): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2110,28): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2111,28): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2134,28): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2135,28): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2160,28): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.test.ts(2161,28): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.ts(30,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Scheduler'.
+src/nonInteractiveCli.ts(31,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ROOT_SCHEDULER_ID'.
+src/nonInteractiveCli.ts(189,16): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.ts(190,17): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.ts(306,11): error TS2554: Expected 3-5 arguments, but got 6.
+src/nonInteractiveCli.ts(317,22): error TS2339: Property 'getRawOutput' does not exist on type 'Config'.
+src/nonInteractiveCli.ts(317,47): error TS2339: Property 'getAcceptRawOutputRisk' does not exist on type 'Config'.
+src/nonInteractiveCli.ts(365,53): error TS2339: Property 'AgentExecutionStopped' does not exist on type 'typeof GeminiEventType'.
+src/nonInteractiveCli.ts(366,67): error TS2339: Property 'value' does not exist on type 'ServerGeminiChatCompressedEvent | ServerGeminiCitationEvent | ServerGeminiFinishedEvent | ... 7 more ... | ServerGeminiModelInfoEvent'.
+  Property 'value' does not exist on type 'ServerGeminiUserCancelledEvent'.
+src/nonInteractiveCli.ts(366,104): error TS2339: Property 'value' does not exist on type 'ServerGeminiChatCompressedEvent | ServerGeminiCitationEvent | ServerGeminiFinishedEvent | ... 7 more ... | ServerGeminiModelInfoEvent'.
+  Property 'value' does not exist on type 'ServerGeminiUserCancelledEvent'.
+src/nonInteractiveCli.ts(385,53): error TS2339: Property 'AgentExecutionBlocked' does not exist on type 'typeof GeminiEventType'.
+src/nonInteractiveCli.ts(386,68): error TS2339: Property 'value' does not exist on type 'ServerGeminiChatCompressedEvent | ServerGeminiCitationEvent | ServerGeminiFinishedEvent | ... 7 more ... | ServerGeminiModelInfoEvent'.
+  Property 'value' does not exist on type 'ServerGeminiUserCancelledEvent'.
+src/nonInteractiveCli.ts(386,105): error TS2339: Property 'value' does not exist on type 'ServerGeminiChatCompressedEvent | ServerGeminiCitationEvent | ServerGeminiFinishedEvent | ... 7 more ... | ServerGeminiModelInfoEvent'.
+  Property 'value' does not exist on type 'ServerGeminiUserCancelledEvent'.
+src/nonInteractiveCli.ts(459,14): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/services/BuiltinCommandLoader.test.ts(56,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'isNightly'.
+src/services/BuiltinCommandLoader.ts(16,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'isNightly'.
+src/services/BuiltinCommandLoader.ts(18,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getAdminErrorMessage'. Did you mean 'getErrorMessage'?
+src/services/BuiltinCommandLoader.ts(101,24): error TS2339: Property 'getExtensionsEnabled' does not exist on type 'Config'.
+src/services/BuiltinCommandLoader.ts(123,24): error TS2551: Property 'getEnableHooksUI' does not exist on type 'Config'. Did you mean 'getEnableHooks'?
+src/services/BuiltinCommandLoader.ts(128,24): error TS2339: Property 'getMcpEnabled' does not exist on type 'Config'.
+src/test-utils/createExtension.ts(13,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/test-utils/render.tsx(108,7): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/App.test.tsx(225,7): error TS2345: Argument of type '"isEventDrivenSchedulerEnabled"' is not assignable to parameter of type '"fallbackModelHandler" | "initialize" | "getContentGenerator" | "refreshAuth" | "getExperimentsAsync" | "getUserTier" | "getBaseLlmClient" | "getSessionId" | "setSessionId" | ... 149 more ... | "setExperiments"'.
+src/ui/App.test.tsx(226,23): error TS2345: Argument of type 'true' is not assignable to parameter of type 'string | ModelConfigService | Storage | EnvironmentSanitizationConfig | undefined'.
+src/ui/AppContainer.test.tsx(34,8): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/AppContainer.test.tsx(533,28): error TS2345: Argument of type '"getUserTierName"' is not assignable to parameter of type '"fallbackModelHandler" | "initialize" | "getContentGenerator" | "refreshAuth" | "getExperimentsAsync" | "getUserTier" | "getBaseLlmClient" | "getSessionId" | "setSessionId" | ... 149 more ... | "setExperiments"'.
+src/ui/AppContainer.test.tsx(582,28): error TS2345: Argument of type '"getUserTierName"' is not assignable to parameter of type '"fallbackModelHandler" | "initialize" | "getContentGenerator" | "refreshAuth" | "getExperimentsAsync" | "getUserTier" | "getBaseLlmClient" | "getSessionId" | "setSessionId" | ... 149 more ... | "setExperiments"'.
+src/ui/AppContainer.test.tsx(2504,52): error TS2339: Property 'ConsentRequest' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.test.tsx(2543,19): error TS2339: Property 'ConsentRequest' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(41,8): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/AppContainer.tsx(68,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ConsentRequestPayload'.
+src/ui/AppContainer.tsx(69,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'AgentsDiscoveredPayload'.
+src/ui/AppContainer.tsx(70,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ChangeAuthRequestedError'.
+src/ui/AppContainer.tsx(211,33): error TS2551: Property 'getUserTierName' does not exist on type 'Config'. Did you mean 'getUserTier'?
+src/ui/AppContainer.tsx(404,11): error TS2339: Property 'fireSessionStartEvent' does not exist on type 'HookSystem'.
+src/ui/AppContainer.tsx(440,31): error TS2339: Property 'kill' does not exist on type 'typeof ShellExecutionService'.
+src/ui/AppContainer.tsx(447,38): error TS2339: Property 'fireSessionEndEvent' does not exist on type 'HookSystem'.
+src/ui/AppContainer.tsx(487,29): error TS2339: Property 'SettingsChanged' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(488,29): error TS2339: Property 'AdminSettingsChanged' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(489,29): error TS2339: Property 'AgentsDiscovered' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(491,32): error TS2339: Property 'SettingsChanged' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(493,19): error TS2339: Property 'AdminSettingsChanged' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(496,32): error TS2339: Property 'AgentsDiscovered' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(895,29): error TS2339: Property 'ConsentRequest' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(897,32): error TS2339: Property 'ConsentRequest' does not exist on type 'typeof CoreEvent'.
+src/ui/AppContainer.tsx(2108,41): error TS2339: Property 'getRemoteAdminSettings' does not exist on type 'Config'.
+src/ui/AppContainer.tsx(2124,49): error TS2339: Property 'acknowledgeAgent' does not exist on type 'AgentRegistry'.
+src/ui/auth/LoginWithGoogleRestartDialog.tsx(31,43): error TS2339: Property 'getRemoteAdminSettings' does not exist on type 'Config'.
+src/ui/commands/aboutCommand.test.ts(163,44): error TS2551: Property 'getUserTierName' does not exist on type 'Config'. Did you mean 'getUserTier'?
+src/ui/commands/aboutCommand.ts(47,43): error TS2551: Property 'getUserTierName' does not exist on type 'Config'. Did you mean 'getUserTier'?
+src/ui/commands/agentsCommand.ts(127,23): error TS2339: Property 'reload' does not exist on type 'AgentRegistry'.
+src/ui/commands/agentsCommand.ts(206,23): error TS2339: Property 'reload' does not exist on type 'AgentRegistry'.
+src/ui/commands/agentsCommand.ts(246,36): error TS2339: Property 'getDiscoveredDefinition' does not exist on type 'AgentRegistry'.
+src/ui/commands/agentsCommand.ts(294,36): error TS2339: Property 'getAllDiscoveredAgentNames' does not exist on type 'AgentRegistry'.
+src/ui/commands/agentsCommand.ts(345,25): error TS2339: Property 'reload' does not exist on type 'AgentRegistry'.
+src/ui/commands/chatCommand.test.ts(698,38): error TS2339: Property 'getLatestApiRequest' does not exist on type 'Config'.
+src/ui/commands/chatCommand.ts(30,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'convertToRestPayload'.
+src/ui/commands/chatCommand.ts(344,42): error TS2339: Property 'getLatestApiRequest' does not exist on type 'Config'.
+src/ui/commands/clearCommand.ts(34,24): error TS2339: Property 'fireSessionEndEvent' does not exist on type 'HookSystem'.
+src/ui/commands/clearCommand.ts(56,33): error TS2339: Property 'fireSessionStartEvent' does not exist on type 'HookSystem'.
+src/ui/commands/collaborativeAgentCommand.ts(22,3): error TS2322: Type '(_context: CommandContext, args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/directoryCommand.test.tsx(142,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(148,35): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(162,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(168,35): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(183,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(201,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(208,35): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(256,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(359,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.test.tsx(366,35): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/commands/directoryCommand.tsx(64,29): error TS2339: Property 'recordDirectories' does not exist on type 'ChatRecordingService'.
+src/ui/commands/enhancedCollaborativeCommand.ts(22,3): error TS2322: Type '(_context: CommandContext, args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/helpCommand.ts(15,3): error TS2322: Type '(_context: CommandContext, _args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/loadBalancerCommand.ts(454,3): error TS2322: Type '(_context: CommandContext, args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/mcpCommand.test.ts(61,5): error TS2345: Argument of type 'MessageBus' is not assignable to parameter of type 'boolean | undefined'.
+src/ui/commands/mcpCommand.ts(105,29): error TS2339: Property 'OauthDisplayMessage' does not exist on type 'typeof CoreEvent'.
+src/ui/commands/mcpCommand.ts(159,43): error TS2339: Property 'OauthDisplayMessage' does not exist on type 'typeof CoreEvent'.
+src/ui/commands/memoryCommand.test.ts(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'refreshMemory'.
+src/ui/commands/memoryCommand.test.ts(19,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'showMemory'.
+src/ui/commands/memoryCommand.test.ts(20,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'addMemory'.
+src/ui/commands/memoryCommand.test.ts(21,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'listMemoryFiles'.
+src/ui/commands/memoryCommand.test.ts(87,49): error TS7006: Parameter 'config' implicitly has an 'any' type.
+src/ui/commands/memoryCommand.test.ts(156,48): error TS7006: Parameter 'args' implicitly has an 'any' type.
+src/ui/commands/memoryCommand.test.ts(399,54): error TS7006: Parameter 'config' implicitly has an 'any' type.
+src/ui/commands/memoryCommand.ts(8,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'addMemory'.
+src/ui/commands/memoryCommand.ts(9,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'listMemoryFiles'.
+src/ui/commands/memoryCommand.ts(10,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'refreshMemory'.
+src/ui/commands/memoryCommand.ts(11,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'showMemory'.
+src/ui/commands/planCommand.ts(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SupervisorAgent'.
+src/ui/commands/planCommand.ts(16,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SupervisorConfig'.
+src/ui/commands/policiesCommand.ts(40,9): error TS2339: Property 'source' does not exist on type 'PolicyRule'.
+src/ui/commands/policiesCommand.ts(40,36): error TS2339: Property 'source' does not exist on type 'PolicyRule'.
+src/ui/commands/rewindCommand.tsx(45,43): error TS2339: Property 'rewindTo' does not exist on type 'ChatRecordingService'.
+src/ui/commands/skillCommand.ts(89,16): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillCommand.ts(90,13): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.test.ts(12,23): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/ui/commands/skillsCommand.ts(20,10): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getAdminErrorMessage'. Did you mean 'getErrorMessage'?
+src/ui/commands/skillsCommand.ts(53,43): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(57,25): error TS7006: Parameter 'skill' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(189,61): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(202,18): error TS2339: Property 'reloadSkills' does not exist on type 'Config'.
+src/ui/commands/skillsCommand.ts(219,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(221,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(272,14): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(273,11): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(286,14): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/skillsCommand.ts(287,11): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/commands/statsCommand.ts(29,41): error TS2551: Property 'getUserTierName' does not exist on type 'Config'. Did you mean 'getUserTier'?
+src/ui/commands/subagentsCommand.ts(446,3): error TS2322: Type '(_context: CommandContext, args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/supervisorCommand.ts(294,3): error TS2322: Type '(context: unknown, args: string) => Promise<MessageActionReturn>' is not assignable to type '(context: CommandContext, args: string) => void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+  Type 'Promise<MessageActionReturn>' is not assignable to type 'void | SlashCommandActionReturn | Promise<void | SlashCommandActionReturn>'.
+    Type 'Promise<MessageActionReturn>' is not assignable to type 'Promise<void | SlashCommandActionReturn>'.
+      Type 'MessageActionReturn' is not assignable to type 'void | SlashCommandActionReturn'.
+        Type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/cli/src/ui/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn' is not assignable to type 'import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/src/commands/types", { with: { "resolution-mode": "import" } }).MessageActionReturn'.
+          Types of property 'messageType' are incompatible.
+            Type '"error" | "info" | "success"' is not assignable to type '"error" | "info"'.
+              Type '"success"' is not assignable to type '"error" | "info"'.
+src/ui/commands/types.ts(18,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/components/AgentConfigDialog.test.tsx(14,15): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/components/AgentConfigDialog.tsx(16,15): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/components/AgentConfigDialog.tsx(16,32): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'AgentOverride'.
+src/ui/components/AlternateBufferQuittingDisplay.tsx(26,12): error TS2339: Property 'isEventDrivenSchedulerEnabled' does not exist on type 'Config'.
+src/ui/components/ApprovalModeIndicator.test.tsx(24,57): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/components/ApprovalModeIndicator.tsx(29,23): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/components/AskUserDialog.test.tsx(12,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'QuestionType'.
+src/ui/components/AskUserDialog.test.tsx(12,29): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Question'.
+src/ui/components/AskUserDialog.tsx(18,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Question'.
+src/ui/components/AskUserDialog.tsx(463,50): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(472,10): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(500,39): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(505,10): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(528,32): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(528,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(623,8): error TS7006: Parameter 'opt' implicitly has an 'any' type.
+src/ui/components/AskUserDialog.tsx(623,13): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/ui/components/BackgroundShellDisplay.tsx(103,47): error TS2339: Property 'subscribe' does not exist on type 'typeof ShellExecutionService'.
+src/ui/components/BackgroundShellDisplay.tsx(103,69): error TS7006: Parameter 'event' implicitly has an 'any' type.
+src/ui/components/BubblingRegression.test.tsx(12,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Question'.
+src/ui/components/Composer.tsx(61,40): error TS2551: Property 'enableLoadingPhrases' does not exist on type 'AccessibilitySettings'. Did you mean 'disableLoadingPhrases'?
+src/ui/components/Composer.tsx(66,40): error TS2551: Property 'enableLoadingPhrases' does not exist on type 'AccessibilitySettings'. Did you mean 'disableLoadingPhrases'?
+src/ui/components/ConfigInitDisplay.test.tsx(53,31): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/components/ConfigInitDisplay.test.tsx(91,31): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/components/ConfigInitDisplay.test.tsx(127,31): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/components/ConfigInitDisplay.tsx(62,29): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/components/ConfigInitDisplay.tsx(64,32): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/components/DialogManager.tsx(209,35): error TS2339: Property 'reload' does not exist on type 'AgentRegistry'.
+src/ui/components/HistoryItemDisplay.test.tsx(85,9): error TS2741: Property 'displayName' is missing in type '{ name: string; description: string; kind: string; }' but required in type 'AgentDefinitionJson'.
+src/ui/components/InputPrompt.test.tsx(1325,39): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/components/InputPrompt.test.tsx(1516,20): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.test.tsx(1788,24): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.test.tsx(1845,24): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.test.tsx(1869,22): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.test.tsx(1901,20): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.test.tsx(3126,20): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.tsx(1125,37): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/InputPrompt.tsx(1153,55): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/components/MainContent.tsx(39,12): error TS2339: Property 'isEventDrivenSchedulerEnabled' does not exist on type 'Config'.
+src/ui/components/messages/CompressionMessage.test.tsx(227,46): error TS2339: Property 'COMPRESSION_FAILED_EMPTY_SUMMARY' does not exist on type 'typeof CompressionStatus'.
+src/ui/components/messages/CompressionMessage.tsx(49,30): error TS2339: Property 'COMPRESSION_FAILED_EMPTY_SUMMARY' does not exist on type 'typeof CompressionStatus'.
+src/ui/components/messages/RedirectionConfirmation.test.tsx(32,7): error TS2561: Object literal may only specify known properties, but 'rootCommands' does not exist in type 'ToolExecuteConfirmationDetails'. Did you mean to write 'rootCommand'?
+src/ui/components/messages/ToolConfirmationMessage.test.tsx(96,7): error TS2561: Object literal may only specify known properties, but 'rootCommands' does not exist in type 'ToolExecuteConfirmationDetails'. Did you mean to write 'rootCommand'?
+src/ui/components/messages/ToolConfirmationMessage.test.tsx(135,7): error TS2561: Object literal may only specify known properties, but 'rootCommands' does not exist in type 'ToolExecuteConfirmationDetails'. Did you mean to write 'rootCommand'?
+src/ui/components/messages/ToolConfirmationMessage.tsx(13,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SerializableConfirmationDetails'.
+src/ui/components/messages/ToolConfirmationMessage.tsx(268,66): error TS2353: Object literal may only specify known properties, and 'answers' does not exist in type 'ToolConfirmationPayload'.
+src/ui/components/messages/ToolConfirmationMessage.tsx(318,59): error TS7006: Parameter 'cmd' implicitly has an 'any' type.
+src/ui/components/messages/ToolConfirmationMessage.tsx(377,39): error TS7006: Parameter 'cmd' implicitly has an 'any' type.
+src/ui/components/messages/ToolConfirmationMessage.tsx(377,44): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/ui/components/messages/ToolConfirmationMessage.tsx(406,36): error TS7006: Parameter 'url' implicitly has an 'any' type.
+src/ui/components/messages/ToolGroupMessage.test.tsx(16,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ASK_USER_DISPLAY_NAME'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(51,5): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(94,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(128,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(190,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(395,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(518,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(555,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.test.tsx(591,9): error TS2353: Object literal may only specify known properties, and 'enableEventDrivenScheduler' does not exist in type 'Partial<ConfigParameters>'.
+src/ui/components/messages/ToolGroupMessage.tsx(18,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ASK_USER_DISPLAY_NAME'.
+src/ui/components/messages/ToolGroupMessage.tsx(64,32): error TS2339: Property 'isEventDrivenSchedulerEnabled' does not exist on type 'Config'.
+src/ui/components/messages/ToolShared.tsx(21,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ASK_USER_DISPLAY_NAME'.
+src/ui/components/messages/UserMessage.tsx(31,37): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/messages/UserShellMessage.tsx(24,37): error TS2339: Property 'getUseBackgroundColor' does not exist on type 'Config'.
+src/ui/components/NewAgentsNotification.tsx(8,15): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/components/Notifications.tsx(16,31): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/ui/components/RewindViewer.test.tsx(280,11): error TS2353: Object literal may only specify known properties, and 'displayContent' does not exist in type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/ui/components/RewindViewer.tsx(39,35): error TS2339: Property 'displayContent' does not exist on type 'MessageRecord'.
+  Property 'displayContent' does not exist on type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/ui/components/RewindViewer.tsx(41,21): error TS2339: Property 'displayContent' does not exist on type 'MessageRecord'.
+  Property 'displayContent' does not exist on type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/ui/components/RewindViewer.tsx(233,34): error TS2339: Property 'displayContent' does not exist on type 'MessageRecord'.
+  Property 'displayContent' does not exist on type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/ui/components/shared/text-buffer.ts(20,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getEditorCommand'. Did you mean 'getDiffCommand'?
+src/ui/components/ToolConfirmationQueue.tsx(19,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SerializableConfirmationDetails'.
+src/ui/components/ValidationDialog.tsx(14,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'openBrowserSecurely'.
+src/ui/components/ValidationDialog.tsx(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'shouldLaunchBrowser'.
+src/ui/components/ValidationDialog.tsx(16,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationIntent'.
+src/ui/components/views/ExtensionsList.tsx(74,32): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/ui/components/views/ExtensionsList.tsx(78,36): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/ui/components/views/ExtensionsList.tsx(79,37): error TS2339: Property 'scope' does not exist on type 'ResolvedExtensionSetting'.
+src/ui/components/views/ExtensionsList.tsx(80,36): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/ui/components/views/ExtensionsList.tsx(80,59): error TS2339: Property 'source' does not exist on type 'ResolvedExtensionSetting'.
+src/ui/components/views/SkillsList.test.tsx(10,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/ui/contexts/AskUserActionsContext.tsx(9,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Question'.
+src/ui/contexts/ToolActionsContext.tsx(124,11): error TS2353: Object literal may only specify known properties, and 'outcome' does not exist in type 'ToolConfirmationResponse'.
+src/ui/contexts/UIActionsContext.tsx(14,8): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/contexts/UIStateContext.tsx(26,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationIntent'.
+src/ui/contexts/UIStateContext.tsx(27,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/hooks/atCommandProcessor.test.ts(18,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'GEMINI_IGNORE_FILE_NAME'.
+src/ui/hooks/atCommandProcessor.test.ts(88,18): error TS2341: Property 'interactive' is private and only accessible within class 'Config'.
+src/ui/hooks/atCommandProcessor.test.ts(105,18): error TS2339: Property 'isPathAllowed' does not exist on type 'Config'.
+src/ui/hooks/atCommandProcessor.test.ts(139,51): error TS2554: Expected 1 arguments, but got 2.
+src/ui/hooks/atCommandProcessor.ts(21,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'REFERENCE_CONTENT_START'.
+src/ui/hooks/atCommandProcessor.ts(22,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'REFERENCE_CONTENT_END'.
+src/ui/hooks/atCommandProcessor.ts(237,17): error TS2339: Property 'isPathAllowed' does not exist on type 'Config'.
+src/ui/hooks/atCommandProcessor_agents.test.ts(11,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/hooks/atCommandProcessor_agents.test.ts(88,18): error TS2341: Property 'interactive' is private and only accessible within class 'Config'.
+src/ui/hooks/atCommandProcessor_agents.test.ts(105,18): error TS2339: Property 'isPathAllowed' does not exist on type 'Config'.
+src/ui/hooks/atCommandProcessor_agents.test.ts(141,51): error TS2554: Expected 1 arguments, but got 2.
+src/ui/hooks/shellCommandProcessor.test.tsx(875,13): error TS2353: Object literal may only specify known properties, and 'backgrounded' does not exist in type 'Partial<ShellExecutionResult>'.
+src/ui/hooks/shellCommandProcessor.ts(193,29): error TS2339: Property 'background' does not exist on type 'typeof ShellExecutionService'.
+src/ui/hooks/shellCommandProcessor.ts(209,33): error TS2339: Property 'kill' does not exist on type 'typeof ShellExecutionService'.
+src/ui/hooks/shellCommandProcessor.ts(230,53): error TS2339: Property 'onExit' does not exist on type 'typeof ShellExecutionService'.
+src/ui/hooks/shellCommandProcessor.ts(230,66): error TS7006: Parameter 'code' implicitly has an 'any' type.
+src/ui/hooks/shellCommandProcessor.ts(240,53): error TS2339: Property 'subscribe' does not exist on type 'typeof ShellExecutionService'.
+src/ui/hooks/shellCommandProcessor.ts(240,69): error TS7006: Parameter 'event' implicitly has an 'any' type.
+src/ui/hooks/shellCommandProcessor.ts(366,24): error TS2678: Type '"exit"' is not comparable to type '"data" | "binary_detected" | "binary_progress"'.
+src/ui/hooks/shellCommandProcessor.ts(435,22): error TS2339: Property 'backgrounded' does not exist on type 'ShellExecutionResult'.
+src/ui/hooks/shellCommandProcessor.ts(458,29): error TS2339: Property 'backgrounded' does not exist on type 'ShellExecutionResult'.
+src/ui/hooks/slashCommandProcessor.test.tsx(1048,7): error TS2345: Argument of type '[]' is not assignable to parameter of type 'never'.
+src/ui/hooks/slashCommandProcessor.ts(22,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/hooks/slashCommandProcessor.ts(300,41): error TS2345: Argument of type '(_event: ExtensionsStartingEvent | ExtensionsStoppingEvent) => void' is not assignable to parameter of type 'never'.
+src/ui/hooks/slashCommandProcessor.ts(301,41): error TS2345: Argument of type '(_event: ExtensionsStartingEvent | ExtensionsStoppingEvent) => void' is not assignable to parameter of type 'never'.
+src/ui/hooks/slashCommandProcessor.ts(310,44): error TS2345: Argument of type '(_event: ExtensionsStartingEvent | ExtensionsStoppingEvent) => void' is not assignable to parameter of type 'never'.
+src/ui/hooks/slashCommandProcessor.ts(311,44): error TS2345: Argument of type '(_event: ExtensionsStartingEvent | ExtensionsStoppingEvent) => void' is not assignable to parameter of type 'never'.
+src/ui/hooks/slashCommandProcessor.ts(527,23): error TS2561: Object literal may only specify known properties, but 'rootCommands' does not exist in type 'ToolExecuteConfirmationDetails'. Did you mean to write 'rootCommand'?
+src/ui/hooks/toolMapping.test.ts(185,9): error TS2353: Object literal may only specify known properties, and 'correlationId' does not exist in type 'WaitingToolCall'.
+src/ui/hooks/toolMapping.test.ts(211,9): error TS2322: Type '{ type: "edit"; title: string; fileName: string; filePath: string; fileDiff: string; originalContent: string; newContent: string; }' is not assignable to type 'ToolCallConfirmationDetails'.
+  Property 'onConfirm' is missing in type '{ type: "edit"; title: string; fileName: string; filePath: string; fileDiff: string; originalContent: string; newContent: string; }' but required in type 'ToolEditConfirmationDetails'.
+src/ui/hooks/toolMapping.ts(11,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SerializableConfirmationDetails'.
+src/ui/hooks/toolMapping.ts(97,30): error TS2339: Property 'correlationId' does not exist on type 'WaitingToolCall'.
+src/ui/hooks/useApprovalModeIndicator.test.ts(262,20): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/hooks/useApprovalModeIndicator.ts(11,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'getAdminErrorMessage'. Did you mean 'getErrorMessage'?
+src/ui/hooks/useApprovalModeIndicator.ts(50,42): error TS2339: Property 'getRemoteAdminSettings' does not exist on type 'Config'.
+src/ui/hooks/useApprovalModeIndicator.ts(78,39): error TS2339: Property 'isPlanEnabled' does not exist on type 'Config'.
+src/ui/hooks/useApprovalModeIndicator.ts(79,30): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/hooks/useApprovalModeIndicator.ts(82,29): error TS2339: Property 'PLAN' does not exist on type 'typeof ApprovalMode'.
+src/ui/hooks/useAtCompletion.test.ts(154,9): error TS2353: Object literal may only specify known properties, and 'fileDiscoveryService' does not exist in type 'FileSearchOptions'.
+src/ui/hooks/useAtCompletion.test.ts(154,69): error TS2554: Expected 1 arguments, but got 2.
+src/ui/hooks/useAtCompletion.test.ts(279,9): error TS2353: Object literal may only specify known properties, and 'fileDiscoveryService' does not exist in type 'FileSearchOptions'.
+src/ui/hooks/useAtCompletion.test.ts(279,69): error TS2554: Expected 1 arguments, but got 2.
+src/ui/hooks/useAtCompletion.ts(258,11): error TS2353: Object literal may only specify known properties, and 'fileDiscoveryService' does not exist in type 'FileSearchOptions'.
+src/ui/hooks/useAtCompletion.ts(260,13): error TS2554: Expected 1 arguments, but got 2.
+src/ui/hooks/useAtCompletion.ts(267,21): error TS2551: Property 'getFileFilteringEnableFuzzySearch' does not exist on type 'Config'. Did you mean 'getFileFilteringDisableFuzzySearch'?
+src/ui/hooks/useAtCompletion.ts(268,56): error TS2339: Property 'maxFileCount' does not exist on type 'FileFilteringOptions'.
+src/ui/hooks/useAtCompletion.ts(298,44): error TS2339: Property 'searchTimeout' does not exist on type 'FileFilteringOptions'.
+src/ui/hooks/useAtCompletion_agents.test.ts(12,23): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/hooks/useCompletion.integration.test.ts(9,33): error TS2307: Cannot find module '@testing-library/react' or its corresponding type declarations.
+src/ui/hooks/useCompletion.integration.test.ts(188,30): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(194,43): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(204,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(236,30): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(246,36): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(252,36): error TS2551: Property 'shouldGeminiIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(254,43): error TS2551: Property 'shouldGeminiIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(264,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(323,30): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(330,36): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(336,36): error TS2551: Property 'shouldGeminiIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(338,43): error TS2551: Property 'shouldGeminiIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(348,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(363,62): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/hooks/useCompletion.integration.test.ts(365,35): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/ui/hooks/useCompletion.integration.test.ts(389,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(417,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(452,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(481,30): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(487,43): error TS2551: Property 'shouldGitIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(490,43): error TS2551: Property 'shouldGeminiIgnoreFile' does not exist on type 'Mocked<FileDiscoveryService>'. Did you mean 'shouldIgnoreFile'?
+src/ui/hooks/useCompletion.integration.test.ts(500,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(527,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(564,9): error TS2345: Argument of type 'never[]' is not assignable to parameter of type 'string'.
+src/ui/hooks/useCompletion.integration.test.ts(593,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(613,16): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(629,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(650,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(667,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(718,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(742,16): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(758,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(774,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(797,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(832,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(853,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useCompletion.integration.test.ts(863,44): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/ui/hooks/useCompletion.integration.test.ts(871,14): error TS2554: Expected 6-7 arguments, but got 5.
+src/ui/hooks/useExtensionUpdates.test.tsx(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadAgentsFromDirectory'.
+src/ui/hooks/useExtensionUpdates.test.tsx(16,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadSkillsFromDir'.
+src/ui/hooks/useGeminiStream.test.tsx(1380,35): error TS2339: Property 'RetryAttempt' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useGeminiStream.test.tsx(1414,35): error TS2339: Property 'RetryAttempt' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useGeminiStream.test.tsx(3153,41): error TS2339: Property 'AgentExecutionStopped' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.test.tsx(3184,41): error TS2339: Property 'AgentExecutionStopped' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.test.tsx(3212,41): error TS2339: Property 'AgentExecutionBlocked' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.test.tsx(3242,41): error TS2339: Property 'AgentExecutionBlocked' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.ts(28,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ASK_USER_TOOL_NAME'.
+src/ui/hooks/useGeminiStream.ts(32,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationRequiredError'.
+src/ui/hooks/useGeminiStream.ts(48,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'RetryAttemptPayload'.
+src/ui/hooks/useGeminiStream.ts(221,29): error TS2339: Property 'RetryAttempt' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useGeminiStream.ts(223,32): error TS2339: Property 'RetryAttempt' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useGeminiStream.ts(392,34): error TS2339: Property 'isEventDrivenSchedulerEnabled' does not exist on type 'Config'.
+src/ui/hooks/useGeminiStream.ts(741,7): error TS2552: Cannot find name 'naturalLanguageProcessor'. Did you mean 'NaturalLanguageSubagentProcessor'?
+src/ui/hooks/useGeminiStream.ts(1097,38): error TS2339: Property 'AgentExecutionStopped' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.ts(1099,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1101,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1102,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1105,38): error TS2339: Property 'AgentExecutionBlocked' does not exist on type 'typeof GeminiEventType'.
+src/ui/hooks/useGeminiStream.ts(1107,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1109,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1110,21): error TS2339: Property 'value' does not exist on type 'ServerGeminiStreamEvent'.
+  Property 'value' does not exist on type 'ServerGeminiLoopDetectedEvent'.
+src/ui/hooks/useGeminiStream.ts(1260,17): error TS2554: Expected 3-5 arguments, but got 6.
+src/ui/hooks/useGeminiStream.ts(1319,17): error TS18046: 'error' is of type 'unknown'.
+src/ui/hooks/useGeminiStream.ts(1448,35): error TS2339: Property 'data' does not exist on type 'ToolResponseWithParts'.
+src/ui/hooks/useHookDisplayState.test.ts(13,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'HookStartPayload'.
+src/ui/hooks/useHookDisplayState.test.ts(14,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'HookEndPayload'.
+src/ui/hooks/useHookDisplayState.test.ts(27,45): error TS2339: Property 'HookStart' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useHookDisplayState.test.ts(28,45): error TS2339: Property 'HookEnd' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useHookDisplayState.test.ts(47,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(66,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(81,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(96,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(111,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(129,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(137,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(144,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(173,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(197,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(207,18): error TS2339: Property 'emitHookStart' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(217,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.test.ts(240,18): error TS2339: Property 'emitHookEnd' does not exist on type 'CoreEventEmitter'.
+src/ui/hooks/useHookDisplayState.ts(11,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'HookStartPayload'.
+src/ui/hooks/useHookDisplayState.ts(12,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'HookEndPayload'.
+src/ui/hooks/useHookDisplayState.ts(91,29): error TS2339: Property 'HookStart' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useHookDisplayState.ts(92,29): error TS2339: Property 'HookEnd' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useHookDisplayState.ts(95,32): error TS2339: Property 'HookStart' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useHookDisplayState.ts(96,32): error TS2339: Property 'HookEnd' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useIncludeDirsTrust.test.tsx(29,39): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useIncludeDirsTrust.test.tsx(131,40): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useIncludeDirsTrust.test.tsx(139,39): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useIncludeDirsTrust.test.tsx(186,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useIncludeDirsTrust.test.tsx(213,38): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useIncludeDirsTrust.test.tsx(221,37): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useLoadingIndicator.test.tsx(18,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'RetryAttemptPayload'.
+src/ui/hooks/useLoadingIndicator.ts(13,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'RetryAttemptPayload'.
+src/ui/hooks/useMcpStatus.test.tsx(91,33): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useMcpStatus.ts(23,41): error TS2551: Property 'getMcpServerCount' does not exist on type 'McpClientManager'. Did you mean 'getMcpServers'?
+src/ui/hooks/useMcpStatus.ts(31,35): error TS2551: Property 'getMcpServerCount' does not exist on type 'McpClientManager'. Did you mean 'getMcpServers'?
+src/ui/hooks/useMcpStatus.ts(35,29): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useMcpStatus.ts(37,32): error TS2339: Property 'McpClientUpdate' does not exist on type 'typeof CoreEvent'.
+src/ui/hooks/useQuotaAndFallback.test.ts(518,54): error TS2345: Argument of type '"setValidationHandler"' is not assignable to parameter of type '"fallbackModelHandler" | "initialize" | "getContentGenerator" | "refreshAuth" | "getExperimentsAsync" | "getUserTier" | "getBaseLlmClient" | "getSessionId" | "setSessionId" | ... 149 more ... | "setExperiments"'.
+src/ui/hooks/useQuotaAndFallback.ts(12,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationHandler'.
+src/ui/hooks/useQuotaAndFallback.ts(13,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ValidationIntent'.
+src/ui/hooks/useQuotaAndFallback.ts(136,7): error TS7006: Parameter 'validationLink' implicitly has an 'any' type.
+src/ui/hooks/useQuotaAndFallback.ts(137,7): error TS7006: Parameter 'validationDescription' implicitly has an 'any' type.
+src/ui/hooks/useQuotaAndFallback.ts(138,7): error TS7006: Parameter 'learnMoreUrl' implicitly has an 'any' type.
+src/ui/hooks/useQuotaAndFallback.ts(160,12): error TS2339: Property 'setValidationHandler' does not exist on type 'Config'.
+src/ui/hooks/useSessionBrowser.test.ts(190,7): error TS2352: Conversion of type '{ type: "user"; content: { text: string; }[]; displayContent: { text: string; }[]; }' to type 'MessageRecord' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ type: "user"; content: { text: string; }[]; displayContent: { text: string; }[]; }' is not comparable to type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+    Type '{ type: "user"; content: { text: string; }[]; displayContent: { text: string; }[]; }' is missing the following properties from type 'BaseMessageRecord': id, timestamp
+src/ui/hooks/useSessionResume.test.ts(207,11): error TS2353: Object literal may only specify known properties, and 'directories' does not exist in type 'ConversationRecord'.
+src/ui/hooks/useSessionResume.ts(76,36): error TS2339: Property 'directories' does not exist on type 'ConversationRecord'.
+src/ui/hooks/useSessionResume.ts(77,36): error TS2339: Property 'directories' does not exist on type 'ConversationRecord'.
+src/ui/hooks/useSessionResume.ts(82,28): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/hooks/useSessionResume.ts(82,68): error TS2339: Property 'directories' does not exist on type 'ConversationRecord'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(14,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Scheduler'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(19,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ToolCallsUpdateMessage'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(22,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ROOT_SCHEDULER_ID'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(118,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(163,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(220,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(283,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(300,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(324,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(393,13): error TS2339: Property 'Scheduler' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(466,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(472,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(481,64): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(484,63): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(504,25): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(505,24): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(510,30): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.test.ts(522,63): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.ts(16,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'Scheduler'.
+src/ui/hooks/useToolExecutionScheduler.ts(18,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ToolCallsUpdateMessage'.
+src/ui/hooks/useToolExecutionScheduler.ts(19,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ROOT_SCHEDULER_ID'.
+src/ui/hooks/useToolExecutionScheduler.ts(96,33): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/ui/hooks/useToolExecutionScheduler.ts(113,41): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.ts(115,45): error TS2339: Property 'TOOL_CALLS_UPDATE' does not exist on type 'typeof MessageBusType'.
+src/ui/hooks/useToolExecutionScheduler.ts(184,28): error TS2339: Property 'schedulerId' does not exist on type 'TrackedToolCall'.
+  Property 'schedulerId' does not exist on type 'ValidatingToolCall & { responseSubmittedToGemini?: boolean | undefined; }'.
+src/ui/hooks/useToolExecutionScheduler.ts(224,61): error TS2339: Property 'correlationId' does not exist on type 'WaitingToolCall'.
+src/ui/hooks/useToolExecutionScheduler.ts(225,38): error TS2339: Property 'correlationId' does not exist on type 'WaitingToolCall'.
+src/ui/hooks/useToolExecutionScheduler.ts(239,15): error TS2353: Object literal may only specify known properties, and 'outcome' does not exist in type 'ToolConfirmationResponse'.
+src/ui/hooks/useToolScheduler.ts(75,32): error TS2339: Property 'isEventDrivenSchedulerEnabled' does not exist on type 'Config'.
+src/ui/themes/theme-manager.test.ts(14,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/ui/themes/theme-manager.ts(22,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/ui/themes/theme-manager.ts(29,23): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/ui/themes/theme.test.ts(16,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/ui/themes/theme.ts(17,15): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'CustomTheme'.
+src/ui/types.ts(13,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SerializableConfirmationDetails'.
+src/ui/types.ts(16,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/ui/types.ts(17,3): error TS2724: '"@google/gemini-cli-core"' has no exported member named 'AgentDefinition'. Did you mean 'SubagentDefinition'?
+src/ui/utils/directoryUtils.ts(10,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/ui/utils/directoryUtils.ts(156,35): error TS2551: Property 'addDirectories' does not exist on type 'WorkspaceContext'. Did you mean 'addDirectory'?
+src/ui/utils/formatters.ts(8,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'REFERENCE_CONTENT_START'.
+src/ui/utils/formatters.ts(9,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'REFERENCE_CONTENT_END'.
+src/ui/utils/rewindFileOps.test.ts(71,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(71,45): error TS2339: Property 'computeAddedAndRemovedLines' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(127,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(127,45): error TS2339: Property 'computeAddedAndRemovedLines' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(223,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(273,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(320,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(372,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.test.ts(424,15): error TS2339: Property 'getFileDiffFromResultDisplay' does not exist on type 'typeof import("C:/Users/downl/Desktop/gemini-cli-main/packages/core/dist/index", { with: { "resolution-mode": "import" } })'.
+src/ui/utils/rewindFileOps.ts(16,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'getFileDiffFromResultDisplay'.
+src/ui/utils/rewindFileOps.ts(17,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'computeAddedAndRemovedLines'.
+src/ui/utils/terminalCapabilityManager.ts(14,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'enableBracketedPasteMode'.
+src/ui/utils/terminalCapabilityManager.ts(15,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'disableBracketedPasteMode'.
+src/ui/utils/terminalSetup.ts(34,23): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/ui/utils/textUtils.test.ts(94,13): error TS2561: Object literal may only specify known properties, but 'rootCommands' does not exist in type 'ToolExecuteConfirmationDetails'. Did you mean to write 'rootCommand'?
+src/utils/activityLogger.ts(340,36): error TS2551: Property 'getProjectTempLogsDir' does not exist on type 'Storage'. Did you mean 'getProjectTempDir'?
+src/utils/cleanup.ts(74,32): error TS2339: Property 'dispose' does not exist on type 'Config'.
+src/utils/relaunch.ts(11,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'FetchAdminControlsResponse'.
+src/utils/resolvePath.ts(8,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/utils/sandbox.ts(20,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/utils/sessionCleanup.ts(12,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'TOOL_OUTPUT_DIR'.
+src/utils/sessionUtils.ts(538,38): error TS2339: Property 'displayContent' does not exist on type 'MessageRecord'.
+  Property 'displayContent' does not exist on type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/utils/sessionUtils.ts(539,35): error TS2339: Property 'displayContent' does not exist on type 'MessageRecord'.
+  Property 'displayContent' does not exist on type 'BaseMessageRecord & { type: "user" | "error" | "info" | "warning"; }'.
+src/utils/settingsUtils.ts(20,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'ExperimentFlags'.
+src/utils/skillUtils.ts(11,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'loadSkillsFromDir'.
+src/utils/skillUtils.ts(12,8): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'SkillDefinition'.
+src/utils/toolOutputCleanup.test.ts(11,23): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'TOOL_OUTPUT_DIR'.
+src/utils/userStartupWarnings.ts(10,10): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'homedir'.
+src/zed-integration/zedIntegration.ts(31,3): error TS2305: Module '"@google/gemini-cli-core"' has no exported member 'REFERENCE_CONTENT_START'.
+src/zed-integration/zedIntegration.ts(390,48): error TS2339: Property 'fileName' does not exist on type 'never'.
+src/zed-integration/zedIntegration.ts(391,51): error TS2339: Property 'originalContent' does not exist on type 'never'.
+src/zed-integration/zedIntegration.ts(392,51): error TS2339: Property 'newContent' does not exist on type 'never'.
+src/zed-integration/zedIntegration.ts(1183,10): error TS2678: Type '"ask_user"' is not comparable to type '"mcp" | "info" | "edit" | "exec"'.
+src/zed-integration/zedIntegration.ts(1209,15): error TS2339: Property 'Communicate' does not exist on type 'typeof Kind'.

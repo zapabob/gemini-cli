@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "cursorIntegration": {
+    "enabled": true,
+    "autoSync": true,
+    "realTimeCollaboration": true
+  },
+  "geminiCLI": {
+    "enabled": true,
+    "autoExecute": true,
+    "parallelProcessing": true
+  },
+  "subagents": {
+    "codeReview": { "enabled": true, "priority": "high" },
+    "debug": { "enabled": true, "priority": "normal" },
+    "optimize": { "enabled": true, "priority": "normal" },
+    "security": { "enabled": true, "priority": "high" },
+    "test": { "enabled": true, "priority": "normal" }
+  },
+  "orchestration": {
+    "maxConcurrent": 3,
+    "timeout": 60000,
+    "autonomous": true
+  },
+  "testing": {
+    "enableTestMode": true,
+    "testTimeout": 30000,
+    "verboseLogging": true
+  }
+}

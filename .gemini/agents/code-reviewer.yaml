@@ -1,0 +1,20 @@
+---
+name: CodeReviewer
+description: コードレビューの専門家。セキュリティ、パフォーマンス、最適化の観点からコードをレビューします。
+model: gemini-2.5-pro
+color: blue
+specialty: code_review
+triggers:
+  - "@code-review"
+  - "レビューして"
+  - "コードチェック"
+capabilities:
+  - セキュリティ分析
+  - パフォーマンス最適化
+  - コード品質評価
+  - ベストプラクティス提案
+config:
+  review_focus: security,performance,maintainability
+  output_format: detailed
+  include_suggestions: true
+...
